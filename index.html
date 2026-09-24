@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumina, desembarace o mundo</title>
+<meta name="description" content="Jogo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC. Abre na internet da escola pública, e o professor acompanha por habilidade.">
+<meta name="theme-color" content="#0b221f">
+<meta property="og:title" content="Lumina, desembarace o mundo">
+<meta property="og:description" content="Jogo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC.">
+<meta property="og:image" content="https://justmazzo.github.io/lumina/arte/capa-og.jpg">
+<meta property="og:url" content="https://justmazzo.github.io/lumina/">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230b221f' stroke='%23ffc247' stroke-width='4'/%3E%3Ccircle cx='16' cy='16' r='4.5' fill='%23ffc247'/%3E%3C/svg%3E">
+<link rel="preload" href="fontes/titan-one-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fontes/lexend-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="arte/capa-1600.webp" imagesrcset="arte/capa-1280.webp 1280w, arte/capa-1600.webp 1600w" imagesizes="100vw">
+<style>
+/* ================================================
+   O SITE DO LUMINA
+   A travessia pelo mapa do jogo: cada seção é uma parada da trilha.
+   O contrato de direção mora em .impeccable/surfaces/, não aqui.
+   ================================================ */
+
+/* As fontes vêm junto com o site: zero chamada a servidor de fora.
+   Português só usa o recorte latin; o latin-ext baixa sozinho apenas
+   se aparecer um caractere dele. */
+@font-face { font-family: 'Titan One'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(fontes/titan-one-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Titan One'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(fontes/titan-one-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Lexend'; font-style: normal; font-weight: 400 600; font-display: swap;
+  src: url(fontes/lexend-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Lexend'; font-style: normal; font-weight: 400 600; font-display: swap;
+  src: url(fontes/lexend-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  color-scheme: dark;
+  /* a mata de noite: as árvores do mapa do jogo (#327858), escurecidas */
+  --mata: #0b221f; --mata-2: #0f2d29; --mata-3: #123a33; --mata-4: #1a4a3f;
+  --painel: #07191a; --campo: #0e2a26; --campo-2: #13352f; --borda: #2b5a50; --borda-2: #3d7568;
+  --creme: #fff4dc; --creme-2: #cfe3d6;
+  --candeia: #ffc247; --candeia-2: #ffd574; --labio: #b87a12; --tinta: #2a1a02;
+  --no: #a678d8;          /* só no fio embaraçado, nunca em controle */
+  --verde: #86dba6;       /* deu certo */
+  --ponto: #fffdf4;       /* os pontos da trilha, os mesmos do mapa */
+
+  --f-letreiro: 'Titan One', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --f-texto: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* UMA régua de cantos: botão 14, painel e mídia 22, campo 12,
+     marcador e pílula redondos. */
+  --r-bt: 14px; --r-painel: 22px; --r-campo: 12px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* a agulha: mola amortecida, um só passo além do ponto e volta */
+  --mola: linear(0, 0.2 6%, 0.62 15%, 0.96 25%, 1.08 32%, 1.1 36%, 1.07 43%, 1.01 53%, 0.99 62%, 1 78%, 1);
+
+  --gut: clamp(20px, 6.667vw, 96px);
+  --larg: 1440px;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scrollbar-color: var(--borda-2) var(--mata); }
+body {
+  margin: 0; background: var(--mata); color: var(--creme);
+  font: 400 17px/1.6 var(--f-texto);
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+  caret-color: var(--candeia);
+}
+::selection { background: var(--candeia); color: var(--tinta); }
+img, video, svg { display: block; max-width: 100%; }
+h1, h2, h3 { margin: 0; font-family: var(--f-letreiro); font-weight: 400; line-height: 1.12; letter-spacing: -0.005em; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; text-underline-offset: 0.22em; text-decoration-thickness: 1.5px; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--candeia); outline-offset: 3px; border-radius: 6px; }
+.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pular { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--candeia); color: var(--tinta); padding: 12px 18px; border-radius: var(--r-bt); font-weight: 600; text-decoration: none; transition: top 160ms var(--ease-out); }
+.pular:focus { top: 12px; }
+.env { width: 100%; max-width: var(--larg); margin-inline: auto; padding-inline: var(--gut); position: relative; z-index: 2; }
+
+/* ---------- botões: o botão do próprio jogo, com lábio embaixo ---------- */
+.bt {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 14px 28px; border-radius: var(--r-bt);
+  font: 600 17px/1 var(--f-texto); text-decoration: none; white-space: nowrap; cursor: pointer;
+  border: 0; transition: transform 160ms var(--ease-out), background-color 160ms ease, box-shadow 160ms ease;
+}
+.bt-luz { background: var(--candeia); color: var(--tinta); box-shadow: inset 0 -5px 0 var(--labio), 0 10px 22px -12px rgb(0 10 8 / 0.7); }
+.bt-vazio { background: rgb(255 255 255 / 0.07); color: var(--creme); box-shadow: inset 0 0 0 1.5px rgb(255 244 220 / 0.55); }
+.bt:active { transform: scale(0.97); }
+.bt-luz:active { box-shadow: inset 0 -2px 0 var(--labio); }
+@media (hover: hover) and (pointer: fine) {
+  .bt-luz:hover { background: var(--candeia-2); }
+  .bt-vazio:hover { background: rgb(255 255 255 / 0.13); }
+}
+.bt:disabled { cursor: default; opacity: 0.6; transform: none; }
+
+/* ================= A CAPA ================= */
+.capa { position: relative; min-height: clamp(620px, 100svh, 1000px); isolation: isolate; overflow: hidden; background: #1c5fae; }
+.capa-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  /* ancorada à esquerda: centralizada, ela corta o L do letreiro pintado */
+  object-position: 0% 30%; z-index: -2; }
+.veu-topo { position: absolute; inset: 0 0 auto; height: 150px; z-index: -1; pointer-events: none;
+  background: linear-gradient(rgb(6 26 44 / 0.62), rgb(6 26 44 / 0)); }
+.topo { position: absolute; inset: 0 0 auto; z-index: 5; }
+.topo .env { display: flex; justify-content: flex-end; align-items: center; gap: 14px; min-height: 88px; }
+/* OS LINKS TÊM FUNDO PRÓPRIO. Sobre a capa, o véu do topo não bastava:
+   "Como se joga" media 2,48:1 em cima do peixe-espada cinza-claro. Uma
+   pílula escura garante o contraste em qualquer recorte da ilustração. */
+.topo .links { display: flex; gap: 30px; align-items: center; min-height: 44px; padding: 11px 22px; border-radius: 999px;
+  background: rgb(8 30 44 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12); }
+.topo a:not(.bt) { font-weight: 500; font-size: 15.5px; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .topo a:not(.bt):hover { text-decoration: underline; } }
+.topo .bt { min-height: 44px; padding: 10px 20px; font-size: 15px; box-shadow: inset 0 -4px 0 var(--labio); }
+
+.chao { position: absolute; inset: auto 0 0; z-index: 0; pointer-events: none; line-height: 0; }
+.chao .franja { width: 100%; height: 96px; position: absolute; left: 0; bottom: 0; }
+.chao .monte { position: absolute; left: 0; bottom: clamp(-72px, -4.6vw, -40px); width: clamp(560px, 62.5vw, 1000px); height: auto; }
+.chamada { position: absolute; left: var(--gut); bottom: clamp(40px, 5.5vh, 64px); z-index: 3; max-width: 36rem; }
+.chamada h1 { font-size: clamp(30px, 2.9vw, 46px); line-height: 1.13; color: var(--creme); }
+.chamada h1 .frase-1, .chamada h1 .frase-2 { display: block; }
+.chamada p { margin-top: 18px; max-width: 30rem; color: var(--creme-2); font-size: clamp(16px, 1.25vw, 18.5px); line-height: 1.5; }
+.acoes { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+.inicio-trilha { position: relative; align-self: center; width: 1px; height: 1px; margin-left: 30px; }
+
+/* a única entrada orquestrada da página: a capa assenta, a chamada sobe */
+@media (prefers-reduced-motion: no-preference) {
+  .capa-img { animation: assenta 1100ms var(--ease-out) both; }
+  .chamada > * { animation: sobe 640ms var(--ease-out) both; }
+  .chamada > :nth-child(2) { animation-delay: 90ms; }
+  .chamada > :nth-child(3) { animation-delay: 180ms; }
+}
+@keyframes assenta { from { transform: scale(1.045); opacity: 0.55; } to { transform: none; opacity: 1; } }
+@keyframes sobe { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ================= AS PARADAS ================= */
+main { position: relative; timeline-scope: --p1, --p2, --p3, --p4, --p5, --p6; }
+.parada { position: relative; padding-block: clamp(80px, 9vw, 128px); }
+.parada:nth-of-type(even) { background: var(--mata-2); }
+.p1 { view-timeline-name: --p1; } .p2 { view-timeline-name: --p2; } .p3 { view-timeline-name: --p3; }
+.p4 { view-timeline-name: --p4; } .p5 { view-timeline-name: --p5; } .p6 { view-timeline-name: --p6; }
+.cabeca { max-width: 44rem; width: fit-content; position: relative; }
+.cabeca .marco { position: absolute; top: 2px; }
+.lado-dir .cabeca, .p6 .cabeca { margin-left: auto; padding-left: 84px; }
+.lado-dir .cabeca .marco, .p6 .cabeca .marco { left: 0; }
+.p6 .cabeca { margin-left: 0; }
+.lado-esq .cabeca { padding-right: 84px; }
+.lado-esq .cabeca .marco { right: 0; }
+.cabeca h2 { font-size: clamp(28px, 2.5vw, 38px); }
+.cabeca p { margin-top: 18px; color: var(--creme-2); font-size: clamp(16px, 1.25vw, 18.5px); max-width: 36rem; }
+/* o marcador de parada: o anel do mapa do jogo */
+.marco { position: absolute; width: 56px; height: 56px; border-radius: 50%; z-index: 3;
+  background: var(--mata); box-shadow: inset 0 0 0 4px rgb(255 244 220 / 0.7), 0 4px 12px rgb(0 10 8 / 0.5); }
+.marco::after { content: ""; position: absolute; inset: 20px; border-radius: 50%; background: var(--creme); animation-fill-mode: both; }
+
+/* ---------- a trilha: uma curva só rege a página ---------- */
+.trilha { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.trilha .pontos { fill: none; stroke: var(--ponto); stroke-width: 11; stroke-linecap: round; stroke-dasharray: 0.1 23; opacity: 0.85; }
+.trilha .cheia { fill: none; stroke: var(--ponto); stroke-width: 5; stroke-linecap: round; opacity: 0; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* tracejada à frente, cheia onde o visitante já passou */
+    .trilha .cheia { opacity: 0.9; stroke-dasharray: var(--L) var(--L); stroke-dashoffset: var(--L);
+      animation: desenha linear both; animation-range: cover 48vh cover calc(100% - 52vh); }
+    .trilha .cheia[data-p="1"] { animation-timeline: --p1; } .trilha .cheia[data-p="2"] { animation-timeline: --p2; }
+    .trilha .cheia[data-p="3"] { animation-timeline: --p3; } .trilha .cheia[data-p="4"] { animation-timeline: --p4; }
+    .trilha .cheia[data-p="5"] { animation-timeline: --p5; }
+    /* o anel acende quando a trilha chega nele */
+    .marco { background: var(--mata); animation: acende linear both; animation-range: cover 38vh cover 52vh; }
+    .marco::after { animation: miolo linear both; animation-timeline: inherit; animation-range: inherit; }
+    .p1 .marco { animation-timeline: --p1; } .p2 .marco { animation-timeline: --p2; } .p3 .marco { animation-timeline: --p3; }
+    .p4 .marco { animation-timeline: --p4; } .p5 .marco { animation-timeline: --p5; } .p6 .marco { animation-timeline: --p6; }
+  }
+}
+@keyframes desenha { to { stroke-dashoffset: 0; } }
+/* O unico brilho dourado da pagina, junto com a soltura do Pingo: a Candeia
+   chegando na parada. Fora destes dois momentos, sombra e neutra. */
+@keyframes acende { from { box-shadow: inset 0 0 0 4px rgb(255 244 220 / 0.7), 0 4px 12px rgb(0 10 8 / 0.5); } to { box-shadow: inset 0 0 0 4px var(--candeia), 0 4px 22px rgb(255 194 71 / 0.45); } }
+@keyframes miolo { from { transform: scale(0.55); background: var(--creme); } to { transform: none; background: var(--candeia); } }
+
+/* ---------- parada 1: o elenco, encostado, sem moldura ---------- */
+.elenco { position: relative; margin-top: clamp(40px, 5vw, 72px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
+.elenco .fio { position: absolute; left: calc(var(--gut) * -1); right: calc(var(--gut) * -1); top: 8%; width: calc(100% + var(--gut) * 2); height: 70%; z-index: 0; pointer-events: none; }
+.bicho { position: relative; z-index: 1; margin: 0; text-align: center; }
+.bicho img { width: 117%; max-width: none; margin-inline: -8.5%; height: auto; aspect-ratio: 480 / 590; object-fit: contain;
+  /* sombra de contato: o recorte projetado para baixo, e o bicho pisa em vez de boiar */
+  filter: drop-shadow(0 16px 8px rgb(0 8 6 / 0.42)); }
+.bicho:nth-child(odd) img { transform: translateY(18px); }
+/* a primeira figura nao invade a margem esquerda, que e onde a trilha desce */
+.elenco .bicho:first-of-type img { margin-left: 0; margin-right: -17%; }
+.bicho figcaption { margin-top: 2px; }
+.bicho b { display: block; font: 400 clamp(19px, 1.55vw, 23px)/1.2 var(--f-letreiro); }
+.bicho span { display: block; margin-top: 4px; font-size: 14px; color: var(--creme-2); }
+
+/* ---------- parada 2: o jogo rodando ---------- */
+.jogo { margin-top: clamp(36px, 4vw, 56px); display: grid; gap: 34px 36px; grid-template-columns: minmax(0, 2.03fr) minmax(0, 1fr); align-items: start; }
+.jogo-lado { display: grid; gap: 34px; }
+.quadro { margin: 0; }
+.quadro .tela { position: relative; border-radius: var(--r-painel); overflow: hidden; background: #081c1a; aspect-ratio: 16 / 9;
+  box-shadow: 0 26px 48px -18px rgb(1 12 10 / 0.75); }
+.quadro .tela::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgb(255 244 220 / 0.14); pointer-events: none; }
+.quadro video { width: 100%; height: 100%; object-fit: cover; }
+.quadro .tocar { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--creme); cursor: pointer; border-radius: inherit; -webkit-tap-highlight-color: transparent; }
+.quadro .tocar:focus-visible { outline-offset: -6px; border-radius: var(--r-painel); }
+/* parado, o botão fica à vista no meio do quadro: é ele que diz que aquilo é vídeo */
+.quadro .icone { width: clamp(52px, 5vw, 72px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%;
+  background: rgb(7 25 26 / 0.74); box-shadow: inset 0 0 0 1.5px rgb(255 244 220 / 0.5), 0 10px 24px -8px rgb(1 12 10 / 0.8);
+  transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out); }
+.quadro .icone svg { width: 40%; height: 40%; fill: currentColor; }
+.quadro .play { translate: 7% 0; }
+.quadro .pausa { display: none; }
+.quadro .tocar:active .icone { transform: scale(0.97); }
+/* tocando, ele some e só volta sob o cursor ou o foco, para pausar */
+.tocando .icone { opacity: 0; transform: scale(0.94); }
+.tocando .play { display: none; }
+.tocando .pausa { display: block; }
+.tocando .tocar:focus-visible .icone { opacity: 1; transform: none; }
+@media (hover: hover) { .tocando .tocar:hover .icone { opacity: 1; transform: none; } }
+.quadro figcaption { margin-top: 14px; font-weight: 500; font-size: 15px; color: var(--creme-2); }
+
+/* ---------- parada 3: como se joga ---------- */
+.joga { margin-top: clamp(40px, 4.5vw, 64px); display: grid; gap: 48px; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; }
+.batidas { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 34px; }
+.batidas::before { content: ""; position: absolute; left: 9px; top: 18px; bottom: 30px; width: 2px;
+  background: repeating-linear-gradient(to bottom, rgb(255 253 244 / 0.55) 0 5px, transparent 5px 22px); }
+.batidas li { position: relative; padding-left: 46px; }
+.batidas li::before { content: ""; position: absolute; left: 0; top: 7px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--mata); box-shadow: inset 0 0 0 3px var(--creme); }
+.batidas b { display: block; font: 400 clamp(22px, 1.8vw, 26px)/1.2 var(--f-letreiro); }
+.batidas span { display: block; margin-top: 6px; color: var(--creme-2); font-size: 17px; max-width: 26rem; }
+
+.demo { position: relative; background: var(--painel); border-radius: var(--r-painel); padding: clamp(22px, 2.4vw, 32px);
+  box-shadow: inset 0 0 0 1px var(--borda), 0 30px 56px -20px rgb(1 12 10 / 0.8); display: grid; gap: 22px; }
+.demo-pingo { position: absolute; right: clamp(-18px, -1.2vw, -10px); top: -64px; width: clamp(96px, 9vw, 128px); height: auto; z-index: 2; filter: drop-shadow(0 12px 16px rgb(0 0 0 / 0.35)); }
+.instrumentos { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.instrumento { margin: 0; text-align: center; }
+.instrumento svg { width: 100%; max-width: 260px; margin-inline: auto; overflow: visible; }
+.instrumento .trilho-arco { fill: none; stroke: #17312d; stroke-width: 14; stroke-linecap: round; }
+.instrumento .cheio-arco { fill: none; stroke-width: 14; stroke-linecap: round; stroke-dasharray: 100 100; stroke-dashoffset: var(--falta, 100);
+  transition: stroke-dashoffset 700ms var(--mola); }
+.instrumento.no .cheio-arco { stroke: var(--no); }
+.instrumento.luz .cheio-arco { stroke: var(--candeia); }
+/* POSIÇÃO NO PAI, ROTAÇÃO NO FILHO: o grupo leva o pivô, a agulha só gira */
+/* a agulha e uma seta afilada, e o curso vai de 12 a 168 graus: nos dois
+   extremos ela nunca fica deitada, que e o que fazia 26/26 e 0/3 parecerem iguais */
+.agulha { fill: var(--creme); rotate: var(--giro, 12deg); transition: rotate 700ms var(--mola); }
+.instrumento .valor { display: block; margin-top: 4px; font: 400 30px/1 var(--f-letreiro); font-variant-numeric: tabular-nums; }
+.instrumento figcaption { margin-top: 8px; font-weight: 500; font-size: 15px; color: var(--creme-2); }
+.fala { display: flex; gap: 16px; align-items: center; min-height: 64px; }
+.fala img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px var(--candeia); flex: none; }
+.fala p { font-weight: 500; font-size: 17px; }
+.fala p em { font-style: normal; color: var(--candeia); }
+.fala.boa p em { color: var(--verde); }
+.fala .erro { display: block; margin-top: 6px; font: 500 13px/1.5 ui-monospace, 'Cascadia Mono', Consolas, monospace; color: var(--creme-2); }
+.pergunta { background: var(--campo); border-radius: 16px; padding: clamp(16px, 1.8vw, 22px); display: grid; gap: 16px; }
+.pergunta > p { font-weight: 500; font-size: clamp(17px, 1.4vw, 19.5px); line-height: 1.45; }
+.opcoes, .lumes { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lumes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.opcao, .lume { background: var(--campo-2); border: 0; box-shadow: inset 0 0 0 1px var(--borda); border-radius: var(--r-campo);
+  min-height: 52px; padding: 13px 18px; text-align: left; font-weight: 600; font-size: 17px; cursor: pointer;
+  transition: background-color 150ms ease, box-shadow 150ms ease, transform 160ms var(--ease-out); }
+.opcao:active:not(:disabled), .lume:active:not(:disabled) { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) {
+  .opcao:hover:not(:disabled), .lume:hover:not(:disabled) { background: #19433b; box-shadow: inset 0 0 0 1px var(--borda-2); }
+}
+.opcao:disabled, .lume:disabled { cursor: default; }
+.opcao:disabled:not(.certa):not(.escolhida) { opacity: 0.5; }
+.opcao.certa { box-shadow: inset 0 0 0 2px var(--verde); background: #123d2c; }
+.opcao.escolhida { box-shadow: inset 0 0 0 2px var(--candeia); }
+.lume { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; padding: 10px 12px; }
+.lume img { width: 44px; height: 56px; object-fit: cover; border-radius: 8px; }
+.lume b { display: block; font-weight: 600; font-size: 16px; }
+.lume small { display: block; font: 500 13px/1.35 var(--f-texto); color: var(--creme-2); font-variant-numeric: tabular-nums; }
+.lume:disabled { opacity: 0.42; }
+.demo-pe { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; }
+.demo-pe p { font-size: 14px; color: var(--creme-2); }
+.bt-mini { min-height: 44px; padding: 10px 16px; border-radius: var(--r-campo); background: transparent; border: 0; box-shadow: inset 0 0 0 1px var(--borda-2); font-weight: 500; font-size: 15px; cursor: pointer; }
+@media (prefers-reduced-motion: no-preference) {
+  .demo-pingo.solto { animation: solta 900ms var(--ease-out) both; }
+}
+@keyframes solta { 0% { transform: scale(0.94); filter: drop-shadow(0 0 0 rgb(255 194 71 / 0)); } 45% { transform: translateY(-14px) scale(1.04); filter: drop-shadow(0 0 22px rgb(255 194 71 / 0.85)); } 100% { transform: none; filter: drop-shadow(0 12px 16px rgb(0 0 0 / 0.35)); } }
+
+/* ---------- parada 4: o mapa é a BNCC ---------- */
+.clareira { position: relative; margin-top: clamp(40px, 4.5vw, 64px); isolation: isolate; }
+.mapa-caixa { position: relative; }
+.clareira .mapa { width: 100%; height: auto; aspect-ratio: 1400 / 781; object-fit: cover; }
+/* UM vocabulario de folha na pagina inteira: bolota redonda e folha pontuda,
+   o mesmo da capa. Toda emenda entre paradas e mata, e nao corte reto. */
+.costura { position: absolute; left: 0; bottom: -1px; width: 100%; height: 72px; z-index: 0; pointer-events: none; }
+.franja-cena { position: absolute; left: 0; width: 100%; height: clamp(56px, 6.7vw, 96px); z-index: 0; pointer-events: none; }
+.franja-cena.cima { top: -1px; } .franja-cena.baixo { bottom: -1px; }
+.franja-mapa { position: absolute; left: 0; width: 100%; height: clamp(56px, 6.7vw, 96px); z-index: 1; pointer-events: none; }
+.franja-mapa.cima { top: -1px; } .franja-mapa.baixo { bottom: -1px; }
+.lugar { position: absolute; z-index: 2; translate: -50% -50%; display: grid; justify-items: center; gap: 8px;
+  background: none; border: 0; padding: 0; cursor: pointer; }
+.lugar i { width: 34px; height: 34px; border-radius: 50%; background: var(--mata); box-shadow: inset 0 0 0 3px var(--candeia), 0 4px 10px rgb(0 12 10 / 0.5);
+  transition: transform 180ms var(--ease-out), background-color 180ms ease; }
+.lugar span { background: rgb(11 34 31 / 0.9); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px; white-space: nowrap; }
+.lugar[aria-pressed="true"] i { background: var(--candeia); box-shadow: inset 0 0 0 4px var(--mata), 0 0 0 3px var(--candeia), 0 4px 12px rgb(0 12 10 / 0.55); transform: scale(1.18); }
+@media (hover: hover) and (pointer: fine) { .lugar:hover i { transform: scale(1.12); } }
+.cartao-lugar { position: absolute; z-index: 3; left: var(--gut); bottom: clamp(70px, 10vw, 150px); width: min(28rem, calc(100% - var(--gut) * 2));
+  background: rgb(11 34 31 / 0.95); border-radius: 18px; padding: 20px 24px; box-shadow: inset 0 0 0 1.5px rgb(255 194 71 / 0.6), 0 20px 40px -18px rgb(0 0 0 / 0.6); }
+.cartao-lugar h3 { font-size: 24px; }
+.cartao-lugar .unidade { margin-top: 6px; color: var(--creme); font-weight: 600; }
+.cartao-lugar .enredo { margin-top: 8px; color: var(--creme-2); font-size: 15.5px; line-height: 1.5; }
+.cartao-lugar .cod { margin-top: 10px; font-weight: 500; font-size: 14px; }
+.cartao-lugar .cod b { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-weight: 600; color: var(--creme); margin-right: 6px; }
+.lugares-lista { display: none; }
+.nota-mapa { margin-top: 28px; color: var(--creme-2); font-weight: 500; max-width: 60rem; }
+
+/* ---------- parada 5: para a escola ---------- */
+.calc { margin-top: clamp(36px, 4vw, 56px); background: var(--painel); border-radius: var(--r-painel); box-shadow: inset 0 0 0 1px var(--borda);
+  display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+.calc-controles { padding: clamp(24px, 2.8vw, 40px); display: grid; gap: 30px; align-content: center; border-right: 1px solid var(--borda); }
+.controle label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-weight: 500; color: var(--creme-2); }
+.controle label b { font: 400 22px/1 var(--f-letreiro); color: var(--creme); font-variant-numeric: tabular-nums; white-space: nowrap; }
+input[type="range"] { width: 100%; margin-top: 14px; height: 30px; background: transparent; accent-color: var(--candeia); cursor: pointer; }
+input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--candeia) var(--cheio, 50%), #17312d var(--cheio, 50%)); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; background: var(--creme); box-shadow: inset 0 0 0 3px var(--labio); }
+input[type="range"] { -webkit-appearance: none; appearance: none; }
+input[type="range"]::-moz-range-track { height: 8px; border-radius: 4px; background: #17312d; }
+input[type="range"]::-moz-range-progress { height: 8px; border-radius: 4px; background: var(--candeia); }
+input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--creme); box-shadow: inset 0 0 0 3px var(--labio); }
+.calc-resposta { padding: clamp(24px, 2.8vw, 40px) clamp(24px, 3.4vw, 48px); display: grid; align-content: center; gap: 18px; }
+.calc-resposta .frase { font-size: clamp(20px, 1.8vw, 26px); line-height: 1.45; }
+.calc-resposta .frase b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.calc-resposta .frase .chega { font-weight: 700; }
+.calc-resposta .miudo { font-size: 15px; color: var(--creme-2); }
+
+.painel-prof { margin-top: clamp(96px, 10vw, 140px); }
+.painel-prof h3 { font-size: clamp(26px, 2.25vw, 34px); max-width: 36rem; }
+.painel-grade { margin-top: clamp(32px, 3.4vw, 48px); display: grid; gap: 48px; grid-template-columns: minmax(0, 0.46fr) minmax(0, 1fr); align-items: start; }
+.capacidades { list-style: none; margin: 0; padding: 0; display: grid; gap: 30px; }
+.capacidades b { display: block; font-weight: 600; font-size: 19px; line-height: 1.4; }
+.capacidades span { display: block; margin-top: 6px; color: var(--creme-2); font-size: 16px; }
+.painel-prof figure { margin: 0; }
+.painel-prof figure img { width: 100%; height: auto; border-radius: 18px; box-shadow: 0 0 0 1px rgb(255 244 220 / 0.18), 0 30px 60px -18px rgb(1 12 10 / 0.8); }
+.painel-prof figcaption { margin-top: 14px; font-size: 14px; color: var(--creme-2); }
+
+/* ---------- parada 6: o piloto, no fim da trilha ---------- */
+.p6 { padding-block: 0; isolation: isolate; overflow: hidden; background: var(--mata); }
+.p6 .fundo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.p6::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(to right, rgb(11 34 31 / 0.94), rgb(11 34 31 / 0.74) 55%, rgb(11 34 31 / 0.38)); }
+.piloto { min-height: clamp(720px, 62.5vw, 900px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 36.5rem); gap: 56px; align-items: center; padding-block: clamp(96px, 9vw, 140px); }
+.piloto .cabeca h2 { font-size: clamp(30px, 2.7vw, 42px); }
+.form { background: rgb(7 25 26 / 0.96); border-radius: var(--r-painel); box-shadow: inset 0 0 0 1px var(--borda); padding: clamp(22px, 2.3vw, 32px); display: grid; gap: 16px; }
+.form-par { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.campo { display: grid; gap: 8px; align-content: start; }
+.campo label { font-weight: 500; font-size: 15px; }
+.campo input, .campo select { height: 50px; padding: 12px 16px; border-radius: var(--r-campo); border: 0; background: var(--campo); color: var(--creme);
+  box-shadow: inset 0 0 0 1px var(--borda); font-size: 16px; transition: box-shadow 150ms ease; }
+.campo select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--creme-2) 50%), linear-gradient(135deg, var(--creme-2) 50%, transparent 50%);
+  background-position: calc(100% - 22px) 22px, calc(100% - 16px) 22px; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 40px; }
+.campo input:focus, .campo select:focus { outline: none; box-shadow: inset 0 0 0 2px var(--candeia); }
+.campo input[aria-invalid="true"] { box-shadow: inset 0 0 0 2px #ff9b87; }
+.campo .ajuda { font-size: 13.5px; color: #ffb4a4; min-height: 0; }
+.form .bt { width: 100%; margin-top: 4px; }
+.form-nota { font-size: 14px; color: var(--creme-2); }
+.form-aviso { font-size: 15px; padding: 12px 14px; border-radius: var(--r-campo); box-shadow: inset 0 0 0 1px var(--borda); }
+.form-aviso.ok { box-shadow: inset 0 0 0 1.5px var(--verde); color: var(--verde); }
+.form-aviso.erro { box-shadow: inset 0 0 0 1.5px #ff9b87; color: #ffb4a4; }
+
+footer { background: #081a18; padding-block: 56px 64px; }
+footer .env { display: grid; gap: 8px; }
+footer b { font: 400 22px/1.2 var(--f-letreiro); }
+footer p { color: var(--creme-2); font-size: 15px; }
+
+/* ================= LARGURAS MENORES ================= */
+@media (max-width: 1100px) {
+  .joga, .painel-grade, .calc, .jogo { grid-template-columns: minmax(0, 1fr); }
+  .calc-controles { border-right: 0; border-bottom: 1px solid var(--borda); }
+  .jogo-lado { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .piloto { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 960px) {
+  /* A trilha vive nas margens, e abaixo daqui não há margem para ela:
+     os anéis ficam, em linha, acima de cada título. */
+  .trilha { display: none; }
+  .lado-dir .cabeca, .lado-esq .cabeca, .p6 .cabeca { margin-left: 0; padding: 0; width: auto; }
+  .cabeca .marco { position: relative; inset: auto; display: block; width: 44px; height: 44px; margin-bottom: 18px; }
+  .marco::after { inset: 15px; }
+  .elenco { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 28px; }
+}
+@media (max-width: 760px) {
+  .capa { min-height: 0; display: flex; flex-direction: column; background: var(--mata); }
+  /* a pintura inteira, sem recorte: nenhum recorte de 390 px guarda o
+     letreiro (a esquerda da capa) e a Aritana (a direita) ao mesmo tempo */
+  /* o trecho da pintura que vai do letreiro (x 50-720 da capa) ate a Aritana
+     (x 780-1180): 1200 de 1600 de largura, e a faixa sobe de ~190 para ~290 px */
+  .capa-img { position: relative; height: auto; aspect-ratio: 1200 / 893; object-position: 1% 0%; animation: none; }
+  .veu-topo { height: 110px; }
+  .topo .env { gap: 0; min-height: 72px; }
+  .topo { display: none; }
+  .chao { position: absolute; top: calc(74.4vw - 30px); bottom: auto; height: 32px; }
+  .chao .franja { height: 32px; }
+  .chao .monte { display: none; }
+  .chamada { position: relative; left: auto; bottom: auto; max-width: none; padding: 18px var(--gut) 20px; }
+  .p1 { padding-top: 40px; }
+  .chamada h1 { font-size: clamp(26px, 7vw, 32px); }
+  .acoes .bt { width: 100%; }
+  .elenco { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .elenco .bicho:last-child { grid-column: 1 / -1; max-width: 50%; justify-self: center; }
+  .jogo-lado { grid-template-columns: minmax(0, 1fr); }
+  .instrumentos { gap: 12px; }
+  .instrumento .valor { font-size: 24px; }
+  .lumes { grid-template-columns: minmax(0, 1fr); }
+  .opcoes { grid-template-columns: minmax(0, 1fr); }
+  .demo-pingo { top: -52px; width: 88px; right: -4px; }
+  /* no celular os rótulos não cabem sobre o mapa: ficam os anéis nele,
+     e os nomes viram uma fileira de pílulas logo abaixo */
+  .lugar span { display: none; }
+  .lugar i { width: 26px; height: 26px; }
+  .cartao-lugar { position: relative; left: auto; bottom: auto; width: auto; margin: 18px var(--gut) 0; }
+  .lugares-lista { position: relative; display: flex; gap: 8px; overflow-x: auto; padding: 16px var(--gut) 4px; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); scrollbar-width: none; }
+  .lugares-lista::after { content: ""; flex: 0 0 calc(var(--gut) - 8px); }
+  .lugares-lista button { scroll-snap-align: start; flex: none; min-height: 44px; padding: 10px 16px; border-radius: 999px; border: 0; background: var(--campo-2); box-shadow: inset 0 0 0 1px var(--borda); font-weight: 600; font-size: 14.5px; cursor: pointer; }
+  .lugares-lista button[aria-pressed="true"] { background: var(--candeia); color: var(--tinta); box-shadow: none; }
+  .form-par { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .bt:active, .opcao:active, .lume:active { transform: none; }
+  .instrumento .cheio-arco, .agulha { transition-duration: 1ms; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="folhas-costura" viewBox="0 0 1440 72" preserveAspectRatio="none"><path d="M0 66 Q22.2 13.4 44.4 66 Q93.4 -1 142.4 66 Q195.5 -0.7 248.7 66 Q261.8 30.8 281.6 4.8 Q301.4 30.8 314.5 66 Q324.4 40.6 339.1 14.6 Q353.8 40.6 363.6 66 Q382 37.5 409.7 11.5 Q437.3 37.5 455.8 66 Q474.2 30.3 502 4.3 Q529.7 30.3 548.1 66 Q559.1 49.3 575.6 23.3 Q592.1 49.3 603 66 Q648.3 6.7 693.6 66 Q742.8 24.2 792 66 Q824.9 18 857.9 66 Q911.6 20.3 965.3 66 Q1018.7 25.6 1072.2 66 Q1094.1 49.9 1127 23.9 Q1159.9 49.9 1181.8 66 Q1224.9 -2.4 1268.1 66 Q1290 25.3 1322.9 -0.7 Q1355.8 25.3 1377.7 66 Q1406 -2.6 1434.2 66 Q1450.9 30 1437.1 4 Q1423.3 30 1440 66 L1440 72 L0 72 Z" style="fill: var(--mata-3)"/><path d="M0 72 Q7 39.7 17.4 20.2 Q27.9 39.7 34.8 72 Q60.3 36.3 85.7 72 Q97.8 39.5 116 20 Q134.2 39.5 146.3 72 Q177.7 34.2 209.2 72 Q227.7 22 246.1 72 Q265.5 28.3 284.8 72 Q295.1 50 310.6 30.5 Q326.1 50 336.4 72 Q347.5 57.8 364.2 38.3 Q380.9 57.8 392 72 Q431.5 19.7 471 72 Q484.8 61.8 505.6 42.3 Q526.3 61.8 540.1 72 Q564 32.5 587.8 72 Q618.7 41.7 649.5 72 Q680.8 39.8 712 72 Q722.8 60.8 738.9 41.3 Q755 60.8 765.7 72 Q791 19.7 816.3 72 Q855.9 30.6 895.6 72 Q924.8 38.9 954 72 Q979.8 27.6 1005.5 72 Q1024 22.2 1042.5 72 Q1055.4 58.5 1074.9 39 Q1094.4 58.5 1107.3 72 Q1124.2 45.2 1149.4 25.7 Q1174.7 45.2 1191.5 72 Q1208 56 1232.7 36.5 Q1257.3 56 1273.8 72 Q1281.8 43.6 1293.9 24.1 Q1306 43.6 1314.1 72 Q1330.5 50.1 1355.2 30.6 Q1379.9 50.1 1396.3 72 Q1410.4 52.6 1418.2 33.1 Q1425.9 52.6 1440 72 L1440 72 L0 72 Z" fill="currentColor"/></symbol><symbol id="folhas-pendura" viewBox="0 0 1440 96" preserveAspectRatio="none"><path d="M0 14 Q9.1 28 22.8 56.6 Q36.5 28 45.6 14 Q68.1 44.8 101.9 73.4 Q135.6 44.8 158.1 14 Q210.6 72.5 263.2 14 Q286.5 71.9 309.9 14 Q328.5 31 356.3 59.6 Q384.1 31 402.6 14 Q436.1 91.1 469.5 14 Q505.6 60.7 541.7 14 Q595.1 90.7 648.4 14 Q692.3 63 736.1 14 Q789.4 71.2 842.6 14 Q858.9 44.6 883.5 73.2 Q908 44.6 924.4 14 Q945.7 58.9 977.8 87.5 Q1009.9 58.9 1031.2 14 Q1074.2 63 1117.2 14 Q1149.8 60.4 1182.4 14 Q1208 91.6 1233.6 14 Q1271.2 76.6 1308.9 14 Q1353.4 79.9 1397.9 14 Q1419 75.7 1440 14 L1440 0 L0 0 Z" style="fill: var(--mata-3)"/><path d="M0 4 Q17.4 56.8 34.8 4 Q71.3 53.8 107.7 4 Q129.1 48.4 150.4 4 Q184.1 53.8 217.8 4 Q252.8 44.1 287.9 4 Q318 60.8 348.2 4 Q383.6 48.2 419 4 Q426.1 25.4 436.7 46.2 Q447.4 25.4 454.5 4 Q468.7 21.4 490 42.2 Q511.3 21.4 525.5 4 Q564.1 58.3 602.7 4 Q646 37.7 689.3 4 Q711.4 44.1 733.5 4 Q761 53.4 788.5 4 Q818.3 50.1 848.2 4 Q876.5 48.2 904.8 4 Q920.9 21.8 944.9 42.6 Q969 21.8 985 4 Q994.8 19.7 1009.5 40.5 Q1024.2 19.7 1034 4 Q1051.6 59.8 1069.2 4 Q1088.5 40 1107.7 4 Q1116.2 37.1 1128.9 57.9 Q1141.5 37.1 1150 4 Q1183.4 56.6 1216.7 4 Q1227.6 16.3 1243.9 37.1 Q1260.2 16.3 1271.1 4 Q1310.2 38 1349.3 4 Q1391.3 50 1433.3 4 Q1436.6 41.8 1440 4 L1440 0 L0 0 Z" fill="currentColor"/></symbol><symbol id="folhas-sobe" viewBox="0 0 1440 96" preserveAspectRatio="none"><path d="M0 82 Q22.8 26.1 45.6 82 Q87.7 8.9 129.8 82 Q143.6 61.8 164.3 33.2 Q184.9 61.8 198.7 82 Q233.9 30 269.1 82 Q326.1 22 383 82 Q426.7 15.1 470.3 82 Q500.7 11.7 531.1 82 Q550.6 40 579.9 11.4 Q609.2 40 628.7 82 Q654.2 23.5 679.7 82 Q717.1 19.1 754.6 82 Q799 33.9 843.4 82 Q857.6 59.6 878.9 31 Q900.2 59.6 914.3 82 Q936 44 968.5 15.4 Q1001 44 1022.7 82 Q1077.6 19 1132.5 82 Q1145.9 51.6 1165.9 23 Q1185.9 51.6 1199.2 82 Q1227.5 8.2 1255.8 82 Q1291 3.3 1326.2 82 Q1380.5 7 1434.7 82 Q1437.3 9.1 1440 82 L1440 96 L0 96 Z" style="fill: var(--mata-3)"/><path d="M0 94 Q17.4 52 34.8 94 Q44.2 82.1 58.3 61.3 Q72.4 82.1 81.8 94 Q117.9 45.9 154 94 Q169.8 76.8 193.4 56 Q217 76.8 232.7 94 Q246.4 65.7 267 44.9 Q287.5 65.7 301.2 94 Q340.7 61.5 380.2 94 Q405.2 54.8 430.1 94 Q454.2 48.5 478.3 94 Q494.1 68.3 517.8 47.5 Q541.5 68.3 557.3 94 Q591.9 39.9 626.5 94 Q667.8 56.5 709.1 94 Q746.1 58.1 783 94 Q800.2 65 826 44.2 Q851.7 65 868.9 94 Q908.8 48.8 948.7 94 Q968.4 48.8 988.2 94 Q1025 39 1061.7 94 Q1093.3 49.8 1124.9 94 Q1161.7 41.9 1198.4 94 Q1225.8 58.1 1253.1 94 Q1294.4 40.8 1335.7 94 Q1365.3 40.1 1394.9 94 Q1404 60.2 1417.5 39.4 Q1430.9 60.2 1440 94 L1440 96 L0 96 Z" fill="currentColor"/></symbol></svg>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="capa">
+  <picture>
+    <img class="capa-img" src="arte/capa-1600.webp" srcset="arte/capa-1280.webp 1280w, arte/capa-1600.webp 1600w" sizes="100vw"
+         width="1600" height="893" fetchpriority="high" decoding="async"
+         alt="Capa do Lumina: o letreiro Lumina pintado no céu e a Aritana tocando flauta sob uma folha gigante, cercada de crianças e bichos, com peixes voando e ilhas no horizonte.">
+  </picture>
+  <div class="veu-topo" aria-hidden="true"></div>
+  <nav class="topo" aria-label="Seções">
+    <div class="env">
+      <div class="links">
+        <a href="#como-se-joga">Como se joga</a>
+        <a href="#mapa">O mapa</a>
+        <a href="#escola">Para a escola</a>
+      </div>
+      <a class="bt bt-luz" href="#piloto">Pedir um piloto</a>
+    </div>
+  </nav>
+  <div class="chao" aria-hidden="true"><svg class="franja" viewBox="0 0 1440 96" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 30 Q21 -0.7 42 32.3 Q69.9 -8.9 97.8 34.4 Q111.9 24.9 133.2 5.4 Q154.5 24.9 168.6 34.8 Q189.3 2.9 220.4 -16.6 Q251.4 2.9 272.1 30.6 Q317 -3.6 362 26.1 Q375.7 -3.1 396.2 -22.6 Q416.8 -3.1 430.5 25 Q479.4 -5.8 528.3 28 Q558.4 -6.6 588.6 31.3 Q616.8 -5.3 645.1 33.9 Q674.7 -16.8 704.2 35 Q715.4 10.7 732.1 -8.8 Q748.9 10.7 760.1 34.2 Q774.4 4.1 795.9 -15.4 Q817.4 4.1 831.8 30.9 Q872 -12.1 912.3 26.7 Q943.6 -20.2 974.8 25.1 Q988.3 7.6 1008.5 -11.9 Q1028.7 7.6 1042.2 25.8 Q1071.2 -17 1100.1 28.3 Q1135.4 -12.4 1170.7 32.1 Q1217.2 -4.8 1263.7 35 Q1273.9 22 1289.1 2.5 Q1304.3 22 1314.4 34.5 Q1361.5 -1.7 1408.5 30.3 Q1417.5 5.1 1424.3 -14.4 Q1431 5.1 1440 28.6 L1440 96 L0 96 Z" fill="#1a4a3f"/><path d="M0 44 Q6.7 22.6 16.8 7 Q26.9 22.6 33.6 45.8 Q55 14.4 76.3 47.7 Q94.9 7.6 113.4 48.8 Q133.4 8.2 153.4 49 Q184.4 14.4 215.4 47.4 Q225.2 28.9 239.9 13.3 Q254.6 28.9 264.4 45 Q303.2 0.8 341.9 40.9 Q364.2 -1.5 386.5 39.4 Q395.5 28.3 409.1 12.7 Q422.7 28.3 431.7 39 Q468 9.7 504.3 40.9 Q522.4 7.4 540.6 42.6 Q559.6 12.2 578.7 44.7 Q616.5 17.3 654.4 48.2 Q661.9 24.8 673.1 9.2 Q684.3 24.8 691.8 48.9 Q728.7 22 765.5 48 Q787.3 7.9 809.1 46.1 Q851.1 16 893.1 41.6 Q900 24.7 910.4 9.1 Q920.8 24.7 927.7 40.1 Q964.9 8.9 1002 39 Q1031.3 15.4 1060.7 40.5 Q1097.7 14.4 1134.8 44.2 Q1152.6 13.3 1170.3 46.1 Q1205 4.6 1239.7 48.7 Q1262.7 24.4 1285.7 48.9 Q1294.3 37.4 1307.3 21.8 Q1320.3 37.4 1328.9 48 Q1340 32 1356.7 16.4 Q1373.4 32 1384.5 45.6 Q1412.2 3 1440 42.6 L1440 96 L0 96 Z" fill="#123a33"/><path d="M0 54 Q5.3 42.2 13.2 30.5 Q21.1 42.2 26.4 55.4 Q42.5 33 58.5 57 Q85.2 30 111.9 58.7 Q130.6 28.6 149.3 59 Q157.4 39.4 169.7 27.7 Q181.9 39.4 190.1 58.3 Q207.1 36 224.2 57 Q254.3 25.9 284.4 53.9 Q290.8 39.4 300.5 27.7 Q310.1 39.4 316.6 52.2 Q323.7 45.4 334.4 33.7 Q345 45.4 352.2 50.5 Q370.8 21.6 389.4 49.4 Q420.2 24.6 451 49.2 Q478.1 18.1 505.3 50.9 Q519.7 31.9 534.1 52.3 Q545.9 47.3 563.6 35.6 Q581.3 47.3 593.1 55.5 Q599.9 37.4 610.1 25.7 Q620.3 37.4 627.1 57.2 Q643.1 39.8 659.2 58.3 Q683.2 28.2 707.1 59 Q724.9 32.9 742.7 58.6 Q765.3 32.9 788 57.1 Q804.5 26.5 821 55.5 Q845.4 25.2 869.8 52.8 Q876.5 43.1 886.6 31.4 Q896.8 43.1 903.5 51.1 Q910.1 42.5 920.1 30.8 Q930 42.5 936.6 49.8 Q953.9 23.6 971.1 49.1 Q982.7 42.4 1000 30.7 Q1017.4 42.4 1028.9 49.5 Q1051.5 23 1074.1 51 Q1082.6 33.7 1095.3 22 Q1108.1 33.7 1116.6 53.2 Q1123 35.7 1132.7 24 Q1142.3 35.7 1148.8 55 Q1171.7 25.5 1194.6 57.2 Q1214.7 26.1 1234.8 58.6 Q1242.4 46.9 1253.7 35.2 Q1265.1 46.9 1272.7 59 Q1280 43.5 1291 31.8 Q1302 43.5 1309.3 58.6 Q1332.2 26 1355 57 Q1381.7 28.7 1408.3 54.3 Q1424.1 33.1 1440 52.6 L1440 96 L0 96 Z" fill="#0b221f"/></svg><svg class="monte" viewBox="0 0 900 460" aria-hidden="true" focusable="false"><path d="M0 44 Q10.1 15.7 25.2 -12.9 Q40.3 15.7 50.4 45.2 Q77.3 -28.5 104.2 46.4 Q149 -13 193.7 48.5 Q229.6 -2.4 265.4 50.2 Q295.9 -6.5 326.5 51.6 Q349 26.2 382.9 -2.4 Q416.8 26.2 439.4 54.2 Q472.8 -14.9 506.2 55.7 Q524.7 26.8 552.4 -1.8 Q580.1 26.8 598.5 57.9 Q613.3 17.5 635.4 -11.1 Q657.5 17.5 672.2 59.6 Q704.7 1.3 737.2 111 Q762.9 111 788.6 234.4 Q833.6 293.1 878.5 389.9 Q889.2 334.7 900 390 L900 460 L0 460 Z" fill="#1a4a3f"/><path d="M0 62 Q7.9 48 19.8 25.9 Q31.7 48 39.6 62.9 Q47.6 31.8 59.6 9.7 Q71.7 31.8 79.7 63.8 Q89.1 46.2 103.3 24.1 Q117.5 46.2 126.9 64.9 Q159.6 26.2 192.2 66.5 Q211.4 34.8 240 12.7 Q268.7 34.8 287.9 68.7 Q304.2 56.5 328.8 34.4 Q353.4 56.5 369.8 70.6 Q380.1 44.5 395.6 22.4 Q411.1 44.5 421.4 71.8 Q435 58.7 455.5 36.6 Q476 58.7 489.7 73.4 Q501.2 46.2 518.6 24.1 Q536 46.2 547.5 74.7 Q588 14.9 628.4 76.6 Q646.4 59.5 673.4 37.4 Q700.3 59.5 718.3 97.8 Q742.3 87.1 766.2 194.6 Q791.4 221.6 816.7 322.5 Q858.3 336.8 900 408 L900 460 L0 460 Z" fill="#123a33"/><path d="M0 78 Q15.6 34.3 31.2 78.7 Q46.5 57 69.5 40.1 Q92.5 57 107.8 80.5 Q121 71 140.7 54.1 Q160.5 71 173.7 82 Q185.4 71 202.9 54.1 Q220.5 71 232.2 83.4 Q265.2 52.3 298.3 84.9 Q310.1 60.5 327.9 43.6 Q345.7 60.5 357.5 86.3 Q377.5 50.9 397.4 87.2 Q422.6 45.3 447.9 88.4 Q470.7 52.6 493.5 89.4 Q513.6 55.8 533.8 90.4 Q565.4 60.9 596.9 91.8 Q610.2 79.9 630.2 63 Q650.2 79.9 663.5 93.4 Q688.6 47.4 713.8 108.2 Q741.5 124.7 769.2 218.2 Q782.4 277 802.1 260.1 Q821.8 277 835 377.2 Q866.7 385.7 898.4 424 Q899.2 394.9 900 424 L900 460 L0 460 Z" fill="#0b221f"/></svg></div>
+  <div class="chamada">
+    <h1><span class="so-leitor">Lumina. </span><span class="frase-1">O mundo embaraçou.</span> <span class="frase-2">A Candeia está com você.</span></h1>
+    <p>Jogo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC.</p>
+    <div class="acoes">
+      <a class="bt bt-luz" href="#piloto">Pedir um piloto</a>
+      <a class="bt bt-vazio" href="#jogo">Ver o jogo rodando</a>
+      <span class="inicio-trilha" data-trilha-inicio aria-hidden="true"></span>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo">
+  <svg class="trilha" aria-hidden="true" focusable="false"><path class="pontos" d=""/></svg>
+
+  <!-- ============ PARADA 1: o Embaraço ============ -->
+  <section class="parada p1 lado-dir" id="embaraco" aria-labelledby="t-embaraco">
+    <div class="env">
+      <div class="cabeca">
+        <span class="marco" data-parada="1" aria-hidden="true"></span>
+        <h2 id="t-embaraco">Não é um vilão. É a confusão.</h2>
+        <p>O Embaraço deixou os bichos confusos, e não maus. Quem enxerga o nó desembaraça, e o bicho vira aliado.</p>
+      </div>
+      <div class="elenco">
+        <svg class="fio" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path d="M-20 250 C 180 120, 330 330, 540 210 S 880 90, 1060 240 S 1330 330, 1460 190" fill="none" stroke="#a678d8" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 15 7 21 3 17 10 14" opacity="0.8" vector-effect="non-scaling-stroke"/>
+          <path d="M-20 300 C 220 220, 400 380, 620 280 S 960 170, 1180 300 S 1380 360, 1460 260" fill="none" stroke="#a678d8" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 18 9 16 2 22" opacity="0.5" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <figure class="bicho"><img src="arte/formiga.webp" width="480" height="600" loading="lazy" decoding="async" alt="A Contadeira, uma formiga roxa com anéis dourados."><figcaption><b>Contadeira</b><span>A Feira Sem Conta</span></figcaption></figure>
+        <figure class="bicho"><img src="arte/goblin.webp" width="480" height="597" loading="lazy" decoding="async" alt="O Remendo, um duende verde com máscara de caveira e um porrete."><figcaption><b>Remendo</b><span>O Tear que Repete</span></figcaption></figure>
+        <figure class="bicho"><img src="arte/golem.webp" width="480" height="592" loading="lazy" decoding="async" alt="O Prumo, um gigante de pedra coberto de musgo."><figcaption><b>Prumo</b><span>A Vila Torta</span></figcaption></figure>
+        <figure class="bicho"><img src="arte/morcego.webp" width="480" height="599" loading="lazy" decoding="async" alt="O Palmo, um morcego roxo de olhos grandes."><figcaption><b>Palmo</b><span>O Rio Sem Palmo</span></figcaption></figure>
+        <figure class="bicho"><img src="arte/slime.webp" width="480" height="585" loading="lazy" decoding="async" alt="O Pingo, uma gosma verde e sorridente."><figcaption><b>Pingo</b><span>O Campo do Talvez</span></figcaption></figure>
+      </div>
+    </div>
+    <svg class="costura" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
+  </section>
+
+  <!-- ============ PARADA 2: o jogo rodando ============ -->
+  <section class="parada p2 lado-esq" id="jogo" aria-labelledby="t-jogo">
+    <div class="env">
+      <div class="cabeca">
+        <span class="marco" data-parada="2" aria-hidden="true"></span>
+        <h2 id="t-jogo">Anda, encontra, desembaraça.</h2>
+        <p>Três trechos gravados do jogo, rodando no navegador.</p>
+      </div>
+      <div class="jogo">
+        <figure class="quadro"><div class="tela"><video data-auto muted loop playsinline preload="metadata" poster="mundo.jpg" width="1280" height="720" aria-label="O herói caminha pelo Campo do Talvez, com o moinho ao fundo, até um Embaraçado.">
+          <source src="mundo.webm" type="video/webm"><source src="mundo.mp4" type="video/mp4"></video><button class="tocar" type="button" aria-label="Tocar o vídeo"><span class="icone" aria-hidden="true"><svg class="play" viewBox="0 0 24 24"><path d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12.2-7.4a1 1 0 0 0 0-1.72L8.5 3.74A1 1 0 0 0 7 4.6z"/></svg><svg class="pausa" viewBox="0 0 24 24"><rect x="5.5" y="4" width="4.6" height="16" rx="1.4"/><rect x="13.9" y="4" width="4.6" height="16" rx="1.4"/></svg></span></button></div>
+          <figcaption>Andar pelo mapa, até um Embaraçado</figcaption></figure>
+        <div class="jogo-lado">
+          <figure class="quadro"><div class="tela"><video data-auto muted loop playsinline preload="none" poster="pergunta.jpg" width="960" height="540" aria-label="A criança abre a folha de rascunho ao lado da pergunta e faz a conta à mão antes de responder.">
+            <source src="pergunta.webm" type="video/webm"><source src="pergunta.mp4" type="video/mp4"></video><button class="tocar" type="button" aria-label="Tocar o vídeo"><span class="icone" aria-hidden="true"><svg class="play" viewBox="0 0 24 24"><path d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12.2-7.4a1 1 0 0 0 0-1.72L8.5 3.74A1 1 0 0 0 7 4.6z"/></svg><svg class="pausa" viewBox="0 0 24 24"><rect x="5.5" y="4" width="4.6" height="16" rx="1.4"/><rect x="13.9" y="4" width="4.6" height="16" rx="1.4"/></svg></span></button></div>
+            <figcaption>A pergunta, com a folha de rascunho</figcaption></figure>
+          <figure class="quadro"><div class="tela"><video data-auto muted loop playsinline preload="none" poster="leque.jpg" width="960" height="540" aria-label="O leque de cartas aberto na base da tela, com o herói de um lado e o Embaraçado do outro.">
+            <source src="leque.webm" type="video/webm"><source src="leque.mp4" type="video/mp4"></video><button class="tocar" type="button" aria-label="Tocar o vídeo"><span class="icone" aria-hidden="true"><svg class="play" viewBox="0 0 24 24"><path d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12.2-7.4a1 1 0 0 0 0-1.72L8.5 3.74A1 1 0 0 0 7 4.6z"/></svg><svg class="pausa" viewBox="0 0 24 24"><rect x="5.5" y="4" width="4.6" height="16" rx="1.4"/><rect x="13.9" y="4" width="4.6" height="16" rx="1.4"/></svg></span></button></div>
+            <figcaption>O leque de cartas, na hora de agir</figcaption></figure>
+        </div>
+      </div>
+    </div>
+    <svg class="costura" style="color: var(--mata)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
+  </section>
+
+  <!-- ============ PARADA 3: como se joga ============ -->
+  <section class="parada p3 lado-dir" id="como-se-joga" aria-labelledby="t-joga">
+    <div class="env">
+      <div class="cabeca">
+        <span class="marco" data-parada="3" aria-hidden="true"></span><h2 id="t-joga">Responder é o que faz o jogo andar.</h2></div>
+      <div class="joga">
+        <ol class="batidas">
+          <li><b>Responde</b><span>Uma pergunta de Matemática ou Português, do ano da criança.</span></li>
+          <li><b>A Candeia enche</b><span>Acertou, 3 de Luz. Errou, 1 de Luz, e a Aritana explica.</span></li>
+          <li><b>Solta um Lume</b><span>Cada carta custa Luz e afrouxa um pouco do nó.</span></li>
+          <li><b>O bicho se solta</b><span>Nó em zero, e ele vira carta na sua mão.</span></li>
+        </ol>
+
+        <div class="demo" id="demo" role="group" aria-labelledby="t-demo">
+          <h3 class="so-leitor" id="t-demo">Demonstração jogável</h3>
+          <img class="demo-pingo" id="pingo" src="arte/slime.webp" width="480" height="585" alt="" loading="lazy" decoding="async">
+          <div class="instrumentos">
+            <figure class="instrumento no" id="inst-no" style="--falta:0;--giro:168deg">
+              <svg viewBox="0 0 260 150" aria-hidden="true" focusable="false">
+                <path class="trilho-arco" d="M20 136 A 110 110 0 0 1 240 136"/>
+                <path class="cheio-arco" d="M20 136 A 110 110 0 0 1 240 136" pathLength="100"/>
+                <g transform="translate(130 136)"><polygon class="agulha" points="-92,0 4,-6 16,0 4,6"/></g>
+                <circle cx="130" cy="136" r="10" fill="#fff4dc"/><circle cx="130" cy="136" r="4" fill="#07191a"/>
+              </svg>
+              <b class="valor"><span id="no-val">26</span> / 26</b>
+              <figcaption>Nó do Pingo Embaraçado</figcaption>
+            </figure>
+            <figure class="instrumento luz" id="inst-luz" style="--falta:100;--giro:12deg">
+              <svg viewBox="0 0 260 150" aria-hidden="true" focusable="false">
+                <path class="trilho-arco" d="M20 136 A 110 110 0 0 1 240 136"/>
+                <path class="cheio-arco" d="M20 136 A 110 110 0 0 1 240 136" pathLength="100"/>
+                <g transform="translate(130 136)"><polygon class="agulha" points="-92,0 4,-6 16,0 4,6"/></g>
+                <circle cx="130" cy="136" r="10" fill="#fff4dc"/><circle cx="130" cy="136" r="4" fill="#07191a"/>
+              </svg>
+              <b class="valor"><span id="luz-val">0</span> / 3</b>
+              <figcaption>Luz da Candeia</figcaption>
+            </figure>
+          </div>
+          <div class="fala" id="fala" aria-live="polite">
+            <img src="arte/aritana.webp" width="320" height="314" alt="" loading="lazy" decoding="async">
+            <p id="fala-txt">A medida sumiu. <em>Responda para encher a Candeia.</em></p>
+          </div>
+          <div class="pergunta" id="cx-pergunta">
+            <p id="enunciado"></p>
+            <div class="opcoes" id="opcoes"></div>
+          </div>
+          <div class="lumes" id="lumes" hidden></div>
+          <div class="demo-pe">
+            <p>Perguntas de verdade, do banco do jogo, com as lições da Aritana.</p>
+            <button class="bt-mini" type="button" id="recomecar">Recomeçar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <svg class="costura" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
+  </section>
+
+  <!-- ============ PARADA 4: o mapa é a BNCC ============ -->
+  <section class="parada p4 lado-esq" id="mapa" aria-labelledby="t-mapa">
+    <div class="env">
+      <div class="cabeca">
+        <span class="marco" data-parada="4" aria-hidden="true"></span>
+        <h2 id="t-mapa">Cada lugar do mapa é uma unidade da BNCC.</h2>
+        <p>O professor entende em três segundos. A criança nem repara que está numa grade curricular.</p>
+      </div>
+    </div>
+    <div class="clareira" id="clareira">
+      <div class="mapa-caixa">
+      <svg class="franja-mapa cima" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-pendura"/></svg>
+      <img class="mapa" src="arte/mapa-dia.webp" width="1400" height="781" loading="lazy" decoding="async"
+           alt="O mapa do jogo: campos verdes, pinheiros, um rio com cachoeira e uma ponte, e uma trilha de pontos brancos ligando os lugares.">
+      <div id="lugares-mapa"></div>
+      <svg class="franja-mapa baixo" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-sobe"/></svg>
+      </div>
+      <div class="cartao-lugar" id="cartao-lugar" aria-live="polite"></div>
+    </div>
+    <div class="lugares-lista" id="lugares-lista" aria-label="Os lugares do mapa"></div>
+    <div class="env">
+      <p class="nota-mapa">111 perguntas escritas, cobrindo 79 das 100 habilidades da BNCC que o jogo acompanha, do 3º ao 5º ano. E a Ponte de Nuvens, fora do mapa, cobra as cinco unidades em rodízio.</p>
+    </div>
+    <svg class="costura" style="color: var(--mata)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
+  </section>
+
+  <!-- ============ PARADA 5: para a escola ============ -->
+  <section class="parada p5 lado-dir" id="escola" aria-labelledby="t-escola">
+    <div class="env">
+      <div class="cabeca">
+        <span class="marco" data-parada="5" aria-hidden="true"></span>
+        <h2 id="t-escola">Abre na internet que a escola tem.</h2>
+        <p>A maioria das escolas públicas brasileiras tem menos de 1 Mbps por aluno no horário de pico (CETIC, 2025). Mexa nos dois controles.</p>
+      </div>
+      <div class="calc">
+        <div class="calc-controles">
+          <div class="controle">
+            <label for="alunos">Alunos abrindo ao mesmo tempo <b id="alunos-val">30</b></label>
+            <input type="range" id="alunos" min="5" max="40" step="1" value="30">
+          </div>
+          <div class="controle">
+            <label for="link">Link da escola, dividido pela sala <b><span id="link-val">1,0</span> Mbps</b></label>
+            <input type="range" id="link" min="5" max="100" step="5" value="10">
+          </div>
+        </div>
+        <div class="calc-resposta" aria-live="polite">
+          <p class="frase">Com <b id="f-alunos">30 alunos</b> num link de <b id="f-link">1,0 Mbps</b>, a primeira tela do jogo chega para a sala toda em <b class="chega" id="f-tempo">14,4 segundos</b>.</p>
+          <p class="miudo">São 58,7 kB por aluno na primeira tela, medidos no jogo de hoje. A sala baixa <span id="f-total">1,7 MB</span> ao todo.</p>
+        </div>
+      </div>
+
+      <div class="painel-prof" data-trilha-passa>
+        <h3>O professor tem um painel que a criança nunca baixa.</h3>
+        <div class="painel-grade">
+          <ul class="capacidades">
+            <li><b>A prova que você já tem vira pergunta do jogo.</b><span>Arquivo .docx ou .pdf. Onde o gabarito não aparece, o painel diz que não achou, em vez de chutar.</span></li>
+            <li><b>Relatório por habilidade, com o código da BNCC.</b><span>E uma planilha que o Excel em português abre certo.</span></li>
+            <li><b>Nenhum nome de aluno acima da turma.</b><span>Escola, DRE e secretaria veem o conjunto, nunca a criança.</span></li>
+          </ul>
+          <figure>
+            <img src="arte/painel-relatorios.webp" width="1640" height="1025" loading="lazy" decoding="async"
+                 alt="O painel do professor, na aba Relatórios: uma tabela de habilidades da BNCC do 5º ano, cada linha com o código oficial, a unidade, o objeto de conhecimento, quantos dominaram e o acerto.">
+            <figcaption>Relatórios do painel, com a turma de exemplo que vem nele: nomes e números inventados.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PARADA 6: o piloto ============ -->
+  <section class="parada p6" id="piloto" aria-labelledby="t-piloto">
+    <svg class="franja-cena cima" style="color: var(--mata)" aria-hidden="true" focusable="false"><use href="#folhas-pendura"/></svg>
+    <svg class="franja-cena baixo" style="color: #081a18" aria-hidden="true" focusable="false"><use href="#folhas-sobe"/></svg>
+    <img class="fundo" src="arte/mapa-noite.webp" width="1400" height="781" loading="lazy" decoding="async" alt="">
+    <div class="env piloto">
+      <div class="cabeca">
+        <span class="marco" data-parada="6" aria-hidden="true"></span>
+        <h2 id="t-piloto">Um piloto começa com uma turma.</h2>
+        <p>Uma sala, um bimestre e, no fim, os números na mesa: o que a turma dominou, habilidade por habilidade.</p>
+      </div>
+      <form class="form" id="form-piloto" novalidate>
+        <div class="form-par">
+          <div class="campo"><label for="f-nome">Seu nome</label><input id="f-nome" name="nome" type="text" autocomplete="name" required aria-describedby="e-nome"><span class="ajuda" id="e-nome"></span></div>
+          <div class="campo"><label for="f-papel">Você é</label>
+            <select id="f-papel" name="papel">
+              <option>Professor ou professora</option>
+              <option>Coordenação pedagógica</option>
+              <option>Direção da escola</option>
+              <option>Secretaria ou DRE</option>
+              <option>Família</option>
+            </select></div>
+        </div>
+        <div class="form-par">
+          <div class="campo"><label for="f-escola">Escola ou rede</label><input id="f-escola" name="escola" type="text" required aria-describedby="e-escola"><span class="ajuda" id="e-escola"></span></div>
+          <div class="campo"><label for="f-cidade">Cidade e UF</label><input id="f-cidade" name="cidade" type="text" autocomplete="address-level2"></div>
+        </div>
+        <div class="campo"><label for="f-contato">E-mail para retorno</label><input id="f-contato" name="contato" type="email" autocomplete="email" required aria-describedby="e-contato"><span class="ajuda" id="e-contato"></span></div>
+        <button class="bt bt-luz" type="submit" id="f-enviar">Pedir um piloto</button>
+        <p class="form-aviso" id="f-aviso" role="status" hidden></p>
+        <p class="form-nota">Só isto: nada de telefone, nada de dado de aluno. O pedido sai como um e-mail para <a href="mailto:claude5@cyberedux.com.br">claude5@cyberedux.com.br</a>.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="env">
+    <b>Lumina, desembarace o mundo</b>
+    <p>Jogo educativo de navegador para o 3º, 4º e 5º ano. Um projeto da CyberEdux.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const suave = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------------------------------------------------------------
+     VÍDEO: só roda com o quadro na tela. Três loops decodificando ao
+     mesmo tempo derrubam o Chromebook do laboratório, que é justamente
+     quem este jogo quer alcançar. */
+  const videos = [...document.querySelectorAll('video[data-auto]')];
+  const naTela = new Set();
+  const toca = v => { if (v.preload === 'none') v.preload = 'metadata'; v.play().catch(() => {}); };
+  for (const v of videos) {
+    // Com "reduzir movimento" ligado, nada começa sozinho; o botão toca
+    // do mesmo jeito. Quem pausa com o botão continua pausado ao voltar.
+    v.dataset.quer = suave.matches ? 'nao' : 'sim';
+    const tela = v.closest('.tela'), bt = tela.querySelector('.tocar');
+    const nome = v.closest('figure').querySelector('figcaption').textContent.trim();
+    const marca = () => {
+      tela.classList.toggle('tocando', !v.paused);
+      bt.setAttribute('aria-label', (v.paused ? 'Tocar' : 'Pausar') + ' o vídeo: ' + nome);
+    };
+    v.addEventListener('play', marca);
+    v.addEventListener('pause', marca);
+    bt.addEventListener('click', () => {
+      if (v.paused) { v.dataset.quer = 'sim'; toca(v); }
+      else { v.dataset.quer = 'nao'; v.pause(); }
+    });
+    marca();
+  }
+  if ('IntersectionObserver' in window) {
+    const olho = new IntersectionObserver(ents => {
+      for (const e of ents) {
+        const v = e.target;
+        if (e.isIntersecting) naTela.add(v); else naTela.delete(v);
+        if (e.isIntersecting && v.dataset.quer === 'sim') toca(v);
+        else v.pause();
+      }
+    }, { rootMargin: '120px 0px', threshold: 0.25 });
+    videos.forEach(v => olho.observe(v));
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) videos.forEach(v => v.pause());
+      else naTela.forEach(v => { if (v.dataset.quer === 'sim') toca(v); });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     A TRILHA
+     Uma curva só, pelas margens, passando por cada anel de parada.
+     Ela é desenhada a partir de onde os anéis ESTÃO, e não de números
+     fixos, e redesenhada quando a página muda de largura. Cada trecho
+     é seu próprio caminho cheio, ligado à linha do tempo de rolagem da
+     sua seção pelo CSS: nenhum ouvinte de scroll aqui. */
+  const main = $('main');
+  const svg = $('.trilha');
+  const NS = 'http://www.w3.org/2000/svg';
+  const desenhaTrilha = () => {
+    if (getComputedStyle(svg).display === 'none') return;
+    const base = main.getBoundingClientRect();
+    const larg = base.width;
+    const pos = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]; };
+    const f = n => n.toFixed(1);
+    const gut = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gut')) || 96;
+    const esq = gut / 2, dir = larg - gut / 2;
+    // cada anel sabe a sua parada; a trilha sai dele pelo lado oposto ao titulo
+    const paradas = [...document.querySelectorAll('.marco[data-parada]')].map(m => {
+      const sec = m.closest('.parada');
+      const r = sec.getBoundingClientRect();
+      const [x, y] = pos(m);
+      const tituloEsq = sec.classList.contains('lado-esq');
+      const vao = sec.querySelector('[data-trilha-passa]');
+      const passa = vao ? vao.getBoundingClientRect().top - base.top - 70 : null;
+      return { x, y, fim: r.bottom - base.top, saida: tituloEsq ? dir : esq, lado: tituloEsq ? 1 : -1, passa };
+    });
+    // descida longa pela margem nao vira regua: serpenteia dentro da margem
+    const desce = (gx, y0, y1) => {
+      const amp = Math.max(8, Math.min(24, gut / 2 - 12));
+      let d = '', y = y0, k = 0;
+      const passos = Math.max(1, Math.round((y1 - y0) / 380));
+      const h = (y1 - y0) / passos;
+      for (let i = 0; i < passos; i++) {
+        const lado = (k++ % 2 ? 1 : -1) * amp;
+        d += ` C ${f(gx + lado)} ${f(y + h * 0.35)}, ${f(gx + lado)} ${f(y + h * 0.65)}, ${f(gx)} ${f(y + h)}`;
+        y += h;
+      }
+      return d;
+    };
+    const [ix, iy] = pos($('[data-trilha-inicio]'));
+    const clareira = $('#clareira .mapa-caixa') || $('#clareira');
+    const cr = clareira.getBoundingClientRect();
+    const clTopo = cr.top - base.top, clBase = cr.bottom - base.top;
+    const trechos = [];
+    const p1 = paradas[0];
+    trechos.push(`M${f(ix)} ${f(iy)} C ${f(ix + 70)} ${f(iy + 90)}, ${f(p1.x)} ${f(p1.y - 150)}, ${f(p1.x)} ${f(p1.y)}`);
+    for (let i = 0; i < paradas.length - 1; i++) {
+      const a = paradas[i], b = paradas[i + 1];
+      let d;
+      if (i === 3) {
+        // o mapa: entra na clareira e vira a trilha pintada; sai pelo pe do mapa, a direita da nota
+        d = `M${f(a.x)} ${f(a.y)} C ${f(a.x + 30)} ${f(a.y + 150)}, ${f(larg * 0.32)} ${f(clTopo - 30)}, ${f(larg * 0.3)} ${f(clTopo + 70)}`;
+        d += ` M${f(larg * 0.82)} ${f(clBase - 50)} C ${f(larg * 0.86)} ${f(clBase + 60)}, ${f(b.x)} ${f(b.y - 160)}, ${f(b.x)} ${f(b.y)}`;
+      } else {
+        const gx = a.saida;
+        const topo = a.y + 150;
+        const fundo = Math.max(topo + 80, a.fim - 160);
+        d = `M${f(a.x)} ${f(a.y)} C ${f(a.x + (gx - a.x) * 0.55)} ${f(a.y)}, ${f(gx)} ${f(a.y + 30)}, ${f(gx)} ${f(topo)}`;
+        let gFim = gx;
+        if (a.passa && a.passa > topo + 120 && a.passa < fundo - 120) {
+          // desce ate o vao, atravessa a pagina por ele e segue pela outra margem
+          const outra = gx === esq ? dir : esq;
+          d += desce(gx, topo, a.passa - 90);
+          d += ` C ${f(gx)} ${f(a.passa - 20)}, ${f(gx + (outra - gx) * 0.25)} ${f(a.passa)}, ${f((gx + outra) / 2)} ${f(a.passa)}`;
+          d += ` C ${f(gx + (outra - gx) * 0.75)} ${f(a.passa)}, ${f(outra)} ${f(a.passa + 20)}, ${f(outra)} ${f(a.passa + 110)}`;
+          d += desce(outra, a.passa + 110, fundo);
+          gFim = outra;
+        } else d += desce(gx, topo, fundo);
+        d += ` C ${f(gFim)} ${f(a.fim - 30)}, ${f(b.x)} ${f(b.y - 170)}, ${f(b.x)} ${f(b.y)}`;
+      }
+      trechos.push(d);
+    }
+    svg.setAttribute('viewBox', `0 0 ${f(larg)} ${f(main.offsetHeight)}`);
+    svg.querySelector('.pontos').setAttribute('d', trechos.join(' '));
+    svg.querySelectorAll('.cheia').forEach(p => p.remove());
+    trechos.forEach((d, i) => {
+      if (i === 0) return; // o trecho da capa fica so pontilhado
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('class', 'cheia'); p.setAttribute('d', d); p.dataset.p = String(i);
+      svg.appendChild(p);
+      p.style.setProperty('--L', String(Math.ceil(p.getTotalLength()) + 2));
+    });
+  };
+  if ('ResizeObserver' in window) {
+    let pedido = 0;
+    new ResizeObserver(() => { cancelAnimationFrame(pedido); pedido = requestAnimationFrame(desenhaTrilha); }).observe(main);
+  }
+  document.fonts?.ready.then(desenhaTrilha);
+  addEventListener('load', desenhaTrilha);
+
+  /* ---------------------------------------------------------------
+     A DEMO: o loop de verdade, com números de verdade.
+     As cartas têm os valores do jogo (src/casca/iniciais/lumes.js) e as
+     perguntas vêm do banco, com a lição da Aritana e o nome do erro que
+     o relatório do professor mostra. */
+  const NO_CHEIO = 26;
+  const PERGUNTAS = [
+    { hab: 'EF03MA07', t: 'Cada caixa da feira tem 4 ovos. Quantos ovos há em 3 caixas?',
+      op: [['7', 'SOMOU_EM_VEZ_DE_MULTIPLICAR'], ['12'], ['34', 'JUNTOU_OS_ALGARISMOS'], ['16', 'CONTOU_UMA_CAIXA_A_MAIS']],
+      licao: 'Três caixas de 4 é 4 + 4 + 4, que dá 12. Multiplicar é somar o mesmo número várias vezes.' },
+    { hab: 'EF35LP12', t: 'A placa do Embaraço escreveu errado. Qual é a forma certa?',
+      op: [['caxorro', 'TROCOU_CH_POR_X'], ['cachoro', 'FALTOU_O_R_DOBRADO'], ['cachorro'], ['caçorro', 'TROCOU_CH_POR_CEDILHA']],
+      licao: 'O som do "ch" pode ser escrito com ch ou com x, e nem sempre dá para saber pelo som. Cachorro é com ch e com dois erres.' },
+    { hab: 'EF03MA24', t: 'Você pagou com uma nota de 10 reais uma fruta de 6 reais. Quanto vem de troco?',
+      op: [['16 reais', 'SOMOU_EM_VEZ_DE_TIRAR'], ['4 reais'], ['6 reais', 'REPETIU_O_PRECO'], ['3 reais', 'CONTAGEM']],
+      licao: 'Troco é o que sobra: de 10 tire 6 e ficam 4 reais.' },
+  ];
+  const LUMES = [
+    { id: 'corte', nome: 'Corte', custo: 1, clareza: 4, img: 'arte/lume-corte.webp' },
+    { id: 'fagulha', nome: 'Fagulha', custo: 2, clareza: 7, img: 'arte/lume-fagulha.webp' },
+    { id: 'folego', nome: 'Fôlego', custo: 1, folego: 6, img: 'arte/lume-folego.webp' },
+  ];
+  const est = { q: 0, luz: 0, no: NO_CHEIO, respondeu: false, fim: false };
+  const elNo = $('#no-val'), elLuz = $('#luz-val'), instNo = $('#inst-no'), instLuz = $('#inst-luz');
+  const fala = $('#fala'), falaTxt = $('#fala-txt'), enun = $('#enunciado'), caixaOp = $('#opcoes'), caixaLumes = $('#lumes'), pingo = $('#pingo');
+
+  const pintar = () => {
+    elNo.textContent = est.no; elLuz.textContent = est.luz;
+    const fNo = est.no / NO_CHEIO, fLuz = est.luz / 3;
+    instNo.style.setProperty('--falta', String(100 - fNo * 100)); instNo.style.setProperty('--giro', (12 + fNo * 156) + 'deg');
+    instLuz.style.setProperty('--falta', String(100 - fLuz * 100)); instLuz.style.setProperty('--giro', (12 + fLuz * 156) + 'deg');
+    [...caixaLumes.children].forEach((b, i) => { b.disabled = est.fim || !est.respondeu || est.luz < LUMES[i].custo; });
+  };
+  const dizer = (html, boa, erro) => {
+    falaTxt.innerHTML = html;
+    if (erro) { const s = document.createElement('span'); s.className = 'erro'; s.textContent = 'No relatório do professor, isto aparece como ' + erro + '.'; falaTxt.appendChild(s); }
+    fala.classList.toggle('boa', !!boa);
+  };
+  const montarPergunta = () => {
+    const p = PERGUNTAS[est.q % PERGUNTAS.length];
+    enun.textContent = p.t;
+    caixaOp.textContent = '';
+    p.op.forEach(([texto, erro]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'opcao'; b.textContent = texto;
+      b.addEventListener('click', () => responder(b, texto, erro, p));
+      caixaOp.appendChild(b);
+    });
+  };
+  const responder = (b, texto, erro, p) => {
+    if (est.respondeu || est.fim) return;
+    est.respondeu = true;
+    est.luz = erro ? 1 : 3;
+    b.classList.add(erro ? 'escolhida' : 'certa');
+    [...caixaOp.children].forEach((x, j) => { x.disabled = true; if (!p.op[j][1]) x.classList.add('certa'); });
+    if (erro) dizer(p.licao + ' <em>Um fio de Luz, e o turno segue.</em>', false, erro);
+    else dizer('Acertou. <em>A Candeia encheu: 3 de Luz.</em> Agora solte um Lume.', true);
+    caixaLumes.hidden = false;
+    pintar();
+    caixaLumes.querySelector('button:not(:disabled)')?.focus({ preventScroll: true });
+  };
+  const proxima = () => {
+    est.q += 1; est.respondeu = false; est.luz = 0;
+    caixaLumes.hidden = true;
+    montarPergunta(); pintar();
+  };
+  LUMES.forEach(l => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'lume';
+    const img = document.createElement('img'); img.src = l.img; img.alt = ''; img.width = 44; img.height = 56; img.loading = 'lazy';
+    const txt = document.createElement('span');
+    const nome = document.createElement('b'); nome.textContent = l.nome;
+    const dado = document.createElement('small');
+    dado.textContent = 'custa ' + l.custo + ' de Luz, ' + (l.clareza ? 'afrouxa ' + l.clareza : 'devolve ' + l.folego + ' de fôlego');
+    txt.append(nome, dado); b.append(img, txt);
+    b.addEventListener('click', () => {
+      if (est.fim || est.luz < l.custo) return;
+      est.luz -= l.custo;
+      if (l.clareza) { est.no = Math.max(0, est.no - l.clareza); dizer(l.nome + ' afrouxou <em>' + l.clareza + '</em> do nó.'); }
+      else dizer('O fôlego do herói voltou. <em>O nó continua igual, e tudo bem.</em>');
+      if (est.no === 0) {
+        est.fim = true;
+        dizer('O Pingo se soltou. <em>Ele vira carta e vai para a sua mão.</em>', true);
+        pingo.classList.remove('solto'); void pingo.offsetWidth; pingo.classList.add('solto');
+      } else if (est.luz === 0) {
+        falaTxt.insertAdjacentHTML('beforeend', ' <em>Acabou a Luz: vem outra pergunta.</em>');
+        setTimeout(proxima, suave.matches ? 400 : 1400);
+      }
+      pintar();
+    });
+    caixaLumes.appendChild(b);
+  });
+  $('#recomecar').addEventListener('click', () => {
+    Object.assign(est, { q: 0, luz: 0, no: NO_CHEIO, respondeu: false, fim: false });
+    caixaLumes.hidden = true; pingo.classList.remove('solto');
+    dizer('A medida sumiu. <em>Responda para encher a Candeia.</em>');
+    montarPergunta(); pintar();
+    caixaOp.querySelector('button')?.focus({ preventScroll: true });
+  });
+  montarPergunta(); pintar();
+
+  /* ---------------------------------------------------------------
+     O MAPA: onde o mapa do jogo põe cada lugar, em % da ilustração. */
+  const LUGARES = [
+    { n: 'O Tear que Repete', u: 'Álgebra', x: 34.4, y: 20, e: 'O desenho errou a repetição. O padrão do tecido começa certo e some no meio do caminho.', c: ['EF04MA11', 'sequências e regularidades'] },
+    { n: 'A Vila Torta', u: 'Geometria', x: 61.3, y: 30, e: 'As casas entortaram. Ângulo, simetria e planta baixa deixaram de combinar entre si.', c: ['EF05MA16', 'ângulos e figuras planas'] },
+    { n: 'A Feira Sem Conta', u: 'Números', x: 26.5, y: 51.6, e: 'Ninguém fecha o troco. As bancas anunciam preço e o dinheiro não bate com o que se leva.', c: ['EF03MA24', 'sistema monetário e troco'] },
+    { n: 'O Rio Sem Palmo', u: 'Grandezas e medidas', x: 80.3, y: 58.6, e: 'Sumiu o tamanho de tudo. Comprimento, massa, tempo e capacidade perderam a referência.', c: ['EF03MA19', 'medidas de comprimento'] },
+    { n: 'O Campo do Talvez', u: 'Probabilidade e estatística', x: 64.7, y: 76, e: 'Tudo virou "sei lá". Ninguém sabe mais o que é provável, o que é certo e o que é impossível.', c: ['EF04MA26', 'probabilidade e possibilidades'] },
+  ];
+  const noMapa = $('#lugares-mapa'), lista = $('#lugares-lista'), cartao = $('#cartao-lugar');
+  const botoes = [];
+  const mostrar = i => {
+    const l = LUGARES[i];
+    botoes.forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.i) === i)));
+    const chip = lista.querySelector(`button[data-i="${i}"]`);
+    if (chip && lista.scrollWidth > lista.clientWidth) {
+      const gut = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gut')) || 20;
+      // so o trilho de chips rola; a pagina fica onde esta
+      lista.scrollTo({ left: Math.max(0, chip.offsetLeft - gut), behavior: suave.matches ? 'auto' : 'smooth' });
+    }
+    cartao.innerHTML = '';
+    const h = document.createElement('h3'); h.textContent = l.n;
+    const u = document.createElement('p'); u.className = 'unidade'; u.textContent = l.u;
+    const e = document.createElement('p'); e.className = 'enredo'; e.textContent = l.e;
+    const c = document.createElement('p'); c.className = 'cod';
+    const cb = document.createElement('b'); cb.textContent = l.c[0]; c.append(cb, document.createTextNode(l.c[1]));
+    cartao.append(h, u, e, c);
+  };
+  LUGARES.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'lugar'; b.dataset.i = String(i);
+    b.style.left = l.x + '%'; b.style.top = l.y + '%';
+    b.setAttribute('aria-label', l.n + ', ' + l.u);
+    b.innerHTML = '<i aria-hidden="true"></i><span></span>'; b.querySelector('span').textContent = l.n;
+    b.addEventListener('click', () => mostrar(i));
+    noMapa.appendChild(b); botoes.push(b);
+    const p = document.createElement('button');
+    p.type = 'button'; p.dataset.i = String(i); p.textContent = l.n;
+    p.addEventListener('click', () => mostrar(i));
+    lista.appendChild(p); botoes.push(p);
+  });
+  mostrar(2);
+
+  /* ---------------------------------------------------------------
+     A CONTA DA REDE: 58,7 kB gzip medidos na primeira tela do jogo
+     (npm run banda), kB de 1024 bytes, link em Mbps de 10^6 bits. Dá os
+     14,4 s que o orçamento do projeto mede para 30 alunos a 1 Mbps. */
+  const PRIMEIRA_TELA = 58.7 * 1024;
+  const fAlunos = $('#alunos'), fLink = $('#link');
+  const virgula = (n, c = 1) => n.toFixed(c).replace('.', ',');
+  const tempo = s => s < 90 ? virgula(s) + ' segundos' : Math.floor(s / 60) + ' min ' + Math.round(s % 60) + ' s';
+  const peso = b => b < 1048576 ? Math.round(b / 1024) + ' kB' : virgula(b / 1048576) + ' MB';
+  const cheio = el => el.style.setProperty('--cheio', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
+  const recalcular = () => {
+    const n = +fAlunos.value, mbps = +fLink.value / 10;
+    $('#alunos-val').textContent = n; $('#link-val').textContent = virgula(mbps);
+    $('#f-alunos').textContent = n + ' alunos'; $('#f-link').textContent = virgula(mbps) + ' Mbps';
+    $('#f-tempo').textContent = tempo(PRIMEIRA_TELA * n * 8 / (mbps * 1e6));
+    $('#f-total').textContent = peso(PRIMEIRA_TELA * n);
+    cheio(fAlunos); cheio(fLink);
+  };
+  fAlunos.addEventListener('input', recalcular); fLink.addEventListener('input', recalcular);
+  recalcular();
+
+  /* ---------------------------------------------------------------
+     O PEDIDO DE PILOTO
+     O site é estático (GitHub Pages): não há servidor para guardar o
+     pedido. O formulário monta um e-mail pronto, e quem envia é o
+     programa de e-mail do visitante. O aviso diz isso com todas as
+     letras e deixa o endereço à vista para quem não tem programa de
+     e-mail configurado. */
+  const CONTATO = 'claude5@cyberedux.com.br';
+  const form = $('#form-piloto'), aviso = $('#f-aviso'), enviar = $('#f-enviar');
+  const erroCampo = (id, msg) => {
+    const i = $('#' + id), e = $('#e-' + id.slice(2));
+    i.setAttribute('aria-invalid', msg ? 'true' : 'false'); if (e) e.textContent = msg || '';
+    return !msg;
+  };
+  const avisar = (txt, tipo) => { aviso.textContent = txt; aviso.className = 'form-aviso ' + (tipo || ''); aviso.hidden = false; };
+  form.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const d = Object.fromEntries(new FormData(form).entries());
+    const ok = [
+      erroCampo('f-nome', d.nome.trim() ? '' : 'Escreva o seu nome.'),
+      erroCampo('f-escola', d.escola.trim() ? '' : 'Diga a escola ou a rede.'),
+      erroCampo('f-contato', /.+@.+\..+/.test(d.contato) ? '' : 'Precisamos de um e-mail válido para responder.'),
+    ].every(Boolean);
+    if (!ok) { form.querySelector('[aria-invalid="true"]')?.focus(); return; }
+    const corpo = [
+      'Olá! Quero pedir um piloto do Lumina.',
+      '',
+      'Nome: ' + d.nome.trim(),
+      'Sou: ' + d.papel,
+      'Escola ou rede: ' + d.escola.trim(),
+      'Cidade e UF: ' + (d.cidade.trim() || '(não informado)'),
+      'E-mail para retorno: ' + d.contato.trim(),
+    ].join('\n');
+    const assunto = 'Pedido de piloto: ' + d.escola.trim();
+    location.href = 'mailto:' + CONTATO + '?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo);
+    avisar('Abrimos o seu programa de e-mail com o pedido pronto; falta só enviar. Se nada abriu, escreva para ' + CONTATO + '.', 'ok');
+  });
+})();
+</script>
+</body>
+</html>
