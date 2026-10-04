@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b3fa8">
 <title>Lumina | Desembarace o mundo</title>
+<script>
+  /* Toda carga começa na abertura (mar de nuvens): o navegador não restaura a rolagem nem pula para âncoras. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  const voltarAoInicio = () => scrollTo(0, 0);
+  voltarAoInicio();
+  addEventListener('DOMContentLoaded', voltarAoInicio);
+  addEventListener('load', voltarAoInicio);
+  addEventListener('pageshow', e => { if (e.persisted) voltarAoInicio(); });
+</script>
 <meta name="description" content="Jogo educativo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC. A pergunta acende a luz que move o jogo.">
 <meta property="og:title" content="Lumina | Desembarace o mundo">
 <meta property="og:description" content="Jogo de cartas para o 3º ao 5º ano, alinhado à BNCC, leve para a internet da escola pública.">
