@@ -1,1032 +1,1374 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lumina, desembarace o mundo</title>
-<meta name="description" content="Jogo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC. Abre na internet da escola pública, e o professor acompanha por habilidade.">
-<meta name="theme-color" content="#0b221f">
-<meta property="og:title" content="Lumina, desembarace o mundo">
-<meta property="og:description" content="Jogo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC.">
-<meta property="og:image" content="https://justmazzo.github.io/lumina/arte/capa-og.jpg">
-<meta property="og:url" content="https://justmazzo.github.io/lumina/">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230b221f' stroke='%23ffc247' stroke-width='4'/%3E%3Ccircle cx='16' cy='16' r='4.5' fill='%23ffc247'/%3E%3C/svg%3E">
-<link rel="preload" href="fontes/titan-one-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fontes/lexend-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" as="image" href="arte/capa-1600.webp" imagesrcset="arte/capa-1280.webp 1280w, arte/capa-1600.webp 1600w" imagesizes="100vw">
+<meta name="theme-color" content="#0b3fa8">
+<title>Lumina | Desembarace o mundo</title>
+<meta name="description" content="Jogo educativo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC. A pergunta acende a luz que move o jogo.">
+<meta property="og:title" content="Lumina | Desembarace o mundo">
+<meta property="og:description" content="Jogo de cartas para o 3º ao 5º ano, alinhado à BNCC, leve para a internet da escola pública.">
+<meta property="og:image" content="arte/capa.webp">
+<link rel="preload" href="arte/capa.webp" as="image" type="image/webp">
+<link rel="stylesheet" href="componentes/mapa.css">
+<link rel="preload" href="fontes/plus-jakarta-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-/* ================================================
-   O SITE DO LUMINA
-   A travessia pelo mapa do jogo: cada seção é uma parada da trilha.
-   O contrato de direção mora em .impeccable/surfaces/, não aqui.
-   ================================================ */
+  /* Fonte única escolhida pelo Guilherme (variante C): Plus Jakarta Sans. A personalidade de pincel fica com o logo vetorial. */
+  @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(fontes/plus-jakarta-latin.woff2) format('woff2'); }
+  @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(fontes/plus-jakarta-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
-/* As fontes vêm junto com o site: zero chamada a servidor de fora.
-   Português só usa o recorte latin; o latin-ext baixa sozinho apenas
-   se aparecer um caractere dele. */
-@font-face { font-family: 'Titan One'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url(fontes/titan-one-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Titan One'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url(fontes/titan-one-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Lexend'; font-style: normal; font-weight: 400 600; font-display: swap;
-  src: url(fontes/lexend-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Lexend'; font-style: normal; font-weight: 400 600; font-display: swap;
-  src: url(fontes/lexend-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-
-:root {
-  color-scheme: dark;
-  /* a mata de noite: as árvores do mapa do jogo (#327858), escurecidas */
-  --mata: #0b221f; --mata-2: #0f2d29; --mata-3: #123a33; --mata-4: #1a4a3f;
-  --painel: #07191a; --campo: #0e2a26; --campo-2: #13352f; --borda: #2b5a50; --borda-2: #3d7568;
-  --creme: #fff4dc; --creme-2: #cfe3d6;
-  --candeia: #ffc247; --candeia-2: #ffd574; --labio: #b87a12; --tinta: #2a1a02;
-  --no: #a678d8;          /* só no fio embaraçado, nunca em controle */
-  --verde: #86dba6;       /* deu certo */
-  --ponto: #fffdf4;       /* os pontos da trilha, os mesmos do mapa */
-
-  --f-letreiro: 'Titan One', 'Arial Rounded MT Bold', system-ui, sans-serif;
-  --f-texto: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-
-  /* UMA régua de cantos: botão 14, painel e mídia 22, campo 12,
-     marcador e pílula redondos. */
-  --r-bt: 14px; --r-painel: 22px; --r-campo: 12px;
-
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  /* a agulha: mola amortecida, um só passo além do ponto e volta */
-  --mola: linear(0, 0.2 6%, 0.62 15%, 0.96 25%, 1.08 32%, 1.1 36%, 1.07 43%, 1.01 53%, 0.99 62%, 1 78%, 1);
-
-  --gut: clamp(20px, 6.667vw, 96px);
-  --larg: 1440px;
-}
-
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scrollbar-color: var(--borda-2) var(--mata); }
-body {
-  margin: 0; background: var(--mata); color: var(--creme);
-  font: 400 17px/1.6 var(--f-texto);
-  -webkit-font-smoothing: antialiased; overflow-x: clip;
-  caret-color: var(--candeia);
-}
-::selection { background: var(--candeia); color: var(--tinta); }
-img, video, svg { display: block; max-width: 100%; }
-h1, h2, h3 { margin: 0; font-family: var(--f-letreiro); font-weight: 400; line-height: 1.12; letter-spacing: -0.005em; text-wrap: balance; }
-p { margin: 0; text-wrap: pretty; }
-a { color: inherit; text-underline-offset: 0.22em; text-decoration-thickness: 1.5px; }
-button, input, select { font: inherit; color: inherit; }
-:focus-visible { outline: 3px solid var(--candeia); outline-offset: 3px; border-radius: 6px; }
-.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.pular { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--candeia); color: var(--tinta); padding: 12px 18px; border-radius: var(--r-bt); font-weight: 600; text-decoration: none; transition: top 160ms var(--ease-out); }
-.pular:focus { top: 12px; }
-.env { width: 100%; max-width: var(--larg); margin-inline: auto; padding-inline: var(--gut); position: relative; z-index: 2; }
-
-/* ---------- botões: o botão do próprio jogo, com lábio embaixo ---------- */
-.bt {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  min-height: 52px; padding: 14px 28px; border-radius: var(--r-bt);
-  font: 600 17px/1 var(--f-texto); text-decoration: none; white-space: nowrap; cursor: pointer;
-  border: 0; transition: transform 160ms var(--ease-out), background-color 160ms ease, box-shadow 160ms ease;
-}
-.bt-luz { background: var(--candeia); color: var(--tinta); box-shadow: inset 0 -5px 0 var(--labio), 0 10px 22px -12px rgb(0 10 8 / 0.7); }
-.bt-vazio { background: rgb(255 255 255 / 0.07); color: var(--creme); box-shadow: inset 0 0 0 1.5px rgb(255 244 220 / 0.55); }
-.bt:active { transform: scale(0.97); }
-.bt-luz:active { box-shadow: inset 0 -2px 0 var(--labio); }
-@media (hover: hover) and (pointer: fine) {
-  .bt-luz:hover { background: var(--candeia-2); }
-  .bt-vazio:hover { background: rgb(255 255 255 / 0.13); }
-}
-.bt:disabled { cursor: default; opacity: 0.6; transform: none; }
-
-/* ================= A CAPA ================= */
-.capa { position: relative; min-height: clamp(620px, 100svh, 1000px); isolation: isolate; overflow: hidden; background: #1c5fae; }
-.capa-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  /* ancorada à esquerda: centralizada, ela corta o L do letreiro pintado */
-  object-position: 0% 30%; z-index: -2; }
-.veu-topo { position: absolute; inset: 0 0 auto; height: 150px; z-index: -1; pointer-events: none;
-  background: linear-gradient(rgb(6 26 44 / 0.62), rgb(6 26 44 / 0)); }
-.topo { position: absolute; inset: 0 0 auto; z-index: 5; }
-.topo .env { display: flex; justify-content: flex-end; align-items: center; gap: 14px; min-height: 88px; }
-/* OS LINKS TÊM FUNDO PRÓPRIO. Sobre a capa, o véu do topo não bastava:
-   "Como se joga" media 2,48:1 em cima do peixe-espada cinza-claro. Uma
-   pílula escura garante o contraste em qualquer recorte da ilustração. */
-.topo .links { display: flex; gap: 30px; align-items: center; min-height: 44px; padding: 11px 22px; border-radius: 999px;
-  background: rgb(8 30 44 / 0.78); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12); }
-.topo a:not(.bt) { font-weight: 500; font-size: 15.5px; text-decoration: none; }
-@media (hover: hover) and (pointer: fine) { .topo a:not(.bt):hover { text-decoration: underline; } }
-.topo .bt { min-height: 44px; padding: 10px 20px; font-size: 15px; box-shadow: inset 0 -4px 0 var(--labio); }
-
-.chao { position: absolute; inset: auto 0 0; z-index: 0; pointer-events: none; line-height: 0; }
-.chao .franja { width: 100%; height: 96px; position: absolute; left: 0; bottom: 0; }
-.chao .monte { position: absolute; left: 0; bottom: clamp(-72px, -4.6vw, -40px); width: clamp(560px, 62.5vw, 1000px); height: auto; }
-.chamada { position: absolute; left: var(--gut); bottom: clamp(40px, 5.5vh, 64px); z-index: 3; max-width: 36rem; }
-.chamada h1 { font-size: clamp(30px, 2.9vw, 46px); line-height: 1.13; color: var(--creme); }
-.chamada h1 .frase-1, .chamada h1 .frase-2 { display: block; }
-.chamada p { margin-top: 18px; max-width: 30rem; color: var(--creme-2); font-size: clamp(16px, 1.25vw, 18.5px); line-height: 1.5; }
-.acoes { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
-.inicio-trilha { position: relative; align-self: center; width: 1px; height: 1px; margin-left: 30px; }
-
-/* a única entrada orquestrada da página: a capa assenta, a chamada sobe */
-@media (prefers-reduced-motion: no-preference) {
-  .capa-img { animation: assenta 1100ms var(--ease-out) both; }
-  .chamada > * { animation: sobe 640ms var(--ease-out) both; }
-  .chamada > :nth-child(2) { animation-delay: 90ms; }
-  .chamada > :nth-child(3) { animation-delay: 180ms; }
-}
-@keyframes assenta { from { transform: scale(1.045); opacity: 0.55; } to { transform: none; opacity: 1; } }
-@keyframes sobe { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-/* ================= AS PARADAS ================= */
-main { position: relative; timeline-scope: --p1, --p2, --p3, --p4, --p5, --p6; }
-.parada { position: relative; padding-block: clamp(80px, 9vw, 128px); }
-.parada:nth-of-type(even) { background: var(--mata-2); }
-.p1 { view-timeline-name: --p1; } .p2 { view-timeline-name: --p2; } .p3 { view-timeline-name: --p3; }
-.p4 { view-timeline-name: --p4; } .p5 { view-timeline-name: --p5; } .p6 { view-timeline-name: --p6; }
-.cabeca { max-width: 44rem; width: fit-content; position: relative; }
-.cabeca .marco { position: absolute; top: 2px; }
-.lado-dir .cabeca, .p6 .cabeca { margin-left: auto; padding-left: 84px; }
-.lado-dir .cabeca .marco, .p6 .cabeca .marco { left: 0; }
-.p6 .cabeca { margin-left: 0; }
-.lado-esq .cabeca { padding-right: 84px; }
-.lado-esq .cabeca .marco { right: 0; }
-.cabeca h2 { font-size: clamp(28px, 2.5vw, 38px); }
-.cabeca p { margin-top: 18px; color: var(--creme-2); font-size: clamp(16px, 1.25vw, 18.5px); max-width: 36rem; }
-/* o marcador de parada: o anel do mapa do jogo */
-.marco { position: absolute; width: 56px; height: 56px; border-radius: 50%; z-index: 3;
-  background: var(--mata); box-shadow: inset 0 0 0 4px rgb(255 244 220 / 0.7), 0 4px 12px rgb(0 10 8 / 0.5); }
-.marco::after { content: ""; position: absolute; inset: 20px; border-radius: 50%; background: var(--creme); animation-fill-mode: both; }
-
-/* ---------- a trilha: uma curva só rege a página ---------- */
-.trilha { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
-.trilha .pontos { fill: none; stroke: var(--ponto); stroke-width: 11; stroke-linecap: round; stroke-dasharray: 0.1 23; opacity: 0.85; }
-.trilha .cheia { fill: none; stroke: var(--ponto); stroke-width: 5; stroke-linecap: round; opacity: 0; }
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* tracejada à frente, cheia onde o visitante já passou */
-    .trilha .cheia { opacity: 0.9; stroke-dasharray: var(--L) var(--L); stroke-dashoffset: var(--L);
-      animation: desenha linear both; animation-range: cover 48vh cover calc(100% - 52vh); }
-    .trilha .cheia[data-p="1"] { animation-timeline: --p1; } .trilha .cheia[data-p="2"] { animation-timeline: --p2; }
-    .trilha .cheia[data-p="3"] { animation-timeline: --p3; } .trilha .cheia[data-p="4"] { animation-timeline: --p4; }
-    .trilha .cheia[data-p="5"] { animation-timeline: --p5; }
-    /* o anel acende quando a trilha chega nele */
-    .marco { background: var(--mata); animation: acende linear both; animation-range: cover 38vh cover 52vh; }
-    .marco::after { animation: miolo linear both; animation-timeline: inherit; animation-range: inherit; }
-    .p1 .marco { animation-timeline: --p1; } .p2 .marco { animation-timeline: --p2; } .p3 .marco { animation-timeline: --p3; }
-    .p4 .marco { animation-timeline: --p4; } .p5 .marco { animation-timeline: --p5; } .p6 .marco { animation-timeline: --p6; }
+  /*
+    Identidade tirada da capa do jogo (decisão "A arte do projeto dita o design").
+    Tema único: céu com nuvens realistas (geradas com feTurbulence, assadas em WebP). Acento único: sol (#ffd447).
+    Forma: sem caixas. Interativos em pílula; mídia com 18px; grupos separados por linha fina e espaço.
+    Movimento: ligado à rolagem e ao cursor; tudo desligado com prefers-reduced-motion.
+    Cursor próprio (estrela da Candeia): pedido explícito do Guilherme; só em mouse/trackpad, nunca em toque; campos de texto mantêm o cursor de texto.
+    Conteúdo: só o que o PRODUCT.md confirma. Nada de preço, sorteio, loja, depoimento ou número de alunos.
+  */
+  :root {
+    --ceu-claro: #8fd0ff;
+    --sol: #ffd447;
+    --vidro: rgba(16, 70, 170, 0.42);
+    --vidro-solido: #144fb8;
+    --borda-vidro: rgba(220, 240, 255, 0.55);
+    --linha: rgba(247, 251, 255, 0.4);
+    --texto: #f7fbff;
+    --texto-suave: rgba(247, 251, 255, 0.86);
+    --sombra-texto: 0 1px 2px rgba(5, 30, 90, 0.7), 0 0 12px rgba(5, 35, 110, 0.55), 0 0 28px rgba(5, 40, 120, 0.35);
+    --raio-midia: 18px;
+    --sair: cubic-bezier(0.23, 1, 0.32, 1);
+    --mola: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --gutter: clamp(16px, 4vw, 56px);
+    --f: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --f-titulo: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
-}
-@keyframes desenha { to { stroke-dashoffset: 0; } }
-/* O unico brilho dourado da pagina, junto com a soltura do Pingo: a Candeia
-   chegando na parada. Fora destes dois momentos, sombra e neutra. */
-@keyframes acende { from { box-shadow: inset 0 0 0 4px rgb(255 244 220 / 0.7), 0 4px 12px rgb(0 10 8 / 0.5); } to { box-shadow: inset 0 0 0 4px var(--candeia), 0 4px 22px rgb(255 194 71 / 0.45); } }
-@keyframes miolo { from { transform: scale(0.55); background: var(--creme); } to { transform: none; background: var(--candeia); } }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #0f4bc0; color: var(--texto); font-family: var(--f); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  body { overflow-x: hidden; position: relative; }
+  a { color: inherit; }
+  img, video { max-width: 100%; display: block; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--sol); outline-offset: 3px; }
+  .pular { position: absolute; left: 12px; top: -60px; z-index: 50; padding: 10px 16px; border-radius: 999px; background: var(--texto); color: #0b3fa8; font-weight: 700; text-decoration: none; }
+  .pular:focus { top: 12px; }
+  .estrela4 { clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); }
 
-/* ---------- parada 1: o elenco, encostado, sem moldura ---------- */
-.elenco { position: relative; margin-top: clamp(40px, 5vw, 72px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
-.elenco .fio { position: absolute; left: calc(var(--gut) * -1); right: calc(var(--gut) * -1); top: 8%; width: calc(100% + var(--gut) * 2); height: 70%; z-index: 0; pointer-events: none; }
-.bicho { position: relative; z-index: 1; margin: 0; text-align: center; }
-.bicho img { width: 117%; max-width: none; margin-inline: -8.5%; height: auto; aspect-ratio: 480 / 590; object-fit: contain;
-  /* sombra de contato: o recorte projetado para baixo, e o bicho pisa em vez de boiar */
-  filter: drop-shadow(0 16px 8px rgb(0 8 6 / 0.42)); }
-.bicho:nth-child(odd) img { transform: translateY(18px); }
-/* a primeira figura nao invade a margem esquerda, que e onde a trilha desce */
-.elenco .bicho:first-of-type img { margin-left: 0; margin-right: -17%; }
-.bicho figcaption { margin-top: 2px; }
-.bicho b { display: block; font: 400 clamp(19px, 1.55vw, 23px)/1.2 var(--f-letreiro); }
-.bicho span { display: block; margin-top: 4px; font-size: 14px; color: var(--creme-2); }
+  /* ---------- Cursor da Candeia (só mouse) ---------- */
+  @media (hover: hover) and (pointer: fine) {
+    html { cursor: url(arte/cursor/estrela.png) 16 16, auto; }
+    a, button, select, label, input[type=range], .interativo { cursor: url(arte/cursor/estrela-ativa.png) 20 20, pointer; }
+    input:not([type=range]) { cursor: text; }
+  }
+  .luz-cursor { position: fixed; left: 0; top: 0; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%; pointer-events: none; z-index: 40;
+    background: radial-gradient(circle, rgba(255, 236, 160, .28) 0%, rgba(255, 220, 110, .1) 35%, transparent 70%); mix-blend-mode: screen;
+    opacity: 0; transition: opacity 300ms, width 300ms var(--sair), height 300ms var(--sair), margin 300ms var(--sair); }
+  .luz-cursor.ligada { opacity: 1; }
+  .luz-cursor.sobre { width: 320px; height: 320px; margin: -160px 0 0 -160px; }
+  .faisca { position: fixed; left: 0; top: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; pointer-events: none; z-index: 41; background: var(--sol);
+    filter: drop-shadow(0 0 4px rgba(255, 220, 110, .9)); animation: faisca 700ms var(--sair) forwards; }
+  @keyframes faisca { to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.2) rotate(90deg); } }
+  .estouro { position: fixed; pointer-events: none; z-index: 42; width: var(--t, 14px); height: var(--t, 14px); margin: calc(var(--t, 14px) / -2) 0 0 calc(var(--t, 14px) / -2);
+    background: var(--c, var(--sol)); filter: drop-shadow(0 0 6px rgba(255, 230, 140, .95)); animation: estouro 900ms var(--sair) forwards; }
+  @keyframes estouro { 0% { transform: translate(0, 0) scale(.3); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1) rotate(160deg); opacity: 0; } }
 
-/* ---------- parada 2: o jogo rodando ---------- */
-.jogo { margin-top: clamp(36px, 4vw, 56px); display: grid; gap: 34px 36px; grid-template-columns: minmax(0, 2.03fr) minmax(0, 1fr); align-items: start; }
-.jogo-lado { display: grid; gap: 34px; }
-.quadro { margin: 0; }
-.quadro .tela { position: relative; border-radius: var(--r-painel); overflow: hidden; background: #081c1a; aspect-ratio: 16 / 9;
-  box-shadow: 0 26px 48px -18px rgb(1 12 10 / 0.75); }
-.quadro .tela::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgb(255 244 220 / 0.14); pointer-events: none; }
-.quadro video { width: 100%; height: 100%; object-fit: cover; }
-.quadro .tocar { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--creme); cursor: pointer; border-radius: inherit; -webkit-tap-highlight-color: transparent; }
-.quadro .tocar:focus-visible { outline-offset: -6px; border-radius: var(--r-painel); }
-/* parado, o botão fica à vista no meio do quadro: é ele que diz que aquilo é vídeo */
-.quadro .icone { width: clamp(52px, 5vw, 72px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%;
-  background: rgb(7 25 26 / 0.74); box-shadow: inset 0 0 0 1.5px rgb(255 244 220 / 0.5), 0 10px 24px -8px rgb(1 12 10 / 0.8);
-  transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out); }
-.quadro .icone svg { width: 40%; height: 40%; fill: currentColor; }
-.quadro .play { translate: 7% 0; }
-.quadro .pausa { display: none; }
-.quadro .tocar:active .icone { transform: scale(0.97); }
-/* tocando, ele some e só volta sob o cursor ou o foco, para pausar */
-.tocando .icone { opacity: 0; transform: scale(0.94); }
-.tocando .play { display: none; }
-.tocando .pausa { display: block; }
-.tocando .tocar:focus-visible .icone { opacity: 1; transform: none; }
-@media (hover: hover) { .tocando .tocar:hover .icone { opacity: 1; transform: none; } }
-.quadro figcaption { margin-top: 14px; font-weight: 500; font-size: 15px; color: var(--creme-2); }
+  /* ---------- Céu e nuvens ---------- */
+  .ceu { position: fixed; inset: 0; z-index: -10; pointer-events: none;
+    background:
+      radial-gradient(55vmax 55vmax at -4% -8%, rgba(255, 250, 222, .7) 0%, rgba(255, 246, 205, .2) 32%, transparent 58%),
+      radial-gradient(120% 45% at 50% 108%, rgba(225, 244, 255, .85) 0%, rgba(170, 220, 255, .35) 45%, transparent 75%),
+      linear-gradient(180deg, #0d47bb 0%, #1a5fd6 38%, #3384ea 70%, #67b3f6 100%); }
+  .nuvens { position: absolute; inset: 0 0 auto 0; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+  .nuvens.frente { z-index: 2; }
+  .camada { position: absolute; inset: 0; }
+  .nuvem { position: absolute; width: var(--w); height: auto; max-width: none; opacity: var(--o, .95); user-select: none; }
+  .nuvem.esp { transform: scaleX(-1); }
+  .longe .nuvem { --o: .38; }
+  .meio .nuvem { --o: .62; }
+  .frente .nuvem { --o: 1; filter: drop-shadow(0 20px 30px rgba(10, 50, 140, .18)); }
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .nuvens { position: fixed; inset: 0; height: auto; }
+      .camada { bottom: auto; animation: subir-ceu linear both; animation-timeline: scroll(root); }
+      .longe .camada { height: 160vh; --sobe: -60vh; }
+      .meio .camada { height: 330vh; --sobe: -230vh; }
+      .frente .camada { height: 520vh; --sobe: -420vh; }
+      @keyframes subir-ceu { to { transform: translate3d(0, var(--sobe), 0); } }
+    }
+  }
 
-/* ---------- parada 3: como se joga ---------- */
-.joga { margin-top: clamp(40px, 4.5vw, 64px); display: grid; gap: 48px; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; }
-.batidas { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 34px; }
-.batidas::before { content: ""; position: absolute; left: 9px; top: 18px; bottom: 30px; width: 2px;
-  background: repeating-linear-gradient(to bottom, rgb(255 253 244 / 0.55) 0 5px, transparent 5px 22px); }
-.batidas li { position: relative; padding-left: 46px; }
-.batidas li::before { content: ""; position: absolute; left: 0; top: 7px; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--mata); box-shadow: inset 0 0 0 3px var(--creme); }
-.batidas b { display: block; font: 400 clamp(22px, 1.8vw, 26px)/1.2 var(--f-letreiro); }
-.batidas span { display: block; margin-top: 6px; color: var(--creme-2); font-size: 17px; max-width: 26rem; }
 
-.demo { position: relative; background: var(--painel); border-radius: var(--r-painel); padding: clamp(22px, 2.4vw, 32px);
-  box-shadow: inset 0 0 0 1px var(--borda), 0 30px 56px -20px rgb(1 12 10 / 0.8); display: grid; gap: 22px; }
-.demo-pingo { position: absolute; right: clamp(-18px, -1.2vw, -10px); top: -64px; width: clamp(96px, 9vw, 128px); height: auto; z-index: 2; filter: drop-shadow(0 12px 16px rgb(0 0 0 / 0.35)); }
-.instrumentos { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.instrumento { margin: 0; text-align: center; }
-.instrumento svg { width: 100%; max-width: 260px; margin-inline: auto; overflow: visible; }
-.instrumento .trilho-arco { fill: none; stroke: #17312d; stroke-width: 14; stroke-linecap: round; }
-.instrumento .cheio-arco { fill: none; stroke-width: 14; stroke-linecap: round; stroke-dasharray: 100 100; stroke-dashoffset: var(--falta, 100);
-  transition: stroke-dashoffset 700ms var(--mola); }
-.instrumento.no .cheio-arco { stroke: var(--no); }
-.instrumento.luz .cheio-arco { stroke: var(--candeia); }
-/* POSIÇÃO NO PAI, ROTAÇÃO NO FILHO: o grupo leva o pivô, a agulha só gira */
-/* a agulha e uma seta afilada, e o curso vai de 12 a 168 graus: nos dois
-   extremos ela nunca fica deitada, que e o que fazia 26/26 e 0/3 parecerem iguais */
-.agulha { fill: var(--creme); rotate: var(--giro, 12deg); transition: rotate 700ms var(--mola); }
-.instrumento .valor { display: block; margin-top: 4px; font: 400 30px/1 var(--f-letreiro); font-variant-numeric: tabular-nums; }
-.instrumento figcaption { margin-top: 8px; font-weight: 500; font-size: 15px; color: var(--creme-2); }
-.fala { display: flex; gap: 16px; align-items: center; min-height: 64px; }
-.fala img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px var(--candeia); flex: none; }
-.fala p { font-weight: 500; font-size: 17px; }
-.fala p em { font-style: normal; color: var(--candeia); }
-.fala.boa p em { color: var(--verde); }
-.fala .erro { display: block; margin-top: 6px; font: 500 13px/1.5 ui-monospace, 'Cascadia Mono', Consolas, monospace; color: var(--creme-2); }
-.pergunta { background: var(--campo); border-radius: 16px; padding: clamp(16px, 1.8vw, 22px); display: grid; gap: 16px; }
-.pergunta > p { font-weight: 500; font-size: clamp(17px, 1.4vw, 19.5px); line-height: 1.45; }
-.opcoes, .lumes { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.lumes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.opcao, .lume { background: var(--campo-2); border: 0; box-shadow: inset 0 0 0 1px var(--borda); border-radius: var(--r-campo);
-  min-height: 52px; padding: 13px 18px; text-align: left; font-weight: 600; font-size: 17px; cursor: pointer;
-  transition: background-color 150ms ease, box-shadow 150ms ease, transform 160ms var(--ease-out); }
-.opcao:active:not(:disabled), .lume:active:not(:disabled) { transform: scale(0.98); }
-@media (hover: hover) and (pointer: fine) {
-  .opcao:hover:not(:disabled), .lume:hover:not(:disabled) { background: #19433b; box-shadow: inset 0 0 0 1px var(--borda-2); }
-}
-.opcao:disabled, .lume:disabled { cursor: default; }
-.opcao:disabled:not(.certa):not(.escolhida) { opacity: 0.5; }
-.opcao.certa { box-shadow: inset 0 0 0 2px var(--verde); background: #123d2c; }
-.opcao.escolhida { box-shadow: inset 0 0 0 2px var(--candeia); }
-.lume { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; padding: 10px 12px; }
-.lume img { width: 44px; height: 56px; object-fit: cover; border-radius: 8px; }
-.lume b { display: block; font-weight: 600; font-size: 16px; }
-.lume small { display: block; font: 500 13px/1.35 var(--f-texto); color: var(--creme-2); font-variant-numeric: tabular-nums; }
-.lume:disabled { opacity: 0.42; }
-.demo-pe { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; }
-.demo-pe p { font-size: 14px; color: var(--creme-2); }
-.bt-mini { min-height: 44px; padding: 10px 16px; border-radius: var(--r-campo); background: transparent; border: 0; box-shadow: inset 0 0 0 1px var(--borda-2); font-weight: 500; font-size: 15px; cursor: pointer; }
-@media (prefers-reduced-motion: no-preference) {
-  .demo-pingo.solto { animation: solta 900ms var(--ease-out) both; }
-}
-@keyframes solta { 0% { transform: scale(0.94); filter: drop-shadow(0 0 0 rgb(255 194 71 / 0)); } 45% { transform: translateY(-14px) scale(1.04); filter: drop-shadow(0 0 22px rgb(255 194 71 / 0.85)); } 100% { transform: none; filter: drop-shadow(0 12px 16px rgb(0 0 0 / 0.35)); } }
+  /* ---------- Abertura: mar de nuvens com o logo vetorial brilhando ---------- */
+  .abertura, .abertura-espaco, .hud { display: none; }
+  .com-abertura { --ini: 100vh; }
+  .com-abertura .abertura-espaco { display: block; height: 100vh; }
+  .com-abertura .abertura { display: block; position: fixed; inset: 0; z-index: 25; pointer-events: none; overflow: hidden; }
+  .abertura .nevoa { position: absolute; inset: 0; background:
+      radial-gradient(90% 60% at 50% 100%, rgba(255, 255, 255, .95) 0%, rgba(235, 246, 255, .75) 40%, transparent 72%),
+      radial-gradient(70% 50% at 50% 38%, rgba(160, 215, 255, .35) 0%, transparent 70%); will-change: opacity; }
+  .abertura .grupo { position: absolute; inset: 0; will-change: transform, opacity; }
+  .abertura .nuvem { --o: 1; filter: drop-shadow(0 24px 40px rgba(20, 70, 160, .18)); }
+  .logo-vetor { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform, opacity;
+    filter: drop-shadow(0 0 10px rgba(190, 235, 255, .95)) drop-shadow(0 0 34px rgba(110, 190, 255, .85)) drop-shadow(0 0 80px rgba(70, 150, 255, .6)); }
+  .logo-vetor svg, .logo-vetor img { display: block; width: 100%; height: auto; overflow: visible; }
+  @media (prefers-reduced-motion: no-preference) {
+    .logo-vetor { animation: brilho-logo 3.2s ease-in-out infinite; }
+    @keyframes brilho-logo { 50% { filter: drop-shadow(0 0 14px rgba(220, 245, 255, 1)) drop-shadow(0 0 46px rgba(130, 205, 255, .95)) drop-shadow(0 0 110px rgba(80, 160, 255, .75)); } }
+    .logo-vetor #estrelas > * { transform-box: fill-box; transform-origin: center; animation: piscar-logo 2.6s ease-in-out infinite; }
+    .logo-vetor #estrelas > *:nth-child(2) { animation-delay: -.9s; } .logo-vetor #estrelas > *:nth-child(3) { animation-delay: -1.7s; }
+    @keyframes piscar-logo { 50% { transform: scale(1.18) rotate(8deg); opacity: .85; } }
+    .logo-vetor.entrando { animation: entrar-logo 1600ms var(--sair) both, brilho-logo 3.2s ease-in-out 1600ms infinite; }
+    @keyframes entrar-logo { from { opacity: 0; filter: blur(18px) drop-shadow(0 0 0 transparent); } }
+  }
+  .abertura .convite { position: absolute; left: 50%; bottom: 7vh; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px;
+    font-size: 13px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: #0b3fa8; text-shadow: 0 0 12px rgba(255,255,255,.9); }
+  .abertura .convite i { width: 14px; height: 14px; background: #ffd447; filter: drop-shadow(0 0 6px rgba(255, 200, 60, .9)); }
+  @media (prefers-reduced-motion: no-preference) { .abertura .convite i { animation: descer 1.8s ease-in-out infinite; } @keyframes descer { 50% { transform: translateY(8px) rotate(45deg); } } }
+  .com-abertura .topo { transition: opacity 400ms var(--sair), padding 300ms var(--sair); }
+  .com-abertura .topo.escondido { opacity: 0; pointer-events: none; }
 
-/* ---------- parada 4: o mapa é a BNCC ---------- */
-.clareira { position: relative; margin-top: clamp(40px, 4.5vw, 64px); isolation: isolate; }
-.mapa-caixa { position: relative; }
-.clareira .mapa { width: 100%; height: auto; aspect-ratio: 1400 / 781; object-fit: cover; }
-/* UM vocabulario de folha na pagina inteira: bolota redonda e folha pontuda,
-   o mesmo da capa. Toda emenda entre paradas e mata, e nao corte reto. */
-.costura { position: absolute; left: 0; bottom: -1px; width: 100%; height: 72px; z-index: 0; pointer-events: none; }
-.franja-cena { position: absolute; left: 0; width: 100%; height: clamp(56px, 6.7vw, 96px); z-index: 0; pointer-events: none; }
-.franja-cena.cima { top: -1px; } .franja-cena.baixo { bottom: -1px; }
-.franja-mapa { position: absolute; left: 0; width: 100%; height: clamp(56px, 6.7vw, 96px); z-index: 1; pointer-events: none; }
-.franja-mapa.cima { top: -1px; } .franja-mapa.baixo { bottom: -1px; }
-.lugar { position: absolute; z-index: 2; translate: -50% -50%; display: grid; justify-items: center; gap: 8px;
-  background: none; border: 0; padding: 0; cursor: pointer; }
-.lugar i { width: 34px; height: 34px; border-radius: 50%; background: var(--mata); box-shadow: inset 0 0 0 3px var(--candeia), 0 4px 10px rgb(0 12 10 / 0.5);
-  transition: transform 180ms var(--ease-out), background-color 180ms ease; }
-.lugar span { background: rgb(11 34 31 / 0.9); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px; white-space: nowrap; }
-.lugar[aria-pressed="true"] i { background: var(--candeia); box-shadow: inset 0 0 0 4px var(--mata), 0 0 0 3px var(--candeia), 0 4px 12px rgb(0 12 10 / 0.55); transform: scale(1.18); }
-@media (hover: hover) and (pointer: fine) { .lugar:hover i { transform: scale(1.12); } }
-.cartao-lugar { position: absolute; z-index: 3; left: var(--gut); bottom: clamp(70px, 10vw, 150px); width: min(28rem, calc(100% - var(--gut) * 2));
-  background: rgb(11 34 31 / 0.95); border-radius: 18px; padding: 20px 24px; box-shadow: inset 0 0 0 1.5px rgb(255 194 71 / 0.6), 0 20px 40px -18px rgb(0 0 0 / 0.6); }
-.cartao-lugar h3 { font-size: 24px; }
-.cartao-lugar .unidade { margin-top: 6px; color: var(--creme); font-weight: 600; }
-.cartao-lugar .enredo { margin-top: 8px; color: var(--creme-2); font-size: 15.5px; line-height: 1.5; }
-.cartao-lugar .cod { margin-top: 10px; font-weight: 500; font-size: 14px; }
-.cartao-lugar .cod b { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-weight: 600; color: var(--creme); margin-right: 6px; }
-.lugares-lista { display: none; }
-.nota-mapa { margin-top: 28px; color: var(--creme-2); font-weight: 500; max-width: 60rem; }
+  /* ---------- HUD da Candeia: a Luz enche conforme o visitante explora ---------- */
+  .com-hud .hud { display: flex; position: fixed; left: var(--gutter); bottom: 22px; z-index: 30; align-items: center; gap: 14px; padding: 10px 18px 10px 10px;
+    border-radius: 999px; background: var(--vidro); border: 1px solid var(--borda-vidro); box-shadow: 0 12px 30px rgba(5, 30, 100, .3);
+    backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); text-decoration: none; color: var(--texto);
+    transition: opacity 500ms var(--sair), transform 500ms var(--sair), box-shadow 400ms; }
+  .com-hud .hud.escondido { opacity: 0; transform: translateY(20px); pointer-events: none; }
+  .hud .anel { position: relative; width: 46px; height: 46px; flex: none; }
+  .hud .anel svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .hud .anel circle { fill: none; stroke-width: 4; }
+  .hud .anel .trilho { stroke: rgba(255,255,255,.22); }
+  .hud .anel .carga { stroke: var(--sol); stroke-linecap: round; stroke-dasharray: 125.7; stroke-dashoffset: calc(125.7 * (1 - var(--luz, 0))); transition: stroke-dashoffset 600ms var(--sair); filter: drop-shadow(0 0 4px rgba(255, 212, 71, .8)); }
+  .hud .anel i { position: absolute; inset: 13px; background: var(--sol); filter: drop-shadow(0 0 calc(4px + var(--luz, 0) * 10px) rgba(255, 220, 110, 1)); transform: scale(calc(.7 + var(--luz, 0) * .4)); transition: transform 600ms var(--mola); }
+  .hud .txt { display: grid; gap: 2px; line-height: 1.2; }
+  .hud small { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ceu-claro); }
+  .hud b { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; }
+  .hud.acesa { box-shadow: 0 0 0 1px rgba(255, 212, 71, .7), 0 0 30px rgba(255, 212, 71, .45), 0 12px 30px rgba(5, 30, 100, .3); }
+  .hud.ganho { animation: ganho 600ms var(--mola); }
+  @keyframes ganho { 40% { transform: scale(1.08); } }
+  @media (max-width: 760px) { .com-hud .hud { left: 12px; right: auto; bottom: 12px; padding: 8px 14px 8px 8px; } .hud .anel { width: 38px; height: 38px; } .hud .anel i { inset: 11px; } .hud b { font-size: 13px; } }
 
-/* ---------- parada 5: para a escola ---------- */
-.calc { margin-top: clamp(36px, 4vw, 56px); background: var(--painel); border-radius: var(--r-painel); box-shadow: inset 0 0 0 1px var(--borda);
-  display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
-.calc-controles { padding: clamp(24px, 2.8vw, 40px); display: grid; gap: 30px; align-content: center; border-right: 1px solid var(--borda); }
-.controle label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-weight: 500; color: var(--creme-2); }
-.controle label b { font: 400 22px/1 var(--f-letreiro); color: var(--creme); font-variant-numeric: tabular-nums; white-space: nowrap; }
-input[type="range"] { width: 100%; margin-top: 14px; height: 30px; background: transparent; accent-color: var(--candeia); cursor: pointer; }
-input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--candeia) var(--cheio, 50%), #17312d var(--cheio, 50%)); }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; background: var(--creme); box-shadow: inset 0 0 0 3px var(--labio); }
-input[type="range"] { -webkit-appearance: none; appearance: none; }
-input[type="range"]::-moz-range-track { height: 8px; border-radius: 4px; background: #17312d; }
-input[type="range"]::-moz-range-progress { height: 8px; border-radius: 4px; background: var(--candeia); }
-input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--creme); box-shadow: inset 0 0 0 3px var(--labio); }
-.calc-resposta { padding: clamp(24px, 2.8vw, 40px) clamp(24px, 3.4vw, 48px); display: grid; align-content: center; gap: 18px; }
-.calc-resposta .frase { font-size: clamp(20px, 1.8vw, 26px); line-height: 1.45; }
-.calc-resposta .frase b { font-weight: 600; font-variant-numeric: tabular-nums; }
-.calc-resposta .frase .chega { font-weight: 700; }
-.calc-resposta .miudo { font-size: 15px; color: var(--creme-2); }
+  /* ---------- Herói ---------- */
+  header.dobra, main, footer { position: relative; z-index: 1; }
+  .dobra { min-height: 100dvh; overflow: hidden; isolation: isolate; display: grid; grid-template-rows: auto 1fr;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--ft, 0px), #000 calc(100% - 170px), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 var(--ft, 0px), #000 calc(100% - 170px), transparent 100%); }
+  .cena { opacity: var(--capa-op, 1); position: absolute; inset: -3%; z-index: -3; -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 97%); mask-image: linear-gradient(to bottom, #000 70%, transparent 97%); }
+  .cena-mov { position: absolute; inset: 0; will-change: transform; transition: translate 900ms var(--sair); }
+  .cena img { width: 100%; height: 100%; object-fit: cover; object-position: 30% 40%; }
+  .veu { position: absolute; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(70% 60% at 6% 72%, rgba(8, 48, 150, 0.78) 0%, rgba(8, 48, 150, 0.45) 45%, transparent 75%); }
+  .raios { position: absolute; left: -10%; top: -20%; width: 70vmax; height: 70vmax; z-index: -1; pointer-events: none;
+    background: conic-gradient(from 110deg at 18% 22%, transparent 0 6deg, rgba(255,250,220,.2) 9deg, transparent 14deg 22deg, rgba(255,250,220,.14) 26deg, transparent 31deg 40deg, rgba(255,250,220,.16) 44deg, transparent 50deg);
+    mix-blend-mode: screen; filter: blur(6px); animation: respirar 9s ease-in-out infinite; }
+  @keyframes respirar { 50% { opacity: .55; transform: rotate(2deg); } }
+  .estrela { position: absolute; z-index: -1; width: var(--t, 18px); aspect-ratio: 1; pointer-events: none; opacity: 0; background: #fff;
+    filter: drop-shadow(0 0 6px rgba(160, 220, 255, .95)); animation: piscar var(--d, 3.6s) ease-in-out var(--a, 0s) infinite; }
+  @keyframes piscar { 0%,100% { opacity: 0; transform: scale(.4) rotate(0); } 45%,55% { opacity: 1; transform: scale(1) rotate(20deg); } }
 
-.painel-prof { margin-top: clamp(96px, 10vw, 140px); }
-.painel-prof h3 { font-size: clamp(26px, 2.25vw, 34px); max-width: 36rem; }
-.painel-grade { margin-top: clamp(32px, 3.4vw, 48px); display: grid; gap: 48px; grid-template-columns: minmax(0, 0.46fr) minmax(0, 1fr); align-items: start; }
-.capacidades { list-style: none; margin: 0; padding: 0; display: grid; gap: 30px; }
-.capacidades b { display: block; font-weight: 600; font-size: 19px; line-height: 1.4; }
-.capacidades span { display: block; margin-top: 6px; color: var(--creme-2); font-size: 16px; }
-.painel-prof figure { margin: 0; }
-.painel-prof figure img { width: 100%; height: auto; border-radius: 18px; box-shadow: 0 0 0 1px rgb(255 244 220 / 0.18), 0 30px 60px -18px rgb(1 12 10 / 0.8); }
-.painel-prof figcaption { margin-top: 14px; font-size: 14px; color: var(--creme-2); }
+  /* Navegação: no topo fica solta; depois da capa vira uma pílula de vidro flutuante. */
+  .topo { position: fixed; top: 0; right: 0; z-index: 30; display: flex; flex-direction: column; align-items: flex-end; padding: clamp(14px, 2.4vw, 28px) var(--gutter); transition: padding 300ms var(--sair); }
+  .menu { display: flex; gap: 2px; padding: 5px; list-style: none; margin: 0; border-radius: 999px; border: 1px solid transparent;
+    transition: background-color 300ms var(--sair), border-color 300ms var(--sair), box-shadow 300ms var(--sair); }
+  .topo.fixo { padding-top: 12px; padding-bottom: 12px; }
+  .topo.fixo .menu { background: var(--vidro); border-color: var(--borda-vidro); box-shadow: 0 10px 30px rgba(5, 30, 100, .3);
+    backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); }
+  .menu a { display: block; padding: 10px 16px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 500; text-shadow: var(--sombra-texto); transition: background-color 160ms var(--sair); }
+  .menu a.destaque { box-shadow: inset 0 0 0 1px rgba(247,251,255,.75); }
+  .menu a.atual { background: rgba(255,255,255,.18); }
+  @media (hover: hover) { .menu a:hover { background: rgba(255,255,255,.2); } }
+  .abrir-menu { display: none; place-items: center; width: 48px; height: 48px; border-radius: 50%; padding: 0; background: var(--vidro); border: 1px solid var(--borda-vidro);
+    backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 8px 24px rgba(5, 30, 100, .3); transition: transform 160ms var(--sair); }
+  .abrir-menu:active { transform: scale(0.95); }
 
-/* ---------- parada 6: o piloto, no fim da trilha ---------- */
-.p6 { padding-block: 0; isolation: isolate; overflow: hidden; background: var(--mata); }
-.p6 .fundo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
-.p6::before { content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(to right, rgb(11 34 31 / 0.94), rgb(11 34 31 / 0.74) 55%, rgb(11 34 31 / 0.38)); }
-.piloto { min-height: clamp(720px, 62.5vw, 900px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 36.5rem); gap: 56px; align-items: center; padding-block: clamp(96px, 9vw, 140px); }
-.piloto .cabeca h2 { font-size: clamp(30px, 2.7vw, 42px); }
-.form { background: rgb(7 25 26 / 0.96); border-radius: var(--r-painel); box-shadow: inset 0 0 0 1px var(--borda); padding: clamp(22px, 2.3vw, 32px); display: grid; gap: 16px; }
-.form-par { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.campo { display: grid; gap: 8px; align-content: start; }
-.campo label { font-weight: 500; font-size: 15px; }
-.campo input, .campo select { height: 50px; padding: 12px 16px; border-radius: var(--r-campo); border: 0; background: var(--campo); color: var(--creme);
-  box-shadow: inset 0 0 0 1px var(--borda); font-size: 16px; transition: box-shadow 150ms ease; }
-.campo select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--creme-2) 50%), linear-gradient(135deg, var(--creme-2) 50%, transparent 50%);
-  background-position: calc(100% - 22px) 22px, calc(100% - 16px) 22px; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 40px; }
-.campo input:focus, .campo select:focus { outline: none; box-shadow: inset 0 0 0 2px var(--candeia); }
-.campo input[aria-invalid="true"] { box-shadow: inset 0 0 0 2px #ff9b87; }
-.campo .ajuda { font-size: 13.5px; color: #ffb4a4; min-height: 0; }
-.form .bt { width: 100%; margin-top: 4px; }
-.form-nota { font-size: 14px; color: var(--creme-2); }
-.form-aviso { font-size: 15px; padding: 12px 14px; border-radius: var(--r-campo); box-shadow: inset 0 0 0 1px var(--borda); }
-.form-aviso.ok { box-shadow: inset 0 0 0 1.5px var(--verde); color: var(--verde); }
-.form-aviso.erro { box-shadow: inset 0 0 0 1.5px #ff9b87; color: #ffb4a4; }
+  .chamada { position: relative; z-index: 1; align-self: end; padding: 0 var(--gutter) clamp(120px, 18vh, 200px); margin-top: 30vh; max-width: 700px; }
+  .lema { margin: 0 0 14px; font-size: clamp(12px, 1vw, 14px); font-weight: 700; letter-spacing: .3em; text-transform: uppercase; text-shadow: var(--sombra-texto); }
+  h1, h2 { font-family: var(--f-titulo); font-weight: 800; letter-spacing: -0.04em; text-wrap: balance; margin: 0; text-shadow: var(--sombra-texto); }
+  h1 { font-size: clamp(40px, 4.4vw, 68px); line-height: 1; padding-bottom: 4px; }
+  h2 { font-size: clamp(34px, 3.8vw, 58px); line-height: 1.02; padding-bottom: 4px; }
+  h1 em, h2 em { font-style: normal; color: var(--sol); text-shadow: 0 0 22px rgba(255, 212, 71, .45), var(--sombra-texto); }
+  .sub { margin: 16px 0 0; font-size: clamp(16px, 1.15vw, 18px); line-height: 1.55; color: var(--texto-suave); text-shadow: var(--sombra-texto); max-width: 40ch; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin-top: 28px; }
+  .botao { display: inline-flex; align-items: center; gap: 12px; padding: 15px 28px; white-space: nowrap; border-radius: 999px; text-decoration: none; font: 700 15px/1 var(--f);
+    letter-spacing: .1em; text-transform: uppercase; color: var(--texto); text-shadow: var(--sombra-texto); background: rgba(10, 50, 150, .25); border: 1.5px solid rgba(247,251,255,.9);
+    transition: transform 160ms var(--sair), background-color 200ms var(--sair), color 200ms var(--sair); }
+  .botao:active { transform: scale(0.97); }
+  .botao .brilho4 { width: 14px; height: 14px; flex: none; background: currentColor; transition: transform 500ms var(--mola); }
+  @media (hover: hover) { .botao:hover { background: var(--texto); color: #0b3fa8; text-shadow: none; } .botao:hover .brilho4 { transform: rotate(90deg) scale(1.2); } }
+  .link-luz { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; text-shadow: var(--sombra-texto); padding: 12px 2px; }
+  .link-luz .brilho4 { width: 11px; height: 11px; background: currentColor; opacity: .85; }
+  @media (hover: hover) { .link-luz:hover { text-decoration: underline; text-underline-offset: 6px; } }
 
-footer { background: #081a18; padding-block: 56px 64px; }
-footer .env { display: grid; gap: 8px; }
-footer b { font: 400 22px/1.2 var(--f-letreiro); }
-footer p { color: var(--creme-2); font-size: 15px; }
 
-/* ================= LARGURAS MENORES ================= */
-@media (max-width: 1100px) {
-  .joga, .painel-grade, .calc, .jogo { grid-template-columns: minmax(0, 1fr); }
-  .calc-controles { border-right: 0; border-bottom: 1px solid var(--borda); }
-  .jogo-lado { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .piloto { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 960px) {
-  /* A trilha vive nas margens, e abaixo daqui não há margem para ela:
-     os anéis ficam, em linha, acima de cada título. */
-  .trilha { display: none; }
-  .lado-dir .cabeca, .lado-esq .cabeca, .p6 .cabeca { margin-left: 0; padding: 0; width: auto; }
-  .cabeca .marco { position: relative; inset: auto; display: block; width: 44px; height: 44px; margin-bottom: 18px; }
-  .marco::after { inset: 15px; }
-  .elenco { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 28px; }
-}
-@media (max-width: 760px) {
-  .capa { min-height: 0; display: flex; flex-direction: column; background: var(--mata); }
-  /* a pintura inteira, sem recorte: nenhum recorte de 390 px guarda o
-     letreiro (a esquerda da capa) e a Aritana (a direita) ao mesmo tempo */
-  /* o trecho da pintura que vai do letreiro (x 50-720 da capa) ate a Aritana
-     (x 780-1180): 1200 de 1600 de largura, e a faixa sobe de ~190 para ~290 px */
-  .capa-img { position: relative; height: auto; aspect-ratio: 1200 / 893; object-position: 1% 0%; animation: none; }
-  .veu-topo { height: 110px; }
-  .topo .env { gap: 0; min-height: 72px; }
-  .topo { display: none; }
-  .chao { position: absolute; top: calc(74.4vw - 30px); bottom: auto; height: 32px; }
-  .chao .franja { height: 32px; }
-  .chao .monte { display: none; }
-  .chamada { position: relative; left: auto; bottom: auto; max-width: none; padding: 18px var(--gut) 20px; }
-  .p1 { padding-top: 40px; }
-  .chamada h1 { font-size: clamp(26px, 7vw, 32px); }
-  .acoes .bt { width: 100%; }
-  .elenco { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .elenco .bicho:last-child { grid-column: 1 / -1; max-width: 50%; justify-self: center; }
-  .jogo-lado { grid-template-columns: minmax(0, 1fr); }
-  .instrumentos { gap: 12px; }
-  .instrumento .valor { font-size: 24px; }
-  .lumes { grid-template-columns: minmax(0, 1fr); }
-  .opcoes { grid-template-columns: minmax(0, 1fr); }
-  .demo-pingo { top: -52px; width: 88px; right: -4px; }
-  /* no celular os rótulos não cabem sobre o mapa: ficam os anéis nele,
-     e os nomes viram uma fileira de pílulas logo abaixo */
-  .lugar span { display: none; }
-  .lugar i { width: 26px; height: 26px; }
-  .cartao-lugar { position: relative; left: auto; bottom: auto; width: auto; margin: 18px var(--gut) 0; }
-  .lugares-lista { position: relative; display: flex; gap: 8px; overflow-x: auto; padding: 16px var(--gut) 4px; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); scrollbar-width: none; }
-  .lugares-lista::after { content: ""; flex: 0 0 calc(var(--gut) - 8px); }
-  .lugares-lista button { scroll-snap-align: start; flex: none; min-height: 44px; padding: 10px 16px; border-radius: 999px; border: 0; background: var(--campo-2); box-shadow: inset 0 0 0 1px var(--borda); font-weight: 600; font-size: 14.5px; cursor: pointer; }
-  .lugares-lista button[aria-pressed="true"] { background: var(--candeia); color: var(--tinta); box-shadow: none; }
-  .form-par { grid-template-columns: minmax(0, 1fr); }
-}
+  /* ---------- Movimento ligado à rolagem (CSS puro onde houver suporte) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .chamada > * { animation: subir 700ms var(--sair) both; }
+    .chamada > :nth-child(2) { animation-delay: 80ms; } .chamada > :nth-child(3) { animation-delay: 160ms; } .chamada > :nth-child(4) { animation-delay: 240ms; }
+    @keyframes subir { from { opacity: 0; transform: translateY(14px); } }
+    .revelar { opacity: 0; filter: blur(14px); transform: translateY(40px) scale(.97); transition: opacity 900ms var(--sair), filter 900ms var(--sair), transform 900ms var(--sair); }
+    .revelar.visivel { opacity: 1; filter: none; transform: none; }
+    @supports (animation-timeline: view()) {
+      .revelar, .revelar.visivel { opacity: 1; filter: none; transform: none; transition: none; animation: aparecer linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; }
+      @keyframes aparecer { from { opacity: 0; filter: blur(16px); transform: translateY(56px) scale(.96); } to { opacity: 1; filter: blur(0); transform: none; } }
+      .cena-mov { animation: afastar linear both; animation-timeline: scroll(root); animation-range: var(--ini, 0px) calc(var(--ini, 0px) + 100vh); }
+      @keyframes afastar { to { transform: translateY(14vh) scale(1.1); filter: blur(5px); } }
+      .chamada { animation: sumir-chamada linear both; animation-timeline: scroll(root); animation-range: calc(var(--ini, 0px) + 10vh) calc(var(--ini, 0px) + 80vh); }
+      @keyframes sumir-chamada { to { opacity: 0; transform: translateY(-8vh); filter: blur(8px); } }
+    }
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .bt:active, .opcao:active, .lume:active { transform: none; }
-  .instrumento .cheio-arco, .agulha { transition-duration: 1ms; }
-}
+  /* ---------- Seções ---------- */
+  main section { padding: clamp(72px, 12vh, 140px) var(--gutter); position: relative; z-index: 1; }
+  .miolo { max-width: 1240px; margin: 0 auto; position: relative; }
+  .texto { margin: 18px 0 0; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.6; color: var(--texto-suave); max-width: 58ch; text-shadow: var(--sombra-texto); }
+
+  /* Trilha pontilhada (o caminho do mapa) que se acende ao rolar, com a Candeia na ponta. */
+  .trilha { position: absolute; left: 0; top: 0; width: 100%; z-index: 0; pointer-events: none; overflow: visible; }
+  .trilha .base { fill: none; stroke: rgba(255,255,255,.35); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 0 22; }
+  .trilha .acesa { fill: none; stroke: var(--sol); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 0 22; filter: drop-shadow(0 0 6px rgba(255, 212, 71, .9)); }
+  .candeia-ponta { position: absolute; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; z-index: 1; pointer-events: none; will-change: transform; opacity: 0; }
+  .candeia-ponta::before { content: ''; position: absolute; inset: -26px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 228, 140, .55), transparent 65%); animation: pulsar 1.6s ease-in-out infinite; }
+  .candeia-ponta span { position: absolute; inset: 0; background: var(--sol); filter: drop-shadow(0 0 8px rgba(255, 220, 110, 1)); animation: girar 6s linear infinite; }
+  @keyframes pulsar { 50% { transform: scale(1.25); opacity: .7; } }
+  @keyframes girar { to { transform: rotate(360deg); } }
+
+  /* Números (contam ao aparecer) */
+  .numeros { padding-top: clamp(80px, 12vh, 140px) !important; padding-bottom: clamp(56px, 9vh, 96px) !important; }
+  .fatos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; margin: 0 auto; max-width: 1240px; }
+  .fato { border-top: 1px solid var(--linha); padding-top: 14px; }
+  .fato dt { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ceu-claro); text-shadow: var(--sombra-texto); }
+  .fato dd { margin: 8px 0 0; font-size: clamp(17px, 1.4vw, 21px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; text-shadow: var(--sombra-texto); }
+  .fato .grande { display: block; margin-bottom: 4px; font-family: var(--f-titulo); font-weight: 800; letter-spacing: -0.035em; font-size: clamp(44px, 4vw, 64px); line-height: 1; color: var(--sol); letter-spacing: 0;
+    text-shadow: 0 0 22px rgba(255, 212, 71, .4), var(--sombra-texto); font-variant-numeric: tabular-nums; }
+  .fonte { margin: 22px auto 0; max-width: 1240px; font-size: 13px; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+
+  /* Os Embaraçados: inclinam com o cursor; clicar desembaraça. */
+  .bichos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); margin: clamp(40px, 7vh, 72px) 0 0; padding: 0; list-style: none; align-items: end; }
+  .bicho:nth-child(2) { margin-bottom: 48px; } .bicho:nth-child(4) { margin-bottom: 32px; }
+  .bicho button { display: block; width: 100%; padding: 0; background: none; border: 0; text-align: center; perspective: 700px; }
+  .bicho .flutua { display: block; }
+  .bicho .corpo { display: block; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0px)); transition: transform 400ms var(--sair); }
+  .bicho img { width: 100%; height: auto; filter: drop-shadow(0 18px 24px rgba(5, 25, 80, .45)); transition: filter 400ms var(--sair); }
+  @media (prefers-reduced-motion: no-preference) {
+    .bicho .flutua { animation: flutuar 6s ease-in-out infinite; }
+    .bicho:nth-child(2) .flutua { animation-delay: -1.2s; } .bicho:nth-child(3) .flutua { animation-delay: -2.4s; }
+    .bicho:nth-child(4) .flutua { animation-delay: -3.6s; } .bicho:nth-child(5) .flutua { animation-delay: -4.8s; }
+    @keyframes flutuar { 50% { transform: translateY(-10px); } }
+    .bicho button:hover .corpo { --ty: -8px; }
+    .bicho.solto .flutua { animation: pular 700ms var(--mola); }
+    @keyframes pular { 30% { transform: translateY(-46px) scale(1.06) rotate(-4deg); } 60% { transform: translateY(0) scale(.96, 1.04); } }
+  }
+  .bicho button:hover img, .bicho button:focus-visible img { filter: drop-shadow(0 18px 24px rgba(5, 25, 80, .45)) drop-shadow(0 0 22px rgba(255, 228, 140, .55)); }
+  .bicho.solto img { filter: drop-shadow(0 18px 24px rgba(5, 25, 80, .35)) drop-shadow(0 0 30px rgba(255, 220, 110, .95)) saturate(1.15) brightness(1.06); }
+  .bicho b { display: block; margin-top: 14px; font-family: var(--f-titulo); font-weight: 800; letter-spacing: -0.035em; font-size: clamp(24px, 2.2vw, 32px); text-shadow: var(--sombra-texto); }
+  .bicho .lugar { display: block; margin-top: 2px; font-size: 14px; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  .bicho .status { display: block; height: 20px; margin-top: 6px; font-size: 13px; font-weight: 700; color: var(--sol); text-shadow: var(--sombra-texto); opacity: 0; transition: opacity 300ms; }
+  .bicho.solto .status { opacity: 1; }
+  .dica { margin: 26px 0 0; font-size: 14px; color: var(--texto-suave); text-shadow: var(--sombra-texto); display: flex; align-items: center; gap: 10px; }
+  .dica .brilho4 { width: 12px; height: 12px; background: var(--sol); }
+
+  /* Vídeos: sequência fixa na tela. Cada um entra desfocado com sua legenda; no fim, se juntam no quadro. */
+  .filme { height: 440vh; padding: 0 !important; }
+  .palco { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .palco-titulo { position: absolute; left: 50%; top: 9vh; width: min(1240px, calc(100% - 2 * var(--gutter))); transform: translateX(-50%); }
+  .palco-titulo .texto { margin-top: 10px; }
+  .quadro { position: absolute; left: 0; top: 0; margin: 0; width: var(--solo-w, 860px); transform-origin: 0 0; will-change: transform, opacity, filter; opacity: 0; }
+  .quadro video { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--raio-midia); background: #0a2c7c; box-shadow: 0 30px 70px rgba(4, 20, 70, .5); }
+  .legenda { position: absolute; left: max(var(--gutter), calc((100% - 1240px) / 2)); top: 55%; width: min(380px, 28vw); transform: translateY(-50%); will-change: transform, opacity, filter; opacity: 0; }
+  .legenda .passo-n { font-family: var(--f-titulo); font-size: 64px; line-height: 1; color: var(--sol); text-shadow: 0 0 22px rgba(255, 212, 71, .45), var(--sombra-texto); }
+  .legenda h3 { margin: 8px 0 0; font-size: clamp(24px, 2.2vw, 32px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; text-shadow: var(--sombra-texto); }
+  .legenda p { margin: 12px 0 0; font-size: 17px; line-height: 1.55; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  /* Sem movimento ou tela pequena: o quadro aparece pronto, sem fixar. */
+  .filme.estatico { height: auto; padding: clamp(72px, 12vh, 140px) var(--gutter) !important; }
+  .filme.estatico .palco { position: relative; height: auto; overflow: visible; }
+  .filme.estatico .palco-titulo { position: relative; left: auto; top: auto; transform: none; width: auto; max-width: 1240px; margin: 0 auto; }
+  .filme.estatico .grade-estatica { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; max-width: 1240px; margin: 36px auto 0; align-items: start; }
+  .filme.estatico .grade-estatica .coluna { display: grid; gap: 24px; }
+  .filme.estatico .quadro { position: relative; width: auto; transform: none !important; opacity: 1 !important; filter: none !important; }
+  .filme.estatico .legenda { position: relative; left: auto; top: auto; width: auto; transform: none !important; opacity: 1 !important; filter: none !important; margin-top: 12px; }
+  .filme.estatico .legenda .passo-n { display: none; }
+  .filme.estatico .legenda h3 { font-size: 18px; }
+  .filme.estatico .legenda p { font-size: 15px; margin-top: 4px; }
+
+  /* Como se joga: linha do tempo + leque de cartas Lume (passe o mouse, clique para jogar). */
+  .jogar-secao { overflow: hidden; }
+  .jogar-topo { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; }
+  .aritana-btn { position: relative; padding: 0; background: none; border: 0; }
+  .aritana { width: clamp(160px, 18vw, 260px); height: auto; filter: drop-shadow(0 18px 30px rgba(4, 20, 70, .5)); transition: transform 500ms var(--mola); }
+  .aritana-btn:hover .aritana { transform: rotate(-6deg) scale(1.05); }
+  .balao { position: absolute; right: 78%; top: 38%; width: max-content; max-width: 240px; padding: 12px 16px; border-radius: 18px 18px 4px 18px; background: var(--texto); color: #0b3fa8;
+    font-size: 15px; font-weight: 700; line-height: 1.35; text-align: left; box-shadow: 0 12px 30px rgba(4, 20, 70, .35); opacity: 0; transform: translateY(8px) scale(.95); transform-origin: right bottom;
+    transition: opacity 250ms var(--sair), transform 350ms var(--mola); pointer-events: none; }
+  .aritana-btn:hover .balao, .aritana-btn:focus-visible .balao, .aritana-btn.falando .balao { opacity: 1; transform: none; }
+  .jogo-corpo { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: center; margin-top: clamp(40px, 7vh, 72px); }
+  .passos { list-style: none; margin: 0; padding: 0 0 0 34px; display: grid; gap: 30px; position: relative; }
+  .passos::before { content: ''; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 1px; background: var(--linha); }
+  .passo { position: relative; }
+  .passo::before { content: ''; position: absolute; left: -34px; top: 2px; width: 20px; height: 20px; background: var(--sol);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); filter: drop-shadow(0 0 6px rgba(255,212,71,.7)); }
+  .passo h3 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; text-shadow: var(--sombra-texto); }
+  .passo p { margin: 8px 0 0; font-size: 16px; line-height: 1.55; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  .leque { position: relative; height: clamp(300px, 30vw, 420px); list-style: none; margin: 0; padding: 0; }
+  .carta { position: absolute; left: 50%; bottom: 40px; width: clamp(120px, 11vw, 168px); margin-left: calc(clamp(120px, 11vw, 168px) / -2); transform-origin: 50% 230%;
+    transform: rotate(var(--r)) translateY(var(--y, 0px)); transition: transform 450ms var(--mola), filter 300ms var(--sair), opacity 450ms var(--sair); }
+  .carta button { display: block; width: 100%; padding: 0; background: none; border: 0; position: relative; }
+  .carta img { width: 100%; height: auto; filter: drop-shadow(0 16px 22px rgba(4, 20, 70, .45)); }
+  .carta .nome-carta { position: absolute; left: 14%; right: 14%; top: 53.5%; transform: translateY(-50%); font-family: var(--f-titulo); font-weight: 800; letter-spacing: -0.02em; font-size: clamp(12px, 1.1vw, 16px); color: #4a2e10; text-align: center; }
+  .leque:hover .carta { --y: 10px; }
+  .leque .carta:hover, .leque .carta:focus-within { --y: -34px; z-index: 5; filter: brightness(1.06) drop-shadow(0 0 24px rgba(255, 228, 140, .6)); transform: rotate(calc(var(--r) * .4)) translateY(var(--y)) scale(1.06); }
+  .leque .carta.jogada { transform: translateY(-260px) rotate(0) scale(1.15); opacity: 0; }
+
+
+  /* ---------- Batalha jogável: o loop de verdade, com perguntas e cartas do jogo ---------- */
+  .arena { position: relative; margin-top: clamp(32px, 5vh, 56px); aspect-ratio: 16 / 9; border-radius: var(--raio-midia); overflow: hidden; isolation: isolate;
+    background: #3c7a3a url(arte/campo.webp) center 72% / cover no-repeat; box-shadow: 0 30px 70px rgba(4, 20, 70, .5); }
+  .arena::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(10, 30, 90, .45), transparent 30%, transparent 65%, rgba(10, 30, 70, .55)); }
+  .arena > * { z-index: 1; }
+  .placar { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; gap: 16px; pointer-events: none; }
+  .medidor { display: flex; align-items: center; gap: 12px; padding: 8px 16px 8px 10px; border-radius: 999px; background: rgba(8, 30, 90, .55); border: 1px solid rgba(220, 240, 255, .4);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-shadow: var(--sombra-texto); }
+  .medidor small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ceu-claro); }
+  .medidor b { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  .pips { display: flex; gap: 6px; }
+  .pips i { width: 22px; height: 22px; background: rgba(255,255,255,.25); transition: background-color 300ms, transform 400ms var(--mola), filter 300ms; }
+  .pips i.on { background: var(--sol); filter: drop-shadow(0 0 6px rgba(255, 212, 71, .95)); transform: scale(1.15); }
+  .barra-no { width: clamp(120px, 16vw, 220px); height: 10px; border-radius: 999px; background: rgba(255,255,255,.2); overflow: hidden; }
+  .barra-no span { display: block; height: 100%; width: calc(var(--no, 1) * 100%); border-radius: inherit; background: linear-gradient(90deg, #ffb347, var(--sol)); transition: width 600ms var(--sair); }
+  .lutador { position: absolute; bottom: 14%; filter: drop-shadow(0 16px 14px rgba(0, 20, 0, .45)); transition: transform 300ms var(--sair), filter 400ms; }
+  .lutador.heroi-arena { left: 9%; height: 34%; }
+  .lutador.pingo-arena { right: 11%; height: 40%; }
+  .lutador img { height: 100%; width: auto; max-width: none; }
+  .pingo-arena.atingido { animation: atingido 450ms var(--sair); }
+  @keyframes atingido { 20% { transform: translateX(14px) rotate(4deg); filter: brightness(1.8) drop-shadow(0 0 20px #fff); } 60% { transform: translateX(-6px); } }
+  .pingo-arena.solto { animation: soltou 1100ms var(--mola) forwards; }
+  @keyframes soltou { 30% { transform: translateY(-40px) scale(1.1) rotate(-6deg); } 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 30px rgba(255, 220, 110, 1)) brightness(1.1) saturate(1.2); } }
+  .heroi-arena.avanca { transform: translateX(40%); }
+  .dano { position: absolute; z-index: 5; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--sol); pointer-events: none;
+    text-shadow: 0 2px 0 #7a4b00, 0 0 18px rgba(255, 212, 71, .8); animation: dano 1000ms var(--sair) forwards; }
+  @keyframes dano { from { transform: translateY(0) scale(.6); opacity: 0; } 20% { opacity: 1; transform: translateY(-10px) scale(1.15); } to { transform: translateY(-70px) scale(1); opacity: 0; } }
+  .pergunta-arena { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); width: min(560px, 62%); padding: 18px 20px 20px; border-radius: 18px;
+    background: rgba(8, 30, 90, .72); border: 1px solid rgba(220, 240, 255, .45); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 20px 50px rgba(4, 20, 70, .45);
+    transition: opacity 400ms var(--sair), transform 500ms var(--sair); }
+  .pergunta-arena.some { opacity: 0; transform: translate(-50%, -20px) scale(.96); pointer-events: none; }
+  .pergunta-arena small { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ceu-claro); }
+  .pergunta-arena p { margin: 6px 0 14px; font-size: clamp(16px, 1.35vw, 19px); font-weight: 700; line-height: 1.4; text-shadow: var(--sombra-texto); }
+  .opcoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opcao { padding: 12px 14px; border-radius: 999px; border: 1.5px solid rgba(247,251,255,.7); background: rgba(255,255,255,.08); font-weight: 700; font-size: 16px; text-align: center;
+    transition: background-color 200ms, transform 160ms var(--sair), border-color 200ms; }
+  .opcao:active { transform: scale(.97); }
+  @media (hover: hover) { .opcao:not(:disabled):hover { background: rgba(255,255,255,.22); } }
+  .opcao.certa { background: rgba(255, 212, 71, .9); color: #3a2a00; border-color: var(--sol); }
+  .opcao.errada { background: rgba(255, 255, 255, .14); border-style: dashed; opacity: .8; }
+  .opcao:disabled { cursor: default; }
+  .fala-arena { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: flex-end; gap: 10px; max-width: min(420px, 36%); pointer-events: none; }
+  .fala-arena img { width: 64px; height: auto; flex: none; filter: drop-shadow(0 8px 10px rgba(0,0,0,.35)); }
+  .fala-arena p { margin: 0; padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: var(--texto); color: #0b3fa8; font-size: 14px; font-weight: 700; line-height: 1.4; box-shadow: 0 10px 24px rgba(4, 20, 70, .35); }
+  .fala-arena p em { font-style: normal; color: #b36b00; }
+  .fala-arena .erro-nome { display: block; margin-top: 4px; font-size: 12px; font-weight: 600; color: #4a5f8a; }
+  .mao { position: absolute; left: 58%; bottom: -8px; width: 0; height: 0; transition: opacity 400ms var(--sair), transform 500ms var(--mola); }
+  .mao.fechada { opacity: 0; transform: translateY(80px); pointer-events: none; }
+  .lume-carta { position: absolute; bottom: 0; width: clamp(96px, 9.5vw, 140px); margin-left: calc(clamp(96px, 9.5vw, 140px) / -2); padding: 0; background: none; border: 0;
+    transform-origin: 50% 160%; transform: rotate(var(--r)) translateY(var(--y, 0px)); transition: transform 400ms var(--mola), filter 300ms, opacity 300ms; }
+  .lume-carta img { width: 100%; height: auto; filter: drop-shadow(0 14px 18px rgba(4, 20, 70, .5)); }
+  .lume-carta .nome-l { position: absolute; left: 12%; right: 12%; top: 53.5%; transform: translateY(-50%); font-size: clamp(11px, 1vw, 14px); font-weight: 800; color: #4a2e10; letter-spacing: -0.01em; }
+  .lume-carta .efeito { position: absolute; left: 20%; right: 20%; top: 62%; bottom: 14%; display: grid; place-items: center; font-size: clamp(10px, .9vw, 13px); font-weight: 800; color: #fff3d6; line-height: 1.2; text-align: center; }
+  .lume-carta .custo { position: absolute; right: 2%; top: 13%; width: 30%; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--sol); color: #3a2a00; font-size: clamp(12px, 1.1vw, 16px); font-weight: 800;
+    box-shadow: 0 0 0 2px #7a4b00, 0 0 12px rgba(255, 212, 71, .8); }
+  .lume-carta:not(:disabled):hover, .lume-carta:not(:disabled):focus-visible { --y: -28px; z-index: 3; filter: drop-shadow(0 0 18px rgba(255, 228, 140, .7)); }
+  .lume-carta:disabled { filter: grayscale(.6) brightness(.75); cursor: not-allowed; }
+  .lume-carta.voando { transition: transform 520ms cubic-bezier(.5, 0, .75, 0), opacity 520ms; opacity: 0; }
+  .fim-arena { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 14px; text-align: center; background: radial-gradient(circle at 70% 60%, rgba(255, 220, 110, .35), rgba(8, 30, 90, .55));
+    opacity: 0; pointer-events: none; transition: opacity 600ms var(--sair); }
+  .fim-arena.ativo { opacity: 1; pointer-events: auto; }
+  .fim-arena h3 { margin: 0; font-size: clamp(26px, 3vw, 44px); font-weight: 800; letter-spacing: -0.03em; text-shadow: var(--sombra-texto); }
+  .fim-arena p { margin: 0; font-size: 16px; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  .fim-arena .acoes { justify-content: center; margin-top: 6px; }
+  .botao-claro { background: var(--texto); color: #0b3fa8; text-shadow: none; }
+  .nota-arena { margin: 14px 0 0; font-size: 14px; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  @media (max-width: 760px) {
+    .arena { aspect-ratio: 3 / 4.4; background-position: 30% 70%; }
+    .placar { top: 10px; left: 10px; right: 64px; flex-direction: column; align-items: stretch; gap: 8px; }
+    .medidor { justify-content: space-between; }
+    .barra-no { width: 40%; }
+    .pergunta-arena { top: 25%; width: calc(100% - 20px); padding: 14px; }
+    .opcao { font-size: 15px; padding: 10px; }
+    .lutador.heroi-arena { left: 4%; height: 16%; bottom: 60%; }
+    .lutador.pingo-arena { right: 6%; height: 19%; bottom: 60%; }
+    .fala-arena { left: 10px; bottom: 10px; max-width: calc(100% - 20px); }
+    .mao { left: 50%; }
+    .fala-arena img { width: 44px; }
+    .fala-arena p { font-size: 13px; }
+    .lume-carta { width: 92px; margin-left: -46px; }
+    .mao { bottom: 128px; }
+  }
+
+  /* Mapa interativo (componente em componentes/): espaço acima */
+  .mapa-interativo { margin-top: clamp(32px, 5vh, 56px); }
+  /* Mapa: aproxima ao rolar */
+  .mapa { margin: clamp(36px, 6vh, 60px) 0 0; overflow: hidden; border-radius: var(--raio-midia); box-shadow: 0 30px 70px rgba(4, 20, 70, .5); }
+  .mapa img { width: 100%; height: auto; }
+  @supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+    .mapa img { animation: aproximar linear both; animation-timeline: view(); animation-range: entry 0% exit 20%; }
+    @keyframes aproximar { from { transform: scale(1.25) translateY(-4%); } to { transform: scale(1) translateY(2%); } }
+  } }
+  .lugares { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 32px; }
+  .lugares li { border-top: 1px solid var(--linha); padding-top: 12px; transition: border-color 300ms; }
+  .lugares li:hover { border-color: var(--sol); }
+  .lugares b { display: block; font-size: 18px; font-weight: 800; text-shadow: var(--sombra-texto); }
+  .lugares span { display: block; margin-top: 4px; font-size: 15px; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  .lugares .ponte b { color: var(--sol); }
+
+  /* Calculadora de rede */
+  .rede { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; margin-top: clamp(36px, 6vh, 60px); }
+  .controle { display: grid; gap: 10px; margin-bottom: 28px; }
+  .controle label { font-size: 15px; font-weight: 600; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  .controle output { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; text-shadow: var(--sombra-texto); }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 2px; background: var(--linha); border-radius: 2px; }
+  input[type=range]::-moz-range-track { height: 2px; background: var(--linha); border-radius: 2px; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -12px; border-radius: 50%; background: var(--sol); border: 3px solid #0a2c7c; box-shadow: 0 0 0 1px var(--sol), 0 0 16px rgba(255,212,71,.7); transition: transform 200ms var(--mola); }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--sol); border: 3px solid #0a2c7c; }
+  .resultado { border-left: 1px solid var(--linha); padding-left: clamp(24px, 4vw, 56px); }
+  .resultado .tempo { font-family: var(--f-titulo); font-size: clamp(72px, 9vw, 140px); line-height: .95; color: var(--sol); text-shadow: 0 0 30px rgba(255, 212, 71, .35); font-variant-numeric: tabular-nums; }
+  .resultado p { margin: 14px 0 0; font-size: 17px; line-height: 1.55; color: var(--texto-suave); max-width: 40ch; text-shadow: var(--sombra-texto); }
+  .resultado strong { color: var(--texto); }
+
+  /* Painel do professor */
+  .painel { display: grid; grid-template-columns: 1fr 1.25fr; gap: clamp(32px, 5vw, 80px); align-items: center; }
+  .pontos { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 22px; }
+  .pontos li { border-top: 1px solid var(--linha); padding-top: 14px; }
+  .pontos b { display: block; font-size: 18px; font-weight: 800; text-shadow: var(--sombra-texto); }
+  .pontos span { display: block; margin-top: 6px; font-size: 16px; line-height: 1.5; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  figure { margin: 0; }
+  .painel .tela { perspective: 1400px; }
+  .painel img { width: 100%; height: auto; border-radius: var(--raio-midia); box-shadow: 0 30px 70px rgba(2, 12, 50, .55); transform: rotateY(var(--ry, -8deg)) rotateX(var(--rx, 3deg)); transition: transform 600ms var(--sair); }
+  .painel figcaption { margin-top: 12px; font-size: 14px; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+
+  /* Heróis: passe o mouse para preparar; clique para o golpe. */
+  .herois-secao { text-align: center; }
+  .herois { list-style: none; margin: clamp(36px, 6vh, 56px) auto 0; padding: 0 0 18px; display: flex; justify-content: center; align-items: flex-end; gap: clamp(12px, 4vw, 64px); border-bottom: 1px solid var(--linha); max-width: 1000px; }
+  .herois li { min-width: 0; }
+  .heroi { padding: 0; background: none; border: 0; display: block; }
+  .heroi .sprite { height: clamp(90px, 13vw, 190px); display: flex; align-items: flex-end; justify-content: center; }
+  .heroi img { height: 100%; width: auto; max-width: none; margin: 0 auto; filter: drop-shadow(0 14px 18px rgba(2, 12, 50, .55)); transition: transform 350ms var(--mola), filter 300ms; transform-origin: 50% 100%; }
+  .heroi:hover img, .heroi:focus-visible img { transform: translateY(-10px) scale(1.06); filter: drop-shadow(0 14px 18px rgba(2, 12, 50, .45)) drop-shadow(0 0 20px rgba(255, 228, 140, .7)); }
+  .heroi.golpe img { transform: translateX(8px) scale(1.1); }
+  .heroi b { display: block; margin-top: 10px; font-family: var(--f-titulo); font-weight: 800; letter-spacing: -0.035em; font-size: 26px; text-shadow: var(--sombra-texto); }
+  .herois-secao .texto { margin-left: auto; margin-right: auto; }
+
+  /* Pedido de piloto */
+  .piloto-secao { padding-bottom: clamp(56px, 9vh, 96px) !important; }
+  .piloto { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+  form { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 28px; }
+  .campo { display: grid; gap: 8px; }
+  .campo.cheio { grid-column: 1 / -1; }
+  .campo label { font-size: 14px; font-weight: 700; color: var(--texto); text-shadow: var(--sombra-texto); }
+  .campo input, .campo select { width: 100%; font: 500 17px/1.3 var(--f); color: var(--texto); background: rgba(8, 40, 120, .25); border: 0; border-bottom: 1.5px solid rgba(247,251,255,.7); border-radius: 0; padding: 10px 8px; }
+  .campo select { -webkit-appearance: none; appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--texto) 50%), linear-gradient(135deg, var(--texto) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 55%, calc(100% - 8px) 55%; background-size: 6px 6px; background-repeat: no-repeat; }
+  .campo select option { color: #0a2c7c; }
+  .campo input::placeholder { color: rgba(247,251,255,.65); }
+  .campo input:focus, .campo select:focus { outline: none; border-bottom-color: var(--sol); background-color: rgba(8, 40, 120, .4); }
+  .campo .erro { min-height: 18px; font-size: 13px; font-weight: 700; color: #ffe2b8; text-shadow: var(--sombra-texto); }
+  .enviar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; }
+  .aviso { margin: 0; font-size: 14px; line-height: 1.5; color: var(--texto-suave); max-width: 46ch; text-shadow: var(--sombra-texto); }
+  .estado { grid-column: 1 / -1; margin: 0; font-size: 15px; font-weight: 700; color: var(--sol); min-height: 22px; text-shadow: var(--sombra-texto); }
+
+
+
+  /* ---------- Rodapé final (referência: Trova): a capa ao fundo e o LUMINA gigante em vidro fosco, cortado pela borda ---------- */
+  .final { position: relative; z-index: 1; overflow: hidden; isolation: isolate; min-height: 100vh; padding: clamp(110px, 18vh, 200px) var(--gutter) 0;
+    display: flex; flex-direction: column; }
+  .final-fundo { position: absolute; inset: 0; z-index: -2; background: #0a2c7c url(arte/capa.webp) 88% 62% / max(160%, 160vh * 1.79) auto no-repeat; }
+  .final-fundo::after { content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(10, 40, 120, .92) 0%, rgba(10, 40, 120, .55) 30%, rgba(6, 28, 90, .5) 60%, rgba(6, 24, 80, .7) 100%); }
+  .final-chamada { text-align: center; max-width: 760px; margin: 0 auto; }
+  .final-chamada h2 { font-size: clamp(34px, 4vw, 60px); }
+  .final-chamada .texto { margin-left: auto; margin-right: auto; }
+  .final-chamada .acoes { justify-content: center; margin-top: 26px; }
+  .final-rodape { display: grid; grid-template-columns: 1.4fr repeat(2, minmax(0, .6fr)); gap: 32px; max-width: 1240px; width: 100%; margin: clamp(80px, 14vh, 150px) auto 0; }
+  .final-marca-peq { width: 120px; height: auto; filter: drop-shadow(0 0 12px rgba(150, 215, 255, .7)); }
+  .final-rodape p { margin: 14px 0 0; font-size: 15px; line-height: 1.55; color: var(--texto-suave); max-width: 42ch; text-shadow: var(--sombra-texto); }
+  .final-rodape .copy { font-size: 14px; color: var(--texto); }
+  .final-rodape h3 { margin: 0 0 14px; font-size: 13px; font-weight: 600; color: var(--texto-suave); text-shadow: var(--sombra-texto); }
+  .final-rodape ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .final-rodape a { font-size: 16px; font-weight: 700; text-decoration: none; text-shadow: var(--sombra-texto); }
+  @media (hover: hover) { .final-rodape a:hover { color: var(--sol); } }
+  /* O vetor do logo vira máscara de um vidro fosco: dentro das letras, a capa aparece desfocada e clara. */
+  .final-letreiro { position: relative; width: min(1500px, 104vw); margin: clamp(24px, 5vh, 60px) auto 0; aspect-ratio: 681 / 333; margin-bottom: calc(min(1500px, 104vw) * -0.09);
+    -webkit-mask: url(arte/lumina-logo.svg) center / contain no-repeat; mask: url(arte/lumina-logo.svg) center / contain no-repeat;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, .66) 0%, rgba(238, 247, 255, .44) 50%, rgba(220, 240, 255, .16) 92%);
+    backdrop-filter: blur(18px) saturate(1.6) brightness(1.45); -webkit-backdrop-filter: blur(18px) saturate(1.6) brightness(1.45); pointer-events: none; }
+  @supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+    .final-letreiro { animation: letreiro linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
+    @keyframes letreiro { from { opacity: 0; transform: translateY(18%) scale(.94); filter: blur(24px); } to { opacity: 1; transform: none; filter: blur(0); } }
+  } }
+  @media (max-width: 760px) {
+    .final { min-height: auto; padding-top: 90px; }
+    .final-rodape { grid-template-columns: 1fr 1fr; }
+    .final-rodape > div:first-child { grid-column: 1 / -1; }
+    .final-letreiro { margin-bottom: calc(104vw * -0.12); }
+  }
+
+  @media (prefers-reduced-transparency: reduce) { .abrir-menu, .topo.fixo .menu { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--vidro-solido) !important; } }
+
+  /* ---------- Tablet ---------- */
+  @media (max-width: 1024px) {
+    .bichos { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 40px; }
+    .bicho:nth-child(n) { margin-bottom: 0; }
+    .jogo-corpo, .painel, .piloto, .rede { grid-template-columns: 1fr; }
+    .resultado { border-left: 0; padding-left: 0; border-top: 1px solid var(--linha); padding-top: 28px; }
+  }
+  /* ---------- Celular ---------- */
+  @media (max-width: 760px) {
+    .dobra { min-height: auto; display: block; -webkit-mask-image: none; mask-image: none; }
+    .cena { position: relative; inset: auto; height: 62vw; }
+    .cena img { object-position: 18% 30%; }
+    .veu, .raios, .estrela { display: none; }
+    .topo { padding: 12px; }
+    .abrir-menu { display: grid; }
+    .menu { display: none; flex-direction: column; margin-top: 8px; min-width: 200px; border-radius: 18px; background: var(--vidro); border-color: var(--borda-vidro);
+      box-shadow: 0 8px 30px rgba(5, 30, 100, .3); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); }
+    .topo.aberto .menu { display: flex; }
+    .menu a { padding: 12px 16px; font-size: 16px; }
+    .menu a.destaque { box-shadow: none; color: var(--sol); }
+    .chamada { margin-top: 28px; padding-bottom: 96px; }
+    .nuvem { width: calc(var(--w) * .45) !important; }
+    .abertura .nuvem { width: calc(var(--w) * 1.8) !important; }
+    .chamada { animation: none !important; }
+    .frente { display: none; }
+    .numeros { padding-top: 80px !important; }
+    .fatos { grid-template-columns: 1fr 1fr; gap: 24px 20px; }
+    .bichos { grid-template-columns: 1fr 1fr; }
+    .bicho:last-child { grid-column: 1 / -1; max-width: 50%; justify-self: center; }
+    .filme.estatico .grade-estatica { grid-template-columns: 1fr; }
+    .jogar-topo { grid-template-columns: 1fr; }
+    .balao { right: auto; left: 60%; border-radius: 18px 18px 18px 4px; }
+    .lugares { grid-template-columns: 1fr; }
+    .herois { flex-wrap: wrap; gap: 24px 28px; }
+    .herois li { flex: 0 0 calc(50% - 14px); }
+    form { grid-template-columns: 1fr; }
+    .botao { width: 100%; justify-content: center; }
+    .acoes .botao { width: auto; }
+    .luz-cursor, .trilha, .candeia-ponta { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .raios, .estrela, .candeia-ponta span, .candeia-ponta::before { animation: none; }
+    .estrela { opacity: .7; }
+    .luz-cursor, .candeia-ponta { display: none; }
+  }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="folhas-costura" viewBox="0 0 1440 72" preserveAspectRatio="none"><path d="M0 66 Q22.2 13.4 44.4 66 Q93.4 -1 142.4 66 Q195.5 -0.7 248.7 66 Q261.8 30.8 281.6 4.8 Q301.4 30.8 314.5 66 Q324.4 40.6 339.1 14.6 Q353.8 40.6 363.6 66 Q382 37.5 409.7 11.5 Q437.3 37.5 455.8 66 Q474.2 30.3 502 4.3 Q529.7 30.3 548.1 66 Q559.1 49.3 575.6 23.3 Q592.1 49.3 603 66 Q648.3 6.7 693.6 66 Q742.8 24.2 792 66 Q824.9 18 857.9 66 Q911.6 20.3 965.3 66 Q1018.7 25.6 1072.2 66 Q1094.1 49.9 1127 23.9 Q1159.9 49.9 1181.8 66 Q1224.9 -2.4 1268.1 66 Q1290 25.3 1322.9 -0.7 Q1355.8 25.3 1377.7 66 Q1406 -2.6 1434.2 66 Q1450.9 30 1437.1 4 Q1423.3 30 1440 66 L1440 72 L0 72 Z" style="fill: var(--mata-3)"/><path d="M0 72 Q7 39.7 17.4 20.2 Q27.9 39.7 34.8 72 Q60.3 36.3 85.7 72 Q97.8 39.5 116 20 Q134.2 39.5 146.3 72 Q177.7 34.2 209.2 72 Q227.7 22 246.1 72 Q265.5 28.3 284.8 72 Q295.1 50 310.6 30.5 Q326.1 50 336.4 72 Q347.5 57.8 364.2 38.3 Q380.9 57.8 392 72 Q431.5 19.7 471 72 Q484.8 61.8 505.6 42.3 Q526.3 61.8 540.1 72 Q564 32.5 587.8 72 Q618.7 41.7 649.5 72 Q680.8 39.8 712 72 Q722.8 60.8 738.9 41.3 Q755 60.8 765.7 72 Q791 19.7 816.3 72 Q855.9 30.6 895.6 72 Q924.8 38.9 954 72 Q979.8 27.6 1005.5 72 Q1024 22.2 1042.5 72 Q1055.4 58.5 1074.9 39 Q1094.4 58.5 1107.3 72 Q1124.2 45.2 1149.4 25.7 Q1174.7 45.2 1191.5 72 Q1208 56 1232.7 36.5 Q1257.3 56 1273.8 72 Q1281.8 43.6 1293.9 24.1 Q1306 43.6 1314.1 72 Q1330.5 50.1 1355.2 30.6 Q1379.9 50.1 1396.3 72 Q1410.4 52.6 1418.2 33.1 Q1425.9 52.6 1440 72 L1440 72 L0 72 Z" fill="currentColor"/></symbol><symbol id="folhas-pendura" viewBox="0 0 1440 96" preserveAspectRatio="none"><path d="M0 14 Q9.1 28 22.8 56.6 Q36.5 28 45.6 14 Q68.1 44.8 101.9 73.4 Q135.6 44.8 158.1 14 Q210.6 72.5 263.2 14 Q286.5 71.9 309.9 14 Q328.5 31 356.3 59.6 Q384.1 31 402.6 14 Q436.1 91.1 469.5 14 Q505.6 60.7 541.7 14 Q595.1 90.7 648.4 14 Q692.3 63 736.1 14 Q789.4 71.2 842.6 14 Q858.9 44.6 883.5 73.2 Q908 44.6 924.4 14 Q945.7 58.9 977.8 87.5 Q1009.9 58.9 1031.2 14 Q1074.2 63 1117.2 14 Q1149.8 60.4 1182.4 14 Q1208 91.6 1233.6 14 Q1271.2 76.6 1308.9 14 Q1353.4 79.9 1397.9 14 Q1419 75.7 1440 14 L1440 0 L0 0 Z" style="fill: var(--mata-3)"/><path d="M0 4 Q17.4 56.8 34.8 4 Q71.3 53.8 107.7 4 Q129.1 48.4 150.4 4 Q184.1 53.8 217.8 4 Q252.8 44.1 287.9 4 Q318 60.8 348.2 4 Q383.6 48.2 419 4 Q426.1 25.4 436.7 46.2 Q447.4 25.4 454.5 4 Q468.7 21.4 490 42.2 Q511.3 21.4 525.5 4 Q564.1 58.3 602.7 4 Q646 37.7 689.3 4 Q711.4 44.1 733.5 4 Q761 53.4 788.5 4 Q818.3 50.1 848.2 4 Q876.5 48.2 904.8 4 Q920.9 21.8 944.9 42.6 Q969 21.8 985 4 Q994.8 19.7 1009.5 40.5 Q1024.2 19.7 1034 4 Q1051.6 59.8 1069.2 4 Q1088.5 40 1107.7 4 Q1116.2 37.1 1128.9 57.9 Q1141.5 37.1 1150 4 Q1183.4 56.6 1216.7 4 Q1227.6 16.3 1243.9 37.1 Q1260.2 16.3 1271.1 4 Q1310.2 38 1349.3 4 Q1391.3 50 1433.3 4 Q1436.6 41.8 1440 4 L1440 0 L0 0 Z" fill="currentColor"/></symbol><symbol id="folhas-sobe" viewBox="0 0 1440 96" preserveAspectRatio="none"><path d="M0 82 Q22.8 26.1 45.6 82 Q87.7 8.9 129.8 82 Q143.6 61.8 164.3 33.2 Q184.9 61.8 198.7 82 Q233.9 30 269.1 82 Q326.1 22 383 82 Q426.7 15.1 470.3 82 Q500.7 11.7 531.1 82 Q550.6 40 579.9 11.4 Q609.2 40 628.7 82 Q654.2 23.5 679.7 82 Q717.1 19.1 754.6 82 Q799 33.9 843.4 82 Q857.6 59.6 878.9 31 Q900.2 59.6 914.3 82 Q936 44 968.5 15.4 Q1001 44 1022.7 82 Q1077.6 19 1132.5 82 Q1145.9 51.6 1165.9 23 Q1185.9 51.6 1199.2 82 Q1227.5 8.2 1255.8 82 Q1291 3.3 1326.2 82 Q1380.5 7 1434.7 82 Q1437.3 9.1 1440 82 L1440 96 L0 96 Z" style="fill: var(--mata-3)"/><path d="M0 94 Q17.4 52 34.8 94 Q44.2 82.1 58.3 61.3 Q72.4 82.1 81.8 94 Q117.9 45.9 154 94 Q169.8 76.8 193.4 56 Q217 76.8 232.7 94 Q246.4 65.7 267 44.9 Q287.5 65.7 301.2 94 Q340.7 61.5 380.2 94 Q405.2 54.8 430.1 94 Q454.2 48.5 478.3 94 Q494.1 68.3 517.8 47.5 Q541.5 68.3 557.3 94 Q591.9 39.9 626.5 94 Q667.8 56.5 709.1 94 Q746.1 58.1 783 94 Q800.2 65 826 44.2 Q851.7 65 868.9 94 Q908.8 48.8 948.7 94 Q968.4 48.8 988.2 94 Q1025 39 1061.7 94 Q1093.3 49.8 1124.9 94 Q1161.7 41.9 1198.4 94 Q1225.8 58.1 1253.1 94 Q1294.4 40.8 1335.7 94 Q1365.3 40.1 1394.9 94 Q1404 60.2 1417.5 39.4 Q1430.9 60.2 1440 94 L1440 96 L0 96 Z" fill="currentColor"/></symbol></svg>
-<a class="pular" href="#conteudo">Pular para o conteúdo</a>
-
-<header class="capa">
-  <picture>
-    <img class="capa-img" src="arte/capa-1600.webp" srcset="arte/capa-1280.webp 1280w, arte/capa-1600.webp 1600w" sizes="100vw"
-         width="1600" height="893" fetchpriority="high" decoding="async"
-         alt="Capa do Lumina: o letreiro Lumina pintado no céu e a Aritana tocando flauta sob uma folha gigante, cercada de crianças e bichos, com peixes voando e ilhas no horizonte.">
-  </picture>
-  <div class="veu-topo" aria-hidden="true"></div>
-  <nav class="topo" aria-label="Seções">
-    <div class="env">
-      <div class="links">
-        <a href="#como-se-joga">Como se joga</a>
-        <a href="#mapa">O mapa</a>
-        <a href="#escola">Para a escola</a>
-      </div>
-      <a class="bt bt-luz" href="#piloto">Pedir um piloto</a>
-    </div>
-  </nav>
-  <div class="chao" aria-hidden="true"><svg class="franja" viewBox="0 0 1440 96" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 30 Q21 -0.7 42 32.3 Q69.9 -8.9 97.8 34.4 Q111.9 24.9 133.2 5.4 Q154.5 24.9 168.6 34.8 Q189.3 2.9 220.4 -16.6 Q251.4 2.9 272.1 30.6 Q317 -3.6 362 26.1 Q375.7 -3.1 396.2 -22.6 Q416.8 -3.1 430.5 25 Q479.4 -5.8 528.3 28 Q558.4 -6.6 588.6 31.3 Q616.8 -5.3 645.1 33.9 Q674.7 -16.8 704.2 35 Q715.4 10.7 732.1 -8.8 Q748.9 10.7 760.1 34.2 Q774.4 4.1 795.9 -15.4 Q817.4 4.1 831.8 30.9 Q872 -12.1 912.3 26.7 Q943.6 -20.2 974.8 25.1 Q988.3 7.6 1008.5 -11.9 Q1028.7 7.6 1042.2 25.8 Q1071.2 -17 1100.1 28.3 Q1135.4 -12.4 1170.7 32.1 Q1217.2 -4.8 1263.7 35 Q1273.9 22 1289.1 2.5 Q1304.3 22 1314.4 34.5 Q1361.5 -1.7 1408.5 30.3 Q1417.5 5.1 1424.3 -14.4 Q1431 5.1 1440 28.6 L1440 96 L0 96 Z" fill="#1a4a3f"/><path d="M0 44 Q6.7 22.6 16.8 7 Q26.9 22.6 33.6 45.8 Q55 14.4 76.3 47.7 Q94.9 7.6 113.4 48.8 Q133.4 8.2 153.4 49 Q184.4 14.4 215.4 47.4 Q225.2 28.9 239.9 13.3 Q254.6 28.9 264.4 45 Q303.2 0.8 341.9 40.9 Q364.2 -1.5 386.5 39.4 Q395.5 28.3 409.1 12.7 Q422.7 28.3 431.7 39 Q468 9.7 504.3 40.9 Q522.4 7.4 540.6 42.6 Q559.6 12.2 578.7 44.7 Q616.5 17.3 654.4 48.2 Q661.9 24.8 673.1 9.2 Q684.3 24.8 691.8 48.9 Q728.7 22 765.5 48 Q787.3 7.9 809.1 46.1 Q851.1 16 893.1 41.6 Q900 24.7 910.4 9.1 Q920.8 24.7 927.7 40.1 Q964.9 8.9 1002 39 Q1031.3 15.4 1060.7 40.5 Q1097.7 14.4 1134.8 44.2 Q1152.6 13.3 1170.3 46.1 Q1205 4.6 1239.7 48.7 Q1262.7 24.4 1285.7 48.9 Q1294.3 37.4 1307.3 21.8 Q1320.3 37.4 1328.9 48 Q1340 32 1356.7 16.4 Q1373.4 32 1384.5 45.6 Q1412.2 3 1440 42.6 L1440 96 L0 96 Z" fill="#123a33"/><path d="M0 54 Q5.3 42.2 13.2 30.5 Q21.1 42.2 26.4 55.4 Q42.5 33 58.5 57 Q85.2 30 111.9 58.7 Q130.6 28.6 149.3 59 Q157.4 39.4 169.7 27.7 Q181.9 39.4 190.1 58.3 Q207.1 36 224.2 57 Q254.3 25.9 284.4 53.9 Q290.8 39.4 300.5 27.7 Q310.1 39.4 316.6 52.2 Q323.7 45.4 334.4 33.7 Q345 45.4 352.2 50.5 Q370.8 21.6 389.4 49.4 Q420.2 24.6 451 49.2 Q478.1 18.1 505.3 50.9 Q519.7 31.9 534.1 52.3 Q545.9 47.3 563.6 35.6 Q581.3 47.3 593.1 55.5 Q599.9 37.4 610.1 25.7 Q620.3 37.4 627.1 57.2 Q643.1 39.8 659.2 58.3 Q683.2 28.2 707.1 59 Q724.9 32.9 742.7 58.6 Q765.3 32.9 788 57.1 Q804.5 26.5 821 55.5 Q845.4 25.2 869.8 52.8 Q876.5 43.1 886.6 31.4 Q896.8 43.1 903.5 51.1 Q910.1 42.5 920.1 30.8 Q930 42.5 936.6 49.8 Q953.9 23.6 971.1 49.1 Q982.7 42.4 1000 30.7 Q1017.4 42.4 1028.9 49.5 Q1051.5 23 1074.1 51 Q1082.6 33.7 1095.3 22 Q1108.1 33.7 1116.6 53.2 Q1123 35.7 1132.7 24 Q1142.3 35.7 1148.8 55 Q1171.7 25.5 1194.6 57.2 Q1214.7 26.1 1234.8 58.6 Q1242.4 46.9 1253.7 35.2 Q1265.1 46.9 1272.7 59 Q1280 43.5 1291 31.8 Q1302 43.5 1309.3 58.6 Q1332.2 26 1355 57 Q1381.7 28.7 1408.3 54.3 Q1424.1 33.1 1440 52.6 L1440 96 L0 96 Z" fill="#0b221f"/></svg><svg class="monte" viewBox="0 0 900 460" aria-hidden="true" focusable="false"><path d="M0 44 Q10.1 15.7 25.2 -12.9 Q40.3 15.7 50.4 45.2 Q77.3 -28.5 104.2 46.4 Q149 -13 193.7 48.5 Q229.6 -2.4 265.4 50.2 Q295.9 -6.5 326.5 51.6 Q349 26.2 382.9 -2.4 Q416.8 26.2 439.4 54.2 Q472.8 -14.9 506.2 55.7 Q524.7 26.8 552.4 -1.8 Q580.1 26.8 598.5 57.9 Q613.3 17.5 635.4 -11.1 Q657.5 17.5 672.2 59.6 Q704.7 1.3 737.2 111 Q762.9 111 788.6 234.4 Q833.6 293.1 878.5 389.9 Q889.2 334.7 900 390 L900 460 L0 460 Z" fill="#1a4a3f"/><path d="M0 62 Q7.9 48 19.8 25.9 Q31.7 48 39.6 62.9 Q47.6 31.8 59.6 9.7 Q71.7 31.8 79.7 63.8 Q89.1 46.2 103.3 24.1 Q117.5 46.2 126.9 64.9 Q159.6 26.2 192.2 66.5 Q211.4 34.8 240 12.7 Q268.7 34.8 287.9 68.7 Q304.2 56.5 328.8 34.4 Q353.4 56.5 369.8 70.6 Q380.1 44.5 395.6 22.4 Q411.1 44.5 421.4 71.8 Q435 58.7 455.5 36.6 Q476 58.7 489.7 73.4 Q501.2 46.2 518.6 24.1 Q536 46.2 547.5 74.7 Q588 14.9 628.4 76.6 Q646.4 59.5 673.4 37.4 Q700.3 59.5 718.3 97.8 Q742.3 87.1 766.2 194.6 Q791.4 221.6 816.7 322.5 Q858.3 336.8 900 408 L900 460 L0 460 Z" fill="#123a33"/><path d="M0 78 Q15.6 34.3 31.2 78.7 Q46.5 57 69.5 40.1 Q92.5 57 107.8 80.5 Q121 71 140.7 54.1 Q160.5 71 173.7 82 Q185.4 71 202.9 54.1 Q220.5 71 232.2 83.4 Q265.2 52.3 298.3 84.9 Q310.1 60.5 327.9 43.6 Q345.7 60.5 357.5 86.3 Q377.5 50.9 397.4 87.2 Q422.6 45.3 447.9 88.4 Q470.7 52.6 493.5 89.4 Q513.6 55.8 533.8 90.4 Q565.4 60.9 596.9 91.8 Q610.2 79.9 630.2 63 Q650.2 79.9 663.5 93.4 Q688.6 47.4 713.8 108.2 Q741.5 124.7 769.2 218.2 Q782.4 277 802.1 260.1 Q821.8 277 835 377.2 Q866.7 385.7 898.4 424 Q899.2 394.9 900 424 L900 460 L0 460 Z" fill="#0b221f"/></svg></div>
-  <div class="chamada">
-    <h1><span class="so-leitor">Lumina. </span><span class="frase-1">O mundo embaraçou.</span> <span class="frase-2">A Candeia está com você.</span></h1>
-    <p>Jogo de cartas de Matemática e Português para o 3º, 4º e 5º ano, alinhado à BNCC.</p>
-    <div class="acoes">
-      <a class="bt bt-luz" href="#piloto">Pedir um piloto</a>
-      <a class="bt bt-vazio" href="#jogo">Ver o jogo rodando</a>
-      <span class="inicio-trilha" data-trilha-inicio aria-hidden="true"></span>
-    </div>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="ceu" aria-hidden="true"></div>
+  <div class="nuvens longe" aria-hidden="true"><div class="camada">
+    <img class="nuvem" src="arte/nuvens/fiapo-1.webp" alt="" width="900" height="264" loading="lazy" decoding="async" style="top:6%;left:66%;--w:380px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-3.webp" alt="" width="798" height="520" loading="lazy" decoding="async" style="top:15%;left:4%;--w:300px">
+    <img class="nuvem" src="arte/nuvens/fiapo-2.webp" alt="" width="900" height="301" loading="lazy" decoding="async" style="top:26%;left:78%;--w:340px">
+    <img class="nuvem" src="arte/nuvens/fiapo-1.webp" alt="" width="900" height="264" loading="lazy" decoding="async" style="top:38%;left:16%;--w:300px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" loading="lazy" decoding="async" style="top:50%;left:62%;--w:320px">
+    <img class="nuvem" src="arte/nuvens/fiapo-2.webp" alt="" width="900" height="301" loading="lazy" decoding="async" style="top:62%;left:2%;--w:360px">
+    <img class="nuvem" src="arte/nuvens/fiapo-1.webp" alt="" width="900" height="264" loading="lazy" decoding="async" style="top:74%;left:74%;--w:300px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" loading="lazy" decoding="async" style="top:86%;left:28%;--w:330px">
+  </div></div>
+  <div class="nuvens meio" aria-hidden="true"><div class="camada">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" loading="lazy" decoding="async" style="top:5%;left:88%;--w:360px">
+    <img class="nuvem" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" loading="lazy" decoding="async" style="top:12%;left:-22%;--w:400px">
+    <img class="nuvem" src="arte/nuvens/cumulo-3.webp" alt="" width="798" height="520" loading="lazy" decoding="async" style="top:21%;left:88%;--w:330px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" loading="lazy" decoding="async" style="top:30%;left:-22%;--w:380px">
+    <img class="nuvem" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" loading="lazy" decoding="async" style="top:40%;left:89%;--w:390px">
+    <img class="nuvem" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" loading="lazy" decoding="async" style="top:50%;left:-22%;--w:360px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-3.webp" alt="" width="798" height="520" loading="lazy" decoding="async" style="top:60%;left:88%;--w:340px">
+    <img class="nuvem" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" loading="lazy" decoding="async" style="top:70%;left:-22%;--w:390px">
+    <img class="nuvem" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" loading="lazy" decoding="async" style="top:80%;left:88%;--w:370px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" loading="lazy" decoding="async" style="top:90%;left:-22%;--w:360px">
+  </div></div>
+  <div class="nuvens frente" aria-hidden="true"><div class="camada">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" loading="lazy" decoding="async" style="top:24%;left:93%;--w:690px">
+    <img class="nuvem" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" loading="lazy" decoding="async" style="top:54%;left:94%;--w:736px">
+    <img class="nuvem esp" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" loading="lazy" decoding="async" style="top:84%;left:93%;--w:690px">
+  </div></div>
+  <div class="luz-cursor" aria-hidden="true"></div>
+  <div class="abertura" aria-hidden="true">
+    <div class="nevoa"></div>
+    <div class="grupo g-esq"><img class="nuvem esp" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" decoding="async" style="left:-14%;top:4%;--w:58vw"><img class="nuvem" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" decoding="async" style="left:-20%;top:34%;--w:62vw"><img class="nuvem esp" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" decoding="async" style="left:-8%;top:60%;--w:52vw"></div>
+    <div class="grupo g-dir"><img class="nuvem" src="arte/nuvens/cumulo-3.webp" alt="" width="798" height="520" decoding="async" style="left:62%;top:2%;--w:52vw"><img class="nuvem" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" decoding="async" style="left:66%;top:30%;--w:60vw"><img class="nuvem esp" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" decoding="async" style="left:58%;top:58%;--w:56vw"></div>
+    <div class="grupo g-baixo"><img class="nuvem" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" decoding="async" style="left:-10%;top:66%;--w:64vw"><img class="nuvem esp" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" decoding="async" style="left:18%;top:70%;--w:60vw"><img class="nuvem" src="arte/nuvens/cumulo-2.webp" alt="" width="900" height="531" decoding="async" style="left:44%;top:66%;--w:64vw"><img class="nuvem" src="arte/nuvens/cumulo-3.webp" alt="" width="798" height="520" decoding="async" style="left:4%;top:80%;--w:58vw"><img class="nuvem esp" src="arte/nuvens/cumulo-4.webp" alt="" width="900" height="470" decoding="async" style="left:40%;top:82%;--w:62vw"><img class="nuvem" src="arte/nuvens/cumulo-1.webp" alt="" width="887" height="522" decoding="async" style="left:70%;top:78%;--w:56vw"></div>
+    <div class="logo-vetor"><img src="arte/lumina-logo.svg" alt="" width="681" height="333"></div>
+    <div class="convite"><span>Role para entrar no mundo</span><i class="estrela4"></i></div>
   </div>
-</header>
+  <div class="abertura-espaco" aria-hidden="true"></div>
+  <a class="hud escondido" href="#piloto" aria-live="polite"><span class="anel"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="trilho" cx="24" cy="24" r="20"/><circle class="carga" cx="24" cy="24" r="20"/></svg><i class="estrela4"></i></span><span class="txt"><small>Luz da Candeia <span class="hud-pct">0%</span></small><b class="hud-missao">Desça e explore</b></span></a>
 
-<main id="conteudo">
-  <svg class="trilha" aria-hidden="true" focusable="false"><path class="pontos" d=""/></svg>
+  <nav class="topo" aria-label="Principal">
+    <button class="abrir-menu" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span class="estrela4" style="width:18px;height:18px;background:#fff" aria-hidden="true"></span></button>
+    <ul class="menu" id="menu">
+      <li><a href="#jogo">O jogo</a></li>
+      <li><a href="#bncc">BNCC</a></li>
+      <li><a href="#escola">Para a escola</a></li>
+      <li><a class="destaque" href="#piloto">Pedir um piloto</a></li>
+    </ul>
+  </nav>
 
-  <!-- ============ PARADA 1: o Embaraço ============ -->
-  <section class="parada p1 lado-dir" id="embaraco" aria-labelledby="t-embaraco">
-    <div class="env">
-      <div class="cabeca">
-        <span class="marco" data-parada="1" aria-hidden="true"></span>
-        <h2 id="t-embaraco">Não é um vilão. É a confusão.</h2>
-        <p>O Embaraço deixou os bichos confusos, e não maus. Quem enxerga o nó desembaraça, e o bicho vira aliado.</p>
-      </div>
-      <div class="elenco">
-        <svg class="fio" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          <path d="M-20 250 C 180 120, 330 330, 540 210 S 880 90, 1060 240 S 1330 330, 1460 190" fill="none" stroke="#a678d8" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 15 7 21 3 17 10 14" opacity="0.8" vector-effect="non-scaling-stroke"/>
-          <path d="M-20 300 C 220 220, 400 380, 620 280 S 960 170, 1180 300 S 1380 360, 1460 260" fill="none" stroke="#a678d8" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 18 9 16 2 22" opacity="0.5" vector-effect="non-scaling-stroke"/>
-        </svg>
-        <figure class="bicho"><img src="arte/formiga.webp" width="480" height="600" loading="lazy" decoding="async" alt="A Contadeira, uma formiga roxa com anéis dourados."><figcaption><b>Contadeira</b><span>A Feira Sem Conta</span></figcaption></figure>
-        <figure class="bicho"><img src="arte/goblin.webp" width="480" height="597" loading="lazy" decoding="async" alt="O Remendo, um duende verde com máscara de caveira e um porrete."><figcaption><b>Remendo</b><span>O Tear que Repete</span></figcaption></figure>
-        <figure class="bicho"><img src="arte/golem.webp" width="480" height="592" loading="lazy" decoding="async" alt="O Prumo, um gigante de pedra coberto de musgo."><figcaption><b>Prumo</b><span>A Vila Torta</span></figcaption></figure>
-        <figure class="bicho"><img src="arte/morcego.webp" width="480" height="599" loading="lazy" decoding="async" alt="O Palmo, um morcego roxo de olhos grandes."><figcaption><b>Palmo</b><span>O Rio Sem Palmo</span></figcaption></figure>
-        <figure class="bicho"><img src="arte/slime.webp" width="480" height="585" loading="lazy" decoding="async" alt="O Pingo, uma gosma verde e sorridente."><figcaption><b>Pingo</b><span>O Campo do Talvez</span></figcaption></figure>
+  <header class="dobra">
+    <div class="cena" aria-hidden="true"><div class="cena-mov">
+      <picture><source srcset="arte/capa.webp" type="image/webp"><img src="arte/capa.jpg" alt="" width="1600" height="893" fetchpriority="high"></picture>
+    </div></div>
+    <div class="veu" aria-hidden="true"></div>
+    <div class="raios" aria-hidden="true"></div>
+    <span class="estrela estrela4" style="left:9%;top:58%;--t:16px;--d:4.2s;--a:.4s" aria-hidden="true"></span>
+    <span class="estrela estrela4" style="left:33%;top:44%;--t:12px;--d:3.4s;--a:1.6s" aria-hidden="true"></span>
+    <span class="estrela estrela4" style="left:47%;top:12%;--t:20px;--d:5s;--a:.9s" aria-hidden="true"></span>
+    <span class="estrela estrela4" style="left:63%;top:6%;--t:12px;--d:3.8s;--a:2.4s" aria-hidden="true"></span>
+    <span class="estrela estrela4" style="left:90%;top:30%;--t:16px;--d:4.6s;--a:3s" aria-hidden="true"></span>
+    <div></div>
+    <div class="chamada">
+      <p class="lema">Desembarace o mundo</p>
+      <h1>O jogo em que a pergunta <em>acende a luz</em>.</h1>
+      <p class="sub">Cartas, criaturas e perguntas da BNCC para o 3º ao 5º ano. Leve até na internet da escola.</p>
+      <div class="acoes">
+        <a class="botao" href="#piloto"><span class="brilho4 estrela4" aria-hidden="true"></span>Pedir um piloto</a>
+        <a class="link-luz" href="#jogo"><span class="brilho4 estrela4" aria-hidden="true"></span>Ver como se joga</a>
       </div>
     </div>
-    <svg class="costura" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
-  </section>
+  </header>
 
-  <!-- ============ PARADA 2: o jogo rodando ============ -->
-  <section class="parada p2 lado-esq" id="jogo" aria-labelledby="t-jogo">
-    <div class="env">
-      <div class="cabeca">
-        <span class="marco" data-parada="2" aria-hidden="true"></span>
-        <h2 id="t-jogo">Anda, encontra, desembaraça.</h2>
-        <p>Três trechos gravados do jogo, rodando no navegador.</p>
-      </div>
-      <div class="jogo">
-        <figure class="quadro"><div class="tela"><video data-auto muted loop playsinline preload="metadata" poster="mundo.jpg" width="1280" height="720" aria-label="O herói caminha pelo Campo do Talvez, com o moinho ao fundo, até um Embaraçado.">
-          <source src="mundo.webm" type="video/webm"><source src="mundo.mp4" type="video/mp4"></video><button class="tocar" type="button" aria-label="Tocar o vídeo"><span class="icone" aria-hidden="true"><svg class="play" viewBox="0 0 24 24"><path d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12.2-7.4a1 1 0 0 0 0-1.72L8.5 3.74A1 1 0 0 0 7 4.6z"/></svg><svg class="pausa" viewBox="0 0 24 24"><rect x="5.5" y="4" width="4.6" height="16" rx="1.4"/><rect x="13.9" y="4" width="4.6" height="16" rx="1.4"/></svg></span></button></div>
-          <figcaption>Andar pelo mapa, até um Embaraçado</figcaption></figure>
-        <div class="jogo-lado">
-          <figure class="quadro"><div class="tela"><video data-auto muted loop playsinline preload="none" poster="pergunta.jpg" width="960" height="540" aria-label="A criança abre a folha de rascunho ao lado da pergunta e faz a conta à mão antes de responder.">
-            <source src="pergunta.webm" type="video/webm"><source src="pergunta.mp4" type="video/mp4"></video><button class="tocar" type="button" aria-label="Tocar o vídeo"><span class="icone" aria-hidden="true"><svg class="play" viewBox="0 0 24 24"><path d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12.2-7.4a1 1 0 0 0 0-1.72L8.5 3.74A1 1 0 0 0 7 4.6z"/></svg><svg class="pausa" viewBox="0 0 24 24"><rect x="5.5" y="4" width="4.6" height="16" rx="1.4"/><rect x="13.9" y="4" width="4.6" height="16" rx="1.4"/></svg></span></button></div>
-            <figcaption>A pergunta, com a folha de rascunho</figcaption></figure>
-          <figure class="quadro"><div class="tela"><video data-auto muted loop playsinline preload="none" poster="leque.jpg" width="960" height="540" aria-label="O leque de cartas aberto na base da tela, com o herói de um lado e o Embaraçado do outro.">
-            <source src="leque.webm" type="video/webm"><source src="leque.mp4" type="video/mp4"></video><button class="tocar" type="button" aria-label="Tocar o vídeo"><span class="icone" aria-hidden="true"><svg class="play" viewBox="0 0 24 24"><path d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12.2-7.4a1 1 0 0 0 0-1.72L8.5 3.74A1 1 0 0 0 7 4.6z"/></svg><svg class="pausa" viewBox="0 0 24 24"><rect x="5.5" y="4" width="4.6" height="16" rx="1.4"/><rect x="13.9" y="4" width="4.6" height="16" rx="1.4"/></svg></span></button></div>
-            <figcaption>O leque de cartas, na hora de agir</figcaption></figure>
+  <main id="conteudo">
+    <svg class="trilha" aria-hidden="true"><defs><mask id="mascara-trilha" maskUnits="userSpaceOnUse"><path class="revela" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round"/></mask></defs>
+      <path class="base"/><path class="acesa" mask="url(#mascara-trilha)"/></svg>
+    <div class="candeia-ponta" aria-hidden="true"><span class="estrela4"></span></div>
+
+    <section class="numeros" aria-label="O Lumina em números">
+      <dl class="fatos">
+        <div class="fato revelar"><dt>Turmas</dt><dd><span class="grande">3º ao 5º</span>ano, Matemática e Português</dd></div>
+        <div class="fato revelar"><dt>Banco de perguntas</dt><dd><span class="grande" data-contar="111">111</span>itens escritos para o jogo</dd></div>
+        <div class="fato revelar"><dt>Currículo</dt><dd><span class="grande" data-contar="79">79</span>das 100 habilidades da BNCC</dd></div>
+        <div class="fato revelar"><dt>Primeira tela</dt><dd><span class="grande" data-contar="58.7" data-casas="1">58,7</span>kB para abrir o jogo</dd></div>
+      </dl>
+      <p class="fonte">Números medidos na versão 3.9.0 do jogo.</p>
+    </section>
+
+    <section class="bichos-secao" id="jogo">
+      <div class="miolo">
+        <div class="revelar">
+          <h2>Não é um vilão. <em>É a confusão.</em></h2>
+          <p class="texto">O Embaraço deixou os bichos confusos, e não maus. Quem enxerga o nó desembaraça, e o bicho vira aliado.</p>
         </div>
+        <ul class="bichos">
+          <li class="bicho revelar"><button type="button" class="interativo" aria-label="Desembaraçar Contadeira"><span class="flutua"><span class="corpo"><img src="arte/formiga.webp" alt="" width="480" height="600" loading="lazy"></span></span><b>Contadeira</b><span class="lugar">A Feira Sem Conta</span><span class="status" aria-live="polite"></span></button></li>
+          <li class="bicho revelar"><button type="button" class="interativo" aria-label="Desembaraçar Remendo"><span class="flutua"><span class="corpo"><img src="arte/goblin.webp" alt="" width="480" height="597" loading="lazy"></span></span><b>Remendo</b><span class="lugar">O Tear que Repete</span><span class="status" aria-live="polite"></span></button></li>
+          <li class="bicho revelar"><button type="button" class="interativo" aria-label="Desembaraçar Prumo"><span class="flutua"><span class="corpo"><img src="arte/golem.webp" alt="" width="480" height="592" loading="lazy"></span></span><b>Prumo</b><span class="lugar">A Vila Torta</span><span class="status" aria-live="polite"></span></button></li>
+          <li class="bicho revelar"><button type="button" class="interativo" aria-label="Desembaraçar Palmo"><span class="flutua"><span class="corpo"><img src="arte/morcego.webp" alt="" width="480" height="599" loading="lazy"></span></span><b>Palmo</b><span class="lugar">O Rio Sem Palmo</span><span class="status" aria-live="polite"></span></button></li>
+          <li class="bicho revelar"><button type="button" class="interativo" aria-label="Desembaraçar Pingo"><span class="flutua"><span class="corpo"><img src="arte/slime.webp" alt="" width="480" height="585" loading="lazy"></span></span><b>Pingo</b><span class="lugar">O Campo do Talvez</span><span class="status" aria-live="polite"></span></button></li>
+        </ul>
+        <p class="dica revelar"><span class="brilho4 estrela4" aria-hidden="true"></span>Toque num bicho para desembaraçar.</p>
       </div>
-    </div>
-    <svg class="costura" style="color: var(--mata)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
-  </section>
+    </section>
 
-  <!-- ============ PARADA 3: como se joga ============ -->
-  <section class="parada p3 lado-dir" id="como-se-joga" aria-labelledby="t-joga">
-    <div class="env">
-      <div class="cabeca">
-        <span class="marco" data-parada="3" aria-hidden="true"></span><h2 id="t-joga">Responder é o que faz o jogo andar.</h2></div>
-      <div class="joga">
-        <ol class="batidas">
-          <li><b>Responde</b><span>Uma pergunta de Matemática ou Português, do ano da criança.</span></li>
-          <li><b>A Candeia enche</b><span>Acertou, 3 de Luz. Errou, 1 de Luz, e a Aritana explica.</span></li>
-          <li><b>Solta um Lume</b><span>Cada carta custa Luz e afrouxa um pouco do nó.</span></li>
-          <li><b>O bicho se solta</b><span>Nó em zero, e ele vira carta na sua mão.</span></li>
-        </ol>
-
-        <div class="demo" id="demo" role="group" aria-labelledby="t-demo">
-          <h3 class="so-leitor" id="t-demo">Demonstração jogável</h3>
-          <img class="demo-pingo" id="pingo" src="arte/slime.webp" width="480" height="585" alt="" loading="lazy" decoding="async">
-          <div class="instrumentos">
-            <figure class="instrumento no" id="inst-no" style="--falta:0;--giro:168deg">
-              <svg viewBox="0 0 260 150" aria-hidden="true" focusable="false">
-                <path class="trilho-arco" d="M20 136 A 110 110 0 0 1 240 136"/>
-                <path class="cheio-arco" d="M20 136 A 110 110 0 0 1 240 136" pathLength="100"/>
-                <g transform="translate(130 136)"><polygon class="agulha" points="-92,0 4,-6 16,0 4,6"/></g>
-                <circle cx="130" cy="136" r="10" fill="#fff4dc"/><circle cx="130" cy="136" r="4" fill="#07191a"/>
-              </svg>
-              <b class="valor"><span id="no-val">26</span> / 26</b>
-              <figcaption>Nó do Pingo Embaraçado</figcaption>
-            </figure>
-            <figure class="instrumento luz" id="inst-luz" style="--falta:100;--giro:12deg">
-              <svg viewBox="0 0 260 150" aria-hidden="true" focusable="false">
-                <path class="trilho-arco" d="M20 136 A 110 110 0 0 1 240 136"/>
-                <path class="cheio-arco" d="M20 136 A 110 110 0 0 1 240 136" pathLength="100"/>
-                <g transform="translate(130 136)"><polygon class="agulha" points="-92,0 4,-6 16,0 4,6"/></g>
-                <circle cx="130" cy="136" r="10" fill="#fff4dc"/><circle cx="130" cy="136" r="4" fill="#07191a"/>
-              </svg>
-              <b class="valor"><span id="luz-val">0</span> / 3</b>
-              <figcaption>Luz da Candeia</figcaption>
-            </figure>
+    <section class="filme" id="filme" aria-labelledby="t-filme">
+      <div class="palco">
+        <div class="palco-titulo">
+          <h2 id="t-filme">Anda, encontra, <em>desembaraça</em>.</h2>
+          <p class="texto">Três trechos gravados do jogo, rodando no navegador.</p>
+        </div>
+        <div class="grade-estatica">
+          <div class="item-filme">
+            <figure class="quadro" data-i="0"><video muted loop playsinline preload="none" poster="video/mundo.jpg" width="1280" height="720" aria-label="Gravação: andar pelo mapa até um Embaraçado"><source src="video/mundo.webm" type="video/webm"><source src="video/mundo.mp4" type="video/mp4"></video></figure>
+            <div class="legenda" data-i="0"><div class="passo-n">1</div><h3>Anda pelo mapa</h3><p>A criança escolhe o caminho e encontra um Embaraçado, com a Aritana por perto.</p></div>
           </div>
-          <div class="fala" id="fala" aria-live="polite">
-            <img src="arte/aritana.webp" width="320" height="314" alt="" loading="lazy" decoding="async">
-            <p id="fala-txt">A medida sumiu. <em>Responda para encher a Candeia.</em></p>
-          </div>
-          <div class="pergunta" id="cx-pergunta">
-            <p id="enunciado"></p>
-            <div class="opcoes" id="opcoes"></div>
-          </div>
-          <div class="lumes" id="lumes" hidden></div>
-          <div class="demo-pe">
-            <p>Perguntas de verdade, do banco do jogo, com as lições da Aritana.</p>
-            <button class="bt-mini" type="button" id="recomecar">Recomeçar</button>
+          <div class="coluna">
+            <div class="item-filme">
+              <figure class="quadro" data-i="1"><video muted loop playsinline preload="none" poster="video/pergunta.jpg" width="960" height="540" aria-label="Gravação: a pergunta, com a folha de rascunho"><source src="video/pergunta.webm" type="video/webm"><source src="video/pergunta.mp4" type="video/mp4"></video></figure>
+              <div class="legenda" data-i="1"><div class="passo-n">2</div><h3>Responde a pergunta</h3><p>Com uma folha de rascunho ao lado, que não é avaliada nem enviada.</p></div>
+            </div>
+            <div class="item-filme">
+              <figure class="quadro" data-i="2"><video muted loop playsinline preload="none" poster="video/leque.jpg" width="960" height="540" aria-label="Gravação: o leque de cartas na hora de agir"><source src="video/leque.webm" type="video/webm"><source src="video/leque.mp4" type="video/mp4"></video></figure>
+              <div class="legenda" data-i="2"><div class="passo-n">3</div><h3>Joga as cartas</h3><p>A Luz da resposta paga os Lumes, e cada carta afrouxa um pouco do nó.</p></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <svg class="costura" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
-  </section>
+    </section>
 
-  <!-- ============ PARADA 4: o mapa é a BNCC ============ -->
-  <section class="parada p4 lado-esq" id="mapa" aria-labelledby="t-mapa">
-    <div class="env">
-      <div class="cabeca">
-        <span class="marco" data-parada="4" aria-hidden="true"></span>
-        <h2 id="t-mapa">Cada lugar do mapa é uma unidade da BNCC.</h2>
-        <p>O professor entende em três segundos. A criança nem repara que está numa grade curricular.</p>
-      </div>
-    </div>
-    <div class="clareira" id="clareira">
-      <div class="mapa-caixa">
-      <svg class="franja-mapa cima" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-pendura"/></svg>
-      <img class="mapa" src="arte/mapa-dia.webp" width="1400" height="781" loading="lazy" decoding="async"
-           alt="O mapa do jogo: campos verdes, pinheiros, um rio com cachoeira e uma ponte, e uma trilha de pontos brancos ligando os lugares.">
-      <div id="lugares-mapa"></div>
-      <svg class="franja-mapa baixo" style="color: var(--mata-2)" aria-hidden="true" focusable="false"><use href="#folhas-sobe"/></svg>
-      </div>
-      <div class="cartao-lugar" id="cartao-lugar" aria-live="polite"></div>
-    </div>
-    <div class="lugares-lista" id="lugares-lista" aria-label="Os lugares do mapa"></div>
-    <div class="env">
-      <p class="nota-mapa">111 perguntas escritas, cobrindo 79 das 100 habilidades da BNCC que o jogo acompanha, do 3º ao 5º ano. E a Ponte de Nuvens, fora do mapa, cobra as cinco unidades em rodízio.</p>
-    </div>
-    <svg class="costura" style="color: var(--mata)" aria-hidden="true" focusable="false"><use href="#folhas-costura"/></svg>
-  </section>
-
-  <!-- ============ PARADA 5: para a escola ============ -->
-  <section class="parada p5 lado-dir" id="escola" aria-labelledby="t-escola">
-    <div class="env">
-      <div class="cabeca">
-        <span class="marco" data-parada="5" aria-hidden="true"></span>
-        <h2 id="t-escola">Abre na internet que a escola tem.</h2>
-        <p>A maioria das escolas públicas brasileiras tem menos de 1 Mbps por aluno no horário de pico (CETIC, 2025). Mexa nos dois controles.</p>
-      </div>
-      <div class="calc">
-        <div class="calc-controles">
-          <div class="controle">
-            <label for="alunos">Alunos abrindo ao mesmo tempo <b id="alunos-val">30</b></label>
-            <input type="range" id="alunos" min="5" max="40" step="1" value="30">
+    <section class="jogar-secao" aria-labelledby="t-jogar">
+      <div class="miolo">
+        <div class="jogar-topo revelar">
+          <div>
+            <h2 id="t-jogar">Responder é o que faz <em>o jogo andar</em>.</h2>
+            <p class="texto">A pergunta é o combustível, não o pedágio. Errar custa o turno, nunca o progresso, e a guia Aritana explica sem dizer "errado".</p>
           </div>
-          <div class="controle">
-            <label for="link">Link da escola, dividido pela sala <b><span id="link-val">1,0</span> Mbps</b></label>
-            <input type="range" id="link" min="5" max="100" step="5" value="10">
-          </div>
+          <button type="button" class="aritana-btn interativo" aria-label="Aritana, a guia do jogo. Clique para ela falar.">
+            <img class="aritana" src="arte/aritana.webp" alt="" width="320" height="314" loading="lazy">
+            <span class="balao" aria-live="polite">Errou? Tudo bem. Eu explico, e a gente tenta de novo.</span>
+          </button>
         </div>
-        <div class="calc-resposta" aria-live="polite">
-          <p class="frase">Com <b id="f-alunos">30 alunos</b> num link de <b id="f-link">1,0 Mbps</b>, a primeira tela do jogo chega para a sala toda em <b class="chega" id="f-tempo">14,4 segundos</b>.</p>
-          <p class="miudo">São 58,7 kB por aluno na primeira tela, medidos no jogo de hoje. A sala baixa <span id="f-total">1,7 MB</span> ao todo.</p>
+        <div class="jogo-corpo">
+          <ol class="passos revelar">
+            <li class="passo"><h3>Responde</h3><p>Uma pergunta de Matemática ou Português, do ano da criança.</p></li>
+            <li class="passo"><h3>A Candeia enche</h3><p>Acertou, 3 de Luz. Errou, 1 de Luz, e a Aritana explica.</p></li>
+            <li class="passo"><h3>Solta um Lume</h3><p>Cada carta custa Luz e afrouxa um pouco do nó.</p></li>
+            <li class="passo"><h3>O bicho se solta</h3><p>Nó em zero, e ele vira carta na sua mão.</p></li>
+          </ol>
+          <ul class="leque revelar" aria-label="Algumas cartas Lume">
+            <li class="carta" style="--r:-24deg"><button type="button" class="interativo" aria-label="Jogar a carta Broto"><img src="arte/cartas/broto.webp" alt="" width="420" height="532" loading="lazy"></button></li>
+            <li class="carta" style="--r:-12deg"><button type="button" class="interativo" aria-label="Jogar a carta Corte"><img src="arte/cartas/corte.webp" alt="" width="420" height="619" loading="lazy"><span class="nome-carta">Corte</span></button></li>
+            <li class="carta" style="--r:0deg"><button type="button" class="interativo" aria-label="Jogar a carta Fagulha"><img src="arte/cartas/fagulha.webp" alt="" width="420" height="620" loading="lazy"><span class="nome-carta">Fagulha</span></button></li>
+            <li class="carta" style="--r:12deg"><button type="button" class="interativo" aria-label="Jogar a carta Fôlego"><img src="arte/cartas/folego.webp" alt="" width="420" height="621" loading="lazy"><span class="nome-carta">Fôlego</span></button></li>
+            <li class="carta" style="--r:24deg"><button type="button" class="interativo" aria-label="Jogar a carta Candeia"><img src="arte/cartas/candeia.webp" alt="" width="420" height="698" loading="lazy"></button></li>
+          </ul>
         </div>
       </div>
+    </section>
 
-      <div class="painel-prof" data-trilha-passa>
-        <h3>O professor tem um painel que a criança nunca baixa.</h3>
-        <div class="painel-grade">
-          <ul class="capacidades">
+    <section class="batalha-secao" id="batalha" aria-labelledby="t-batalha">
+      <div class="miolo">
+        <div class="revelar">
+          <h2 id="t-batalha">Agora é sua vez. <em>Desembarace o Pingo.</em></h2>
+          <p class="texto">Uma batalha de verdade, com perguntas do banco do jogo e cartas com os valores do jogo. Responda para encher a Candeia e use a Luz nas cartas.</p>
+        </div>
+        <div class="arena revelar" role="group" aria-labelledby="t-batalha">
+          <div class="placar">
+            <div class="medidor"><div class="pips" aria-hidden="true"><i class="estrela4"></i><i class="estrela4"></i><i class="estrela4"></i></div><div><small>Luz da Candeia</small><b><span id="b-luz">0</span> de 3</b></div></div>
+            <div class="medidor"><div><small>Nó do Pingo</small><b><span id="b-no">26</span> de 26</b></div><div class="barra-no" aria-hidden="true"><span></span></div></div>
+          </div>
+          <div class="lutador heroi-arena" aria-hidden="true"><img src="arte/heroi-lamina.webp" alt="" height="260"></div>
+          <div class="lutador pingo-arena" aria-hidden="true"><img src="arte/slime.webp" alt="" width="480" height="585"></div>
+          <div class="pergunta-arena" id="b-pergunta"><small id="b-hab">Pergunta</small><p id="b-enunciado"></p><div class="opcoes" id="b-opcoes"></div></div>
+          <div class="mao fechada" id="b-mao" aria-label="Suas cartas Lume"></div>
+          <div class="fala-arena" aria-live="polite"><img src="arte/aritana.webp" alt="" width="320" height="314" loading="lazy"><p id="b-fala">O Pingo está embaraçado. <em>Responda para encher a Candeia.</em></p></div>
+          <div class="fim-arena" id="b-fim">
+            <h3>O Pingo se soltou!</h3>
+            <p>Ele vira carta e vai para a sua mão. No jogo, são cinco lugares como este.</p>
+            <div class="acoes"><button class="botao" type="button" id="b-recomecar"><span class="brilho4 estrela4" aria-hidden="true"></span>Jogar de novo</button><a class="botao botao-claro" href="#piloto"><span class="brilho4 estrela4" aria-hidden="true"></span>Pedir um piloto</a></div>
+          </div>
+        </div>
+        <p class="nota-arena revelar">Perguntas reais do banco do jogo, com a lição da Aritana e o nome do erro que o relatório do professor mostra.</p>
+      </div>
+    </section>
+
+    <section class="mapa-secao" id="bncc" aria-labelledby="t-mapa">
+      <div class="miolo">
+        <div class="revelar">
+          <h2 id="t-mapa">Cada lugar do mapa é <em>uma unidade da BNCC</em>.</h2>
+          <p class="texto">O professor entende em três segundos. A criança nem repara que está numa grade curricular. Escolha um lugar e leve seu herói até lá.</p>
+        </div>
+        <div class="mapa-interativo revelar">
+<div class="mapa-jogo" id="mapa-jogo" data-base="arte/">
+
+
+  <div class="mapa-jogo__palco">
+    <img class="mapa-jogo__fundo" data-arte="mapa-dia.webp" width="1400" height="781" alt="Mapa de Lumina: campos verdes, um caminho de pontinhos, um rio com ponte e uma cachoeira.">
+
+    <svg class="mapa-jogo__trilha" viewBox="0 0 1400 781" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="mapa-jogo-brilho" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="5"/>
+        </filter>
+      </defs>
+      <g data-trilhas></g>
+    </svg>
+
+    <div class="mapa-jogo__seres" data-seres aria-hidden="true"></div>
+
+    <div class="mapa-jogo__heroi" data-heroi-sprite aria-hidden="true">
+      <span class="mapa-jogo__heroi-corpo"><img alt="" data-arte="heroi-lamina.webp" width="399" height="260"></span>
+    </div>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:138;--y:311"
+      data-lugar="1" data-nome="A Feira Sem Conta" data-unidade="Números" data-embaracado="Contadeira" data-ser="formiga.webp" data-balao="abaixo"
+      data-dica="Acertou a pergunta? A Candeia ganha 3 de Luz."
+      aria-label="Lugar 1: A Feira Sem Conta. Unidade: Números. Embaraçado: Contadeira.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">A Feira Sem Conta</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:754;--y:167"
+      data-lugar="2" data-nome="O Tear que Repete" data-unidade="Álgebra" data-embaracado="Remendo" data-ser="goblin.webp" data-balao="abaixo"
+      data-dica="Errou? Ganha 1 de Luz e a Aritana explica."
+      aria-label="Lugar 2: O Tear que Repete. Unidade: Álgebra. Embaraçado: Remendo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">O Tear que Repete</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:1000;--y:318"
+      data-lugar="3" data-nome="A Vila Torta" data-unidade="Geometria" data-embaracado="Prumo" data-ser="golem.webp" data-balao="abaixo"
+      data-dica="A Luz da Candeia paga as cartas. Elas se chamam Lumes."
+      aria-label="Lugar 3: A Vila Torta. Unidade: Geometria. Embaraçado: Prumo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">A Vila Torta</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:1211;--y:498"
+      data-lugar="4" data-nome="O Rio Sem Palmo" data-unidade="Grandezas e medidas" data-embaracado="Palmo" data-ser="morcego.webp" data-balao="esquerda"
+      data-dica="Quando o nó chega a zero, o Embaraçado se solta."
+      aria-label="Lugar 4: O Rio Sem Palmo. Unidade: Grandezas e medidas. Embaraçado: Palmo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">O Rio Sem Palmo</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:414;--y:686"
+      data-lugar="5" data-nome="O Campo do Talvez" data-unidade="Probabilidade e estatística" data-embaracado="Pingo" data-ser="slime.webp" data-balao="acima"
+      data-dica="Quem se solta não vai embora. Vira aliado."
+      aria-label="Lugar 5: O Campo do Talvez. Unidade: Probabilidade e estatística. Embaraçado: Pingo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">O Campo do Talvez</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar mapa-jogo__lugar--ceu" style="--x:500;--y:84"
+      data-lugar="6" data-nome="A Ponte de Nuvens" data-unidade="As cinco, em rodízio" data-embaracado="Os cinco, em rodízio" data-ser="rodizio" data-balao="direita" data-parada="104" data-ser-dx="-88" data-ser-dy="56"
+      data-dica="Fica no céu, fora do mapa. Aqui as cinco unidades voltam em rodízio."
+      aria-label="Lugar 6: A Ponte de Nuvens, no céu. Cobra as cinco unidades em rodízio.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">A Ponte de Nuvens</span>
+    </button>
+
+    <div class="mapa-jogo__faiscas" data-faiscas aria-hidden="true"></div>
+  </div>
+
+  <div class="mapa-jogo__hud">
+    <div class="mapa-jogo__herois" role="group" aria-label="Escolha seu herói">
+      <span class="mapa-jogo__hud-rotulo">Herói</span>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="true" data-heroi="lamina" data-nome="Iberê" data-ancora="0.28" aria-label="Jogar com Iberê" title="Iberê">
+        <img alt="" data-arte="heroi-lamina.webp" width="399" height="260">
+      </button>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="false" data-heroi="adagas" data-nome="Tiê" data-ancora="0.28" aria-label="Jogar com Tiê" title="Tiê">
+        <img alt="" data-arte="heroi-adagas.webp" width="392" height="260">
+      </button>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="false" data-heroi="livro" data-nome="Dandara" data-ancora="0.4" aria-label="Jogar com Dandara" title="Dandara">
+        <img alt="" data-arte="heroi-livro.webp" width="348" height="260">
+      </button>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="false" data-heroi="luvas" data-nome="Juninho" data-ancora="0.5" aria-label="Jogar com Juninho" title="Juninho">
+        <img alt="" data-arte="heroi-luvas.webp" width="268" height="260">
+      </button>
+      <span class="mapa-jogo__heroi-nome" data-heroi-nome>Iberê</span>
+    </div>
+    <p class="mapa-jogo__contador" aria-live="polite">Lugares desembaraçados: <strong data-feitos>0</strong> de 6</p>
+  </div>
+
+  <div class="mapa-jogo__painel" data-painel role="region" aria-label="Lugar escolhido" aria-live="polite"></div>
+</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rede-secao" aria-labelledby="t-rede">
+      <div class="miolo">
+        <div class="revelar">
+          <h2 id="t-rede">Abre na internet <em>que a escola tem</em>.</h2>
+          <p class="texto">A maioria das escolas públicas brasileiras tem menos de 1 Mbps por aluno no horário de pico (CETIC, 2025). Mexa nos dois controles.</p>
+        </div>
+        <div class="rede revelar">
+          <div>
+            <div class="controle"><label for="alunos">Alunos abrindo ao mesmo tempo</label><output id="alunos-valor" for="alunos">30</output><input id="alunos" type="range" min="1" max="40" step="1" value="30"></div>
+            <div class="controle"><label for="link">Link da escola, dividido pela sala</label><output id="link-valor" for="link">1,0 Mbps</output><input id="link" type="range" min="0.5" max="20" step="0.5" value="1"></div>
+          </div>
+          <div class="resultado" aria-live="polite">
+            <div class="tempo"><span id="tempo">14,4</span> s</div>
+            <p>para a primeira tela do jogo chegar à sala toda. São <strong>58,7 kB</strong> por aluno, medidos no jogo de hoje; a sala baixa <strong id="total">1,7 MB</strong> ao todo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="painel-secao" id="escola" aria-labelledby="t-painel">
+      <div class="miolo painel">
+        <div class="revelar">
+          <h2 id="t-painel">O professor tem um painel que <em>a criança nunca baixa</em>.</h2>
+          <ul class="pontos">
             <li><b>A prova que você já tem vira pergunta do jogo.</b><span>Arquivo .docx ou .pdf. Onde o gabarito não aparece, o painel diz que não achou, em vez de chutar.</span></li>
             <li><b>Relatório por habilidade, com o código da BNCC.</b><span>E uma planilha que o Excel em português abre certo.</span></li>
             <li><b>Nenhum nome de aluno acima da turma.</b><span>Escola, DRE e secretaria veem o conjunto, nunca a criança.</span></li>
           </ul>
-          <figure>
-            <img src="arte/painel-relatorios.webp" width="1640" height="1025" loading="lazy" decoding="async"
-                 alt="O painel do professor, na aba Relatórios: uma tabela de habilidades da BNCC do 5º ano, cada linha com o código oficial, a unidade, o objeto de conhecimento, quantos dominaram e o acerto.">
-            <figcaption>Relatórios do painel, com a turma de exemplo que vem nele: nomes e números inventados.</figcaption>
-          </figure>
         </div>
+        <figure class="revelar tela"><img src="arte/painel-relatorios.webp" alt="Tela de relatórios do painel do professor, com habilidades da BNCC por código" width="1640" height="1025" loading="lazy">
+          <figcaption>Relatórios do painel, com a turma de exemplo que vem nele: nomes e números inventados.</figcaption></figure>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ============ PARADA 6: o piloto ============ -->
-  <section class="parada p6" id="piloto" aria-labelledby="t-piloto">
-    <svg class="franja-cena cima" style="color: var(--mata)" aria-hidden="true" focusable="false"><use href="#folhas-pendura"/></svg>
-    <svg class="franja-cena baixo" style="color: #081a18" aria-hidden="true" focusable="false"><use href="#folhas-sobe"/></svg>
-    <img class="fundo" src="arte/mapa-noite.webp" width="1400" height="781" loading="lazy" decoding="async" alt="">
-    <div class="env piloto">
-      <div class="cabeca">
-        <span class="marco" data-parada="6" aria-hidden="true"></span>
-        <h2 id="t-piloto">Um piloto começa com uma turma.</h2>
-        <p>Uma sala, um bimestre e, no fim, os números na mesa: o que a turma dominou, habilidade por habilidade.</p>
+    <section class="herois-secao" aria-labelledby="t-herois">
+      <div class="miolo">
+        <h2 id="t-herois" class="revelar">Quatro heróis, <em>as mesmas regras</em>.</h2>
+        <p class="texto revelar">Cada criança escolhe quem quer ser. Nenhum herói é mais forte que o outro. Clique em um para ver o golpe.</p>
+        <ul class="herois revelar">
+          <li><button type="button" class="heroi interativo" data-h="lamina" aria-label="Iberê: ver o golpe"><span class="sprite"><img src="arte/heroi-lamina.webp" alt="" height="260" loading="lazy"></span><b>Iberê</b></button></li>
+          <li><button type="button" class="heroi interativo" data-h="adagas" aria-label="Tiê: ver o golpe"><span class="sprite"><img src="arte/heroi-adagas.webp" alt="" height="260" loading="lazy"></span><b>Tiê</b></button></li>
+          <li><button type="button" class="heroi interativo" data-h="livro" aria-label="Dandara: ver o golpe"><span class="sprite"><img src="arte/heroi-livro.webp" alt="" height="260" loading="lazy"></span><b>Dandara</b></button></li>
+          <li><button type="button" class="heroi interativo" data-h="luvas" aria-label="Juninho: ver o golpe"><span class="sprite"><img src="arte/heroi-luvas.webp" alt="" height="260" loading="lazy"></span><b>Juninho</b></button></li>
+        </ul>
       </div>
-      <form class="form" id="form-piloto" novalidate>
-        <div class="form-par">
-          <div class="campo"><label for="f-nome">Seu nome</label><input id="f-nome" name="nome" type="text" autocomplete="name" required aria-describedby="e-nome"><span class="ajuda" id="e-nome"></span></div>
+    </section>
+
+    <section class="piloto-secao" id="piloto" aria-labelledby="t-piloto">
+      <div class="miolo piloto">
+        <div class="revelar">
+          <h2 id="t-piloto">Um piloto começa <em>com uma turma</em>.</h2>
+          <p class="texto">Uma sala, um bimestre e, no fim, os números na mesa: o que a turma dominou, habilidade por habilidade.</p>
+        </div>
+        <form id="form-piloto" class="revelar" novalidate>
+          <div class="campo"><label for="f-nome">Seu nome</label><input id="f-nome" name="nome" autocomplete="name" required><span class="erro" id="erro-nome"></span></div>
           <div class="campo"><label for="f-papel">Você é</label>
-            <select id="f-papel" name="papel">
-              <option>Professor ou professora</option>
-              <option>Coordenação pedagógica</option>
-              <option>Direção da escola</option>
-              <option>Secretaria ou DRE</option>
-              <option>Família</option>
-            </select></div>
-        </div>
-        <div class="form-par">
-          <div class="campo"><label for="f-escola">Escola ou rede</label><input id="f-escola" name="escola" type="text" required aria-describedby="e-escola"><span class="ajuda" id="e-escola"></span></div>
-          <div class="campo"><label for="f-cidade">Cidade e UF</label><input id="f-cidade" name="cidade" type="text" autocomplete="address-level2"></div>
-        </div>
-        <div class="campo"><label for="f-contato">E-mail para retorno</label><input id="f-contato" name="contato" type="email" autocomplete="email" required aria-describedby="e-contato"><span class="ajuda" id="e-contato"></span></div>
-        <button class="bt bt-luz" type="submit" id="f-enviar">Pedir um piloto</button>
-        <p class="form-aviso" id="f-aviso" role="status" hidden></p>
-        <p class="form-nota">Só isto: nada de telefone, nada de dado de aluno. O pedido sai como um e-mail para <a href="mailto:claude5@cyberedux.com.br">claude5@cyberedux.com.br</a>.</p>
-      </form>
+            <select id="f-papel" name="papel" required><option value="">Escolha</option><option>Professor ou professora</option><option>Coordenação pedagógica</option><option>Direção da escola</option><option>Secretaria ou DRE</option><option>Família</option></select>
+            <span class="erro" id="erro-papel"></span></div>
+          <div class="campo"><label for="f-escola">Escola ou rede</label><input id="f-escola" name="escola" autocomplete="organization" required><span class="erro" id="erro-escola"></span></div>
+          <div class="campo"><label for="f-cidade">Cidade e UF</label><input id="f-cidade" name="cidade" placeholder="Cuiabá, MT" required><span class="erro" id="erro-cidade"></span></div>
+          <div class="campo cheio"><label for="f-email">E-mail para retorno</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="erro" id="erro-email"></span></div>
+          <div class="enviar">
+            <button class="botao" type="submit"><span class="brilho4 estrela4" aria-hidden="true"></span>Pedir um piloto</button>
+            <p class="aviso">Só isto: nada de telefone, nada de dado de aluno. O pedido sai como um e-mail para claude5@cyberedux.com.br.</p>
+          </div>
+          <p class="estado" id="estado" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="final">
+    <div class="final-fundo" aria-hidden="true"></div>
+    <div class="final-chamada revelar">
+      <h2>Sua turma pode ser a próxima a <em>desembaraçar o mundo</em>.</h2>
+      <p class="texto">Um piloto começa com uma sala e um bimestre. No fim, os números na mesa, habilidade por habilidade.</p>
+      <div class="acoes"><a class="botao botao-claro" href="#piloto"><span class="brilho4 estrela4" aria-hidden="true"></span>Pedir um piloto</a></div>
     </div>
-  </section>
-</main>
+    <div class="final-rodape">
+      <div>
+        <img class="final-marca-peq" src="arte/lumina-logo.svg" alt="Lumina" width="681" height="333" loading="lazy">
+        <p>Jogo educativo de cartas para o 3º, 4º e 5º ano, alinhado à BNCC. Leve até na internet da escola.</p>
+        <p class="copy">© 2026 Lumina. Um projeto da CyberEdux.</p>
+      </div>
+      <nav aria-label="Rodapé: o jogo"><h3>O jogo</h3><ul><li><a href="#jogo">Embaraçados</a></li><li><a href="#batalha">Batalha</a></li><li><a href="#bncc">Mapa e BNCC</a></li></ul></nav>
+      <nav aria-label="Rodapé: para a escola"><h3>Para a escola</h3><ul><li><a href="#escola">Painel do professor</a></li><li><a href="#piloto">Pedir um piloto</a></li></ul></nav>
+    </div>
+    <div class="final-letreiro" aria-hidden="true"></div>
+  </footer>
 
-<footer>
-  <div class="env">
-    <b>Lumina, desembarace o mundo</b>
-    <p>Jogo educativo de navegador para o 3º, 4º e 5º ano. Um projeto da CyberEdux.</p>
-  </div>
-</footer>
-
+<script src="componentes/mapa.js"></script>
 <script>
 (() => {
-  'use strict';
-  const $ = s => document.querySelector(s);
-  const suave = matchMedia('(prefers-reduced-motion: reduce)');
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const temMouse = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const limitar = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const suave = t => t * t * (3 - 2 * t);
+  const fase = (p, a, b) => suave(limitar((p - a) / (b - a)));
+  const misturar = (a, b, t) => a + (b - a) * t;
+  const fmt = (n, c = 0) => n.toLocaleString('pt-BR', { minimumFractionDigits: c, maximumFractionDigits: c });
+  const centro = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
 
-  /* ---------------------------------------------------------------
-     VÍDEO: só roda com o quadro na tela. Três loops decodificando ao
-     mesmo tempo derrubam o Chromebook do laboratório, que é justamente
-     quem este jogo quer alcançar. */
-  const videos = [...document.querySelectorAll('video[data-auto]')];
-  const naTela = new Set();
-  const toca = v => { if (v.preload === 'none') v.preload = 'metadata'; v.play().catch(() => {}); };
-  for (const v of videos) {
-    // Com "reduzir movimento" ligado, nada começa sozinho; o botão toca
-    // do mesmo jeito. Quem pausa com o botão continua pausado ao voltar.
-    v.dataset.quer = suave.matches ? 'nao' : 'sim';
-    const tela = v.closest('.tela'), bt = tela.querySelector('.tocar');
-    const nome = v.closest('figure').querySelector('figcaption').textContent.trim();
-    const marca = () => {
-      tela.classList.toggle('tocando', !v.paused);
-      bt.setAttribute('aria-label', (v.paused ? 'Tocar' : 'Pausar') + ' o vídeo: ' + nome);
-    };
-    v.addEventListener('play', marca);
-    v.addEventListener('pause', marca);
-    bt.addEventListener('click', () => {
-      if (v.paused) { v.dataset.quer = 'sim'; toca(v); }
-      else { v.dataset.quer = 'nao'; v.pause(); }
-    });
-    marca();
-  }
-  if ('IntersectionObserver' in window) {
-    const olho = new IntersectionObserver(ents => {
-      for (const e of ents) {
-        const v = e.target;
-        if (e.isIntersecting) naTela.add(v); else naTela.delete(v);
-        if (e.isIntersecting && v.dataset.quer === 'sim') toca(v);
-        else v.pause();
-      }
-    }, { rootMargin: '120px 0px', threshold: 0.25 });
-    videos.forEach(v => olho.observe(v));
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) videos.forEach(v => v.pause());
-      else naTela.forEach(v => { if (v.dataset.quer === 'sim') toca(v); });
-    });
-  }
-
-  /* ---------------------------------------------------------------
-     A TRILHA
-     Uma curva só, pelas margens, passando por cada anel de parada.
-     Ela é desenhada a partir de onde os anéis ESTÃO, e não de números
-     fixos, e redesenhada quando a página muda de largura. Cada trecho
-     é seu próprio caminho cheio, ligado à linha do tempo de rolagem da
-     sua seção pelo CSS: nenhum ouvinte de scroll aqui. */
-  const main = $('main');
-  const svg = $('.trilha');
-  const NS = 'http://www.w3.org/2000/svg';
-  const desenhaTrilha = () => {
-    if (getComputedStyle(svg).display === 'none') return;
-    const base = main.getBoundingClientRect();
-    const larg = base.width;
-    const pos = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]; };
-    const f = n => n.toFixed(1);
-    const gut = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gut')) || 96;
-    const esq = gut / 2, dir = larg - gut / 2;
-    // cada anel sabe a sua parada; a trilha sai dele pelo lado oposto ao titulo
-    const paradas = [...document.querySelectorAll('.marco[data-parada]')].map(m => {
-      const sec = m.closest('.parada');
-      const r = sec.getBoundingClientRect();
-      const [x, y] = pos(m);
-      const tituloEsq = sec.classList.contains('lado-esq');
-      const vao = sec.querySelector('[data-trilha-passa]');
-      const passa = vao ? vao.getBoundingClientRect().top - base.top - 70 : null;
-      return { x, y, fim: r.bottom - base.top, saida: tituloEsq ? dir : esq, lado: tituloEsq ? 1 : -1, passa };
-    });
-    // descida longa pela margem nao vira regua: serpenteia dentro da margem
-    const desce = (gx, y0, y1) => {
-      const amp = Math.max(8, Math.min(24, gut / 2 - 12));
-      let d = '', y = y0, k = 0;
-      const passos = Math.max(1, Math.round((y1 - y0) / 380));
-      const h = (y1 - y0) / passos;
-      for (let i = 0; i < passos; i++) {
-        const lado = (k++ % 2 ? 1 : -1) * amp;
-        d += ` C ${f(gx + lado)} ${f(y + h * 0.35)}, ${f(gx + lado)} ${f(y + h * 0.65)}, ${f(gx)} ${f(y + h)}`;
-        y += h;
-      }
-      return d;
-    };
-    const [ix, iy] = pos($('[data-trilha-inicio]'));
-    const clareira = $('#clareira .mapa-caixa') || $('#clareira');
-    const cr = clareira.getBoundingClientRect();
-    const clTopo = cr.top - base.top, clBase = cr.bottom - base.top;
-    const trechos = [];
-    const p1 = paradas[0];
-    trechos.push(`M${f(ix)} ${f(iy)} C ${f(ix + 70)} ${f(iy + 90)}, ${f(p1.x)} ${f(p1.y - 150)}, ${f(p1.x)} ${f(p1.y)}`);
-    for (let i = 0; i < paradas.length - 1; i++) {
-      const a = paradas[i], b = paradas[i + 1];
-      let d;
-      if (i === 3) {
-        // o mapa: entra na clareira e vira a trilha pintada; sai pelo pe do mapa, a direita da nota
-        d = `M${f(a.x)} ${f(a.y)} C ${f(a.x + 30)} ${f(a.y + 150)}, ${f(larg * 0.32)} ${f(clTopo - 30)}, ${f(larg * 0.3)} ${f(clTopo + 70)}`;
-        d += ` M${f(larg * 0.82)} ${f(clBase - 50)} C ${f(larg * 0.86)} ${f(clBase + 60)}, ${f(b.x)} ${f(b.y - 160)}, ${f(b.x)} ${f(b.y)}`;
-      } else {
-        const gx = a.saida;
-        const topo = a.y + 150;
-        const fundo = Math.max(topo + 80, a.fim - 160);
-        d = `M${f(a.x)} ${f(a.y)} C ${f(a.x + (gx - a.x) * 0.55)} ${f(a.y)}, ${f(gx)} ${f(a.y + 30)}, ${f(gx)} ${f(topo)}`;
-        let gFim = gx;
-        if (a.passa && a.passa > topo + 120 && a.passa < fundo - 120) {
-          // desce ate o vao, atravessa a pagina por ele e segue pela outra margem
-          const outra = gx === esq ? dir : esq;
-          d += desce(gx, topo, a.passa - 90);
-          d += ` C ${f(gx)} ${f(a.passa - 20)}, ${f(gx + (outra - gx) * 0.25)} ${f(a.passa)}, ${f((gx + outra) / 2)} ${f(a.passa)}`;
-          d += ` C ${f(gx + (outra - gx) * 0.75)} ${f(a.passa)}, ${f(outra)} ${f(a.passa + 20)}, ${f(outra)} ${f(a.passa + 110)}`;
-          d += desce(outra, a.passa + 110, fundo);
-          gFim = outra;
-        } else d += desce(gx, topo, fundo);
-        d += ` C ${f(gFim)} ${f(a.fim - 30)}, ${f(b.x)} ${f(b.y - 170)}, ${f(b.x)} ${f(b.y)}`;
-      }
-      trechos.push(d);
+  /* Explosão de estrelas: usada nos cliques de personagens e cartas. */
+  function estouro(x, y, n = 14, cores = ['#ffd447', '#fff6cf', '#8fd0ff']) {
+    if (semMovimento) return;
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('span'); s.className = 'estouro estrela4';
+      const ang = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 90;
+      s.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(ang) * dist}px;--dy:${Math.sin(ang) * dist - 30}px;--t:${8 + Math.random() * 12}px;--c:${cores[i % cores.length]}`;
+      document.body.appendChild(s); setTimeout(() => s.remove(), 950);
     }
-    svg.setAttribute('viewBox', `0 0 ${f(larg)} ${f(main.offsetHeight)}`);
-    svg.querySelector('.pontos').setAttribute('d', trechos.join(' '));
-    svg.querySelectorAll('.cheia').forEach(p => p.remove());
-    trechos.forEach((d, i) => {
-      if (i === 0) return; // o trecho da capa fica so pontilhado
-      const p = document.createElementNS(NS, 'path');
-      p.setAttribute('class', 'cheia'); p.setAttribute('d', d); p.dataset.p = String(i);
-      svg.appendChild(p);
-      p.style.setProperty('--L', String(Math.ceil(p.getTotalLength()) + 2));
-    });
-  };
-  if ('ResizeObserver' in window) {
-    let pedido = 0;
-    new ResizeObserver(() => { cancelAnimationFrame(pedido); pedido = requestAnimationFrame(desenhaTrilha); }).observe(main);
   }
-  document.fonts?.ready.then(desenhaTrilha);
-  addEventListener('load', desenhaTrilha);
 
-  /* ---------------------------------------------------------------
-     A DEMO: o loop de verdade, com números de verdade.
-     As cartas têm os valores do jogo (src/casca/iniciais/lumes.js) e as
-     perguntas vêm do banco, com a lição da Aritana e o nome do erro que
-     o relatório do professor mostra. */
-  const NO_CHEIO = 26;
-  const PERGUNTAS = [
-    { hab: 'EF03MA07', t: 'Cada caixa da feira tem 4 ovos. Quantos ovos há em 3 caixas?',
-      op: [['7', 'SOMOU_EM_VEZ_DE_MULTIPLICAR'], ['12'], ['34', 'JUNTOU_OS_ALGARISMOS'], ['16', 'CONTOU_UMA_CAIXA_A_MAIS']],
-      licao: 'Três caixas de 4 é 4 + 4 + 4, que dá 12. Multiplicar é somar o mesmo número várias vezes.' },
-    { hab: 'EF35LP12', t: 'A placa do Embaraço escreveu errado. Qual é a forma certa?',
-      op: [['caxorro', 'TROCOU_CH_POR_X'], ['cachoro', 'FALTOU_O_R_DOBRADO'], ['cachorro'], ['caçorro', 'TROCOU_CH_POR_CEDILHA']],
-      licao: 'O som do "ch" pode ser escrito com ch ou com x, e nem sempre dá para saber pelo som. Cachorro é com ch e com dois erres.' },
-    { hab: 'EF03MA24', t: 'Você pagou com uma nota de 10 reais uma fruta de 6 reais. Quanto vem de troco?',
-      op: [['16 reais', 'SOMOU_EM_VEZ_DE_TIRAR'], ['4 reais'], ['6 reais', 'REPETIU_O_PRECO'], ['3 reais', 'CONTAGEM']],
-      licao: 'Troco é o que sobra: de 10 tire 6 e ficam 4 reais.' },
-  ];
-  const LUMES = [
-    { id: 'corte', nome: 'Corte', custo: 1, clareza: 4, img: 'arte/lume-corte.webp' },
-    { id: 'fagulha', nome: 'Fagulha', custo: 2, clareza: 7, img: 'arte/lume-fagulha.webp' },
-    { id: 'folego', nome: 'Fôlego', custo: 1, folego: 6, img: 'arte/lume-folego.webp' },
-  ];
-  const est = { q: 0, luz: 0, no: NO_CHEIO, respondeu: false, fim: false };
-  const elNo = $('#no-val'), elLuz = $('#luz-val'), instNo = $('#inst-no'), instLuz = $('#inst-luz');
-  const fala = $('#fala'), falaTxt = $('#fala-txt'), enun = $('#enunciado'), caixaOp = $('#opcoes'), caixaLumes = $('#lumes'), pingo = $('#pingo');
 
-  const pintar = () => {
-    elNo.textContent = est.no; elLuz.textContent = est.luz;
-    const fNo = est.no / NO_CHEIO, fLuz = est.luz / 3;
-    instNo.style.setProperty('--falta', String(100 - fNo * 100)); instNo.style.setProperty('--giro', (12 + fNo * 156) + 'deg');
-    instLuz.style.setProperty('--falta', String(100 - fLuz * 100)); instLuz.style.setProperty('--giro', (12 + fLuz * 156) + 'deg');
-    [...caixaLumes.children].forEach((b, i) => { b.disabled = est.fim || !est.respondeu || est.luz < LUMES[i].custo; });
-  };
-  const dizer = (html, boa, erro) => {
-    falaTxt.innerHTML = html;
-    if (erro) { const s = document.createElement('span'); s.className = 'erro'; s.textContent = 'No relatório do professor, isto aparece como ' + erro + '.'; falaTxt.appendChild(s); }
-    fala.classList.toggle('boa', !!boa);
-  };
-  const montarPergunta = () => {
-    const p = PERGUNTAS[est.q % PERGUNTAS.length];
-    enun.textContent = p.t;
-    caixaOp.textContent = '';
-    p.op.forEach(([texto, erro]) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'opcao'; b.textContent = texto;
-      b.addEventListener('click', () => responder(b, texto, erro, p));
-      caixaOp.appendChild(b);
-    });
-  };
-  const responder = (b, texto, erro, p) => {
-    if (est.respondeu || est.fim) return;
-    est.respondeu = true;
-    est.luz = erro ? 1 : 3;
-    b.classList.add(erro ? 'escolhida' : 'certa');
-    [...caixaOp.children].forEach((x, j) => { x.disabled = true; if (!p.op[j][1]) x.classList.add('certa'); });
-    if (erro) dizer(p.licao + ' <em>Um fio de Luz, e o turno segue.</em>', false, erro);
-    else dizer('Acertou. <em>A Candeia encheu: 3 de Luz.</em> Agora solte um Lume.', true);
-    caixaLumes.hidden = false;
-    pintar();
-    caixaLumes.querySelector('button:not(:disabled)')?.focus({ preventScroll: true });
-  };
-  const proxima = () => {
-    est.q += 1; est.respondeu = false; est.luz = 0;
-    caixaLumes.hidden = true;
-    montarPergunta(); pintar();
-  };
-  LUMES.forEach(l => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'lume';
-    const img = document.createElement('img'); img.src = l.img; img.alt = ''; img.width = 44; img.height = 56; img.loading = 'lazy';
-    const txt = document.createElement('span');
-    const nome = document.createElement('b'); nome.textContent = l.nome;
-    const dado = document.createElement('small');
-    dado.textContent = 'custa ' + l.custo + ' de Luz, ' + (l.clareza ? 'afrouxa ' + l.clareza : 'devolve ' + l.folego + ' de fôlego');
-    txt.append(nome, dado); b.append(img, txt);
-    b.addEventListener('click', () => {
-      if (est.fim || est.luz < l.custo) return;
-      est.luz -= l.custo;
-      if (l.clareza) { est.no = Math.max(0, est.no - l.clareza); dizer(l.nome + ' afrouxou <em>' + l.clareza + '</em> do nó.'); }
-      else dizer('O fôlego do herói voltou. <em>O nó continua igual, e tudo bem.</em>');
-      if (est.no === 0) {
-        est.fim = true;
-        dizer('O Pingo se soltou. <em>Ele vira carta e vai para a sua mão.</em>', true);
-        pingo.classList.remove('solto'); void pingo.offsetWidth; pingo.classList.add('solto');
-      } else if (est.luz === 0) {
-        falaTxt.insertAdjacentHTML('beforeend', ' <em>Acabou a Luz: vem outra pergunta.</em>');
-        setTimeout(proxima, suave.matches ? 400 : 1400);
+  /* ---------- Abertura: o logo vetorial sai do mar de nuvens e pousa sobre o logo pintado na capa ---------- */
+  const raiz = document.documentElement, abertura = $('.abertura');
+  const usarAbertura = !semMovimento && !!abertura;
+  const logoVetor = $('.logo-vetor'), capaImg = $('.cena img');
+  let origemLogo = [47, 28, 681, 333]; // x, y, largura, altura do logo na capa (1600x893); o SVG pode trazer o valor exato em data-origem
+  if (usarAbertura) {
+    raiz.classList.add('com-abertura');
+    fetch(logoVetor.querySelector('img').getAttribute('src')).then(r => r.ok ? r.text() : Promise.reject()).then(svgTxt => {
+      logoVetor.innerHTML = svgTxt;
+      const s = $('svg', logoVetor), o = s && s.getAttribute('data-origem');
+      if (o) origemLogo = o.split(',').map(Number);
+      ajustarAbertura();
+    }).catch(() => {});
+    logoVetor.classList.add('entrando');
+    if (scrollY < 4) $('.topo').classList.add('escondido');
+  }
+  function retanguloLogoNaCapa() {
+    const r = capaImg.getBoundingClientRect(), nw = 1600, nh = 893;
+    const esc = Math.max(r.width / nw, r.height / nh), w = nw * esc, h = nh * esc;
+    const cs = getComputedStyle(capaImg).objectPosition.split(' ').map(v => parseFloat(v) / 100);
+    const ox = r.left + (r.width - w) * (isNaN(cs[0]) ? .5 : cs[0]), oy = r.top + (r.height - h) * (isNaN(cs[1]) ? .5 : cs[1]);
+    const [x, y, lw, lh] = origemLogo;
+    return { x: ox + x * esc, y: oy + y * esc, w: lw * esc, h: lh * esc };
+  }
+  function ajustarAbertura() {
+    if (!usarAbertura) return;
+    const H = innerHeight, W = innerWidth, p = limitar(scrollY / H);
+    const abre = suave(limitar(p / .85));
+    $('.g-esq', abertura).style.transform = `translate3d(${-abre * 70}vw, ${-abre * 10}vh, 0) scale(${1 + abre * .3})`;
+    $('.g-dir', abertura).style.transform = `translate3d(${abre * 70}vw, ${-abre * 10}vh, 0) scale(${1 + abre * .3})`;
+    const desce = suave(limitar((p - .3) / .6)); $('.g-baixo', abertura).style.transform = `translate3d(0, ${desce * 60}vh, 0) scale(${1 + desce * .25})`;
+    ['.g-esq', '.g-dir', '.g-baixo'].forEach(g => $(g, abertura).style.opacity = (1 - suave(limitar((p - .35) / .55))).toFixed(3));
+    $('.nevoa', abertura).style.opacity = (1 - suave(limitar(p / .7))).toFixed(3);
+    $('.convite', abertura).style.opacity = (1 - limitar(p * 5)).toFixed(3);
+    // logo: começa grande no centro e voa até o lugar do logo pintado na capa
+    const larguraIni = Math.min(W * .74, 980), proporcao = origemLogo[3] / origemLogo[2];
+    const ini = { w: larguraIni, x: (W - larguraIni) / 2, y: H * .36 - larguraIni * proporcao / 2 };
+    const alvo = retanguloLogoNaCapa(), q = suave(limitar((p - .08) / .86));
+    const w = misturar(ini.w, alvo.w, q), x = misturar(ini.x, alvo.x, q), y = misturar(ini.y, alvo.y, q);
+    logoVetor.style.width = '1000px';
+    logoVetor.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${w / 1000})`;
+    logoVetor.style.opacity = (1 - suave(limitar((p - .9) / .1))).toFixed(3);
+    abertura.style.visibility = p >= 1 ? 'hidden' : 'visible';
+    $('.topo').classList.toggle('escondido', p < .55);
+    const dobra = $('.dobra'); dobra.style.setProperty('--capa-op', suave(limitar((p - .62) / .3)).toFixed(3)); dobra.style.setProperty('--ft', ((1 - suave(limitar((p - .5) / .45))) * H * .45).toFixed(0) + 'px');
+  }
+
+  /* ---------- HUD da Candeia: rolagem e interações enchem a Luz ---------- */
+  const hud = $('.hud'), usarHud = !!hud;
+  let luzExplorar = 0, luzAcoes = 0, ultimoPct = -1;
+  const missoes = [['#jogo', 'Conheça os Embaraçados'], ['#filme', 'Veja o jogo rodando'], ['.jogar-secao', 'Aprenda a jogar'], ['#batalha', 'Vença uma batalha'], ['#bncc', 'Explore o mapa'],
+    ['.rede-secao', 'Teste a internet da escola'], ['#escola', 'Conheça o painel do professor'], ['.herois-secao', 'Escolha um herói'], ['#piloto', 'Leve o Lumina para sua escola']];
+  if (usarHud) raiz.classList.add('com-hud');
+  function ganharLuz(qto) { luzAcoes = Math.min(.45, luzAcoes + qto); hud.classList.remove('ganho'); void hud.offsetWidth; hud.classList.add('ganho'); atualizarHud(); }
+  function atualizarHud() {
+    if (!usarHud) return;
+    const docH = document.documentElement.scrollHeight - innerHeight;
+    luzExplorar = Math.max(luzExplorar, limitar(scrollY / docH) * .6);
+    const luz = limitar(luzExplorar + luzAcoes), pct = Math.round(luz * 100);
+    hud.style.setProperty('--luz', luz.toFixed(3));
+    if (pct !== ultimoPct) { $('.hud-pct', hud).textContent = pct + '%'; ultimoPct = pct; }
+    let m = 'Desça e explore';
+    missoes.forEach(([sel, txt]) => { const el = $(sel); if (el && el.getBoundingClientRect().top < innerHeight * .5) m = txt; });
+    if (luz >= .99) m = 'Candeia acesa! Peça um piloto';
+    $('.hud-missao', hud).textContent = m;
+    hud.classList.toggle('acesa', luz >= .99);
+    const rodapeVisivel = $('.final').getBoundingClientRect().top < innerHeight * .7;
+    hud.classList.toggle('escondido', rodapeVisivel || (usarAbertura ? scrollY < innerHeight * .95 : scrollY < innerHeight * .4));
+  }
+  document.addEventListener('lumina:progresso', () => ganharLuz(.06));
+
+  /* Menu do celular. */
+  const topo = $('.topo'), botaoMenu = $('.abrir-menu', topo);
+  botaoMenu.addEventListener('click', () => { const a = topo.classList.toggle('aberto'); botaoMenu.setAttribute('aria-expanded', a); botaoMenu.setAttribute('aria-label', a ? 'Fechar menu' : 'Abrir menu'); });
+  $$('.menu a', topo).forEach(a => a.addEventListener('click', () => topo.classList.remove('aberto')));
+
+  /* Cursor da Candeia: brilho que segue o mouse e rastro de faíscas. */
+  if (temMouse && !semMovimento) {
+    const luz = $('.luz-cursor'); let mx = -500, my = -500, lx = -500, ly = -500, ultima = 0;
+    addEventListener('pointermove', e => {
+      mx = e.clientX; my = e.clientY; luz.classList.add('ligada');
+      luz.classList.toggle('sobre', !!e.target.closest('a, button, .interativo, input, select'));
+      const agora = performance.now();
+      if (agora - ultima > 45 && document.querySelectorAll('.faisca').length < 22) {
+        ultima = agora; const f = document.createElement('span'); f.className = 'faisca estrela4'; const t = 6 + Math.random() * 6;
+        f.style.cssText = `left:${mx}px;top:${my}px;--dx:${(Math.random() - .5) * 30}px;--dy:${12 + Math.random() * 24}px;width:${t}px;height:${t}px`;
+        document.body.appendChild(f); setTimeout(() => f.remove(), 720);
       }
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => luz.classList.remove('ligada'));
+    (function seguir() { lx = misturar(lx, mx, .18); ly = misturar(ly, my, .18); luz.style.transform = `translate3d(${lx}px, ${ly}px, 0)`; requestAnimationFrame(seguir); })();
+  }
+
+  /* A capa acompanha o cursor de leve. */
+  if (temMouse && !semMovimento && innerWidth > 760) {
+    const cena = $('.cena-mov');
+    addEventListener('pointermove', e => {
+      if (scrollY > innerHeight * (usarAbertura ? 2 : 1) || (usarAbertura && scrollY < innerHeight * .9)) return;
+      cena.style.translate = `${(e.clientX / innerWidth - .5) * -18}px ${(e.clientY / innerHeight - .5) * -12}px`;
+    }, { passive: true });
+  }
+
+  /* Revelação ao rolar: o CSS faz onde há suporte; aqui só o reserva. */
+  if (!CSS.supports('animation-timeline: view()') || semMovimento) {
+    const els = $$('.revelar');
+    if (semMovimento || !('IntersectionObserver' in window)) els.forEach(e => e.classList.add('visivel'));
+    else { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visivel'); io.unobserve(e.target); } }), { threshold: .12 }); els.forEach(e => io.observe(e)); }
+  }
+
+  /* Números que contam ao aparecer. */
+  if (!semMovimento && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return; io.unobserve(e.target);
+      const el = e.target, alvo = +el.dataset.contar, casas = +(el.dataset.casas || 0), t0 = performance.now();
+      (function passo(t) { const p = suave(limitar((t - t0) / 1400)); el.textContent = fmt(alvo * p, casas); if (p < 1) requestAnimationFrame(passo); })(t0);
+    }), { threshold: .6 });
+    $$('[data-contar]').forEach(c => io.observe(c));
+  }
+
+  /* Embaraçados: inclinam na direção do cursor; clique desembaraça. */
+  const frasesSolto = ['Se soltou!', 'Virou aliado!', 'Desembaraçou!', 'Agora é carta!', 'Clareza!'];
+  $$('.bicho').forEach((li, i) => {
+    const btn = $('button', li), corpo = $('.corpo', li), status = $('.status', li);
+    if (temMouse && !semMovimento) {
+      btn.addEventListener('pointermove', e => { const r = btn.getBoundingClientRect();
+        corpo.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - .5) * 22}deg`); corpo.style.setProperty('--rx', `${-((e.clientY - r.top) / r.height - .5) * 16}deg`); });
+      btn.addEventListener('pointerleave', () => { corpo.style.setProperty('--ry', '0deg'); corpo.style.setProperty('--rx', '0deg'); });
+    }
+    btn.addEventListener('click', () => {
+      li.classList.remove('solto'); void li.offsetWidth; li.classList.add('solto');
+      status.textContent = frasesSolto[i % frasesSolto.length];
+      const [x, y] = centro($('img', li)); estouro(x, y, 18); if (!li._deuLuz) { li._deuLuz = true; ganharLuz(.04); }
+      clearTimeout(li._t); li._t = setTimeout(() => { li.classList.remove('solto'); status.textContent = ''; }, 2600);
+    });
+  });
+
+  /* Aritana fala ao clicar. */
+  const ari = $('.aritana-btn'), falas = ['Errou? Tudo bem. Eu explico, e a gente tenta de novo.', 'Aqui ninguém perde. A gente desembaraça.', 'Use a folha de rascunho. Ela não vale nota!', 'Cada acerto enche a Candeia com 3 de Luz.'];
+  let fala = 0;
+  ari.addEventListener('click', () => { fala = (fala + 1) % falas.length; $('.balao', ari).textContent = falas[fala]; ari.classList.add('falando'); clearTimeout(ari._t); ari._t = setTimeout(() => ari.classList.remove('falando'), 3200); const [x, y] = centro(ari); estouro(x, y - 40, 8); });
+
+  /* Cartas Lume: clique joga a carta, que volta para a mão. */
+  $$('.carta').forEach(c => $('button', c).addEventListener('click', () => {
+    if (c.classList.contains('jogada')) return;
+    const [x, y] = centro(c); estouro(x, y - 60, 16, ['#ffd447', '#ff9a3c', '#fff6cf']);
+    c.classList.add('jogada'); setTimeout(() => c.classList.remove('jogada'), 900); if (!c._deuLuz) { c._deuLuz = true; ganharLuz(.02); }
+  }));
+
+  /* Heróis: clique mostra o golpe (quadros do próprio jogo). */
+  $$('.heroi').forEach(h => {
+    const img = $('img', h), nome = h.dataset.h, base = img.getAttribute('src'), quadros = [`arte/heroi-${nome}-golpe-1.webp`, `arte/heroi-${nome}-golpe-2.webp`];
+    quadros.forEach(q => { const i = new Image(); i.src = q; });
+    h.addEventListener('click', () => {
+      if (h._ocupado) return; h._ocupado = true; h.classList.add('golpe');
+      const [x, y] = centro(img); estouro(x + 30, y, 12); if (!h._deuLuz) { h._deuLuz = true; ganharLuz(.02); }
+      img.src = quadros[0]; setTimeout(() => { img.src = quadros[1]; }, 140);
+      setTimeout(() => { img.src = quadros[0]; }, 360); setTimeout(() => { img.src = base; h.classList.remove('golpe'); h._ocupado = false; }, 560);
+    });
+  });
+
+  /* Painel: inclina levemente com o cursor. */
+  if (temMouse && !semMovimento) {
+    const tela = $('.painel .tela'), im = $('img', tela);
+    tela.addEventListener('pointermove', e => { const r = tela.getBoundingClientRect();
+      im.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - .5) * 10}deg`); im.style.setProperty('--rx', `${-((e.clientY - r.top) / r.height - .5) * 8}deg`); });
+    tela.addEventListener('pointerleave', () => { im.style.setProperty('--ry', '-8deg'); im.style.setProperty('--rx', '3deg'); });
+  }
+
+  /* Sequência dos vídeos (fixa na tela): cada um entra desfocado com a legenda; no fim, todos se juntam. */
+  const filme = $('#filme'), palco = $('.palco', filme), quadros = $$('.quadro', filme), legendas = $$('.legenda', filme), videos = quadros.map(q => $('video', q));
+  const usarFilme = !semMovimento && innerWidth > 900;
+  let geo = null;
+  function medirFilme() {
+    const W = innerWidth, H = innerHeight, gutter = Math.min(56, Math.max(16, W * .04));
+    const largura = Math.min(1240, W - 2 * gutter), x0 = (W - largura) / 2;
+    const soloW = Math.min(largura * .62, (H * .58) * 16 / 9), soloH = soloW * 9 / 16;
+    const solo = { x: x0 + largura - soloW, y: Math.max(H * .3, (H - soloH) / 2 + H * .08) };
+    const topoGrade = H * .3, alturaGrade = H * .62, gap = 24;
+    let wBig = (largura - gap) * 1.7 / 2.7, hBig = wBig * 9 / 16;
+    if (hBig > alturaGrade) { hBig = alturaGrade; wBig = hBig * 16 / 9; }
+    const wPeq = Math.min((largura - gap) - wBig, ((hBig - gap) / 2) * 16 / 9), hPeq = wPeq * 9 / 16, xDir = x0 + wBig + gap;
+    geo = { solo, soloW, H, grade: [{ x: x0, y: topoGrade, w: wBig }, { x: xDir, y: topoGrade, w: wPeq }, { x: xDir, y: topoGrade + hPeq + gap, w: wPeq }] };
+    filme.style.setProperty('--solo-w', soloW + 'px');
+  }
+  function tocar(v, sim) { if (sim) { if (v.preload === 'none') { v.preload = 'auto'; v.load(); } if (v.paused) v.play().catch(() => {}); } else if (!v.paused) v.pause(); }
+  if (usarFilme) {
+    medirFilme();
+    legendas.forEach(l => palco.appendChild(l)); quadros.forEach(q => palco.appendChild(q));
+    $('.grade-estatica', filme).remove();
+  } else {
+    filme.classList.add('estatico');
+    if (!semMovimento && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => es.forEach(e => tocar(e.target, e.isIntersecting)), { threshold: .35 });
+      videos.forEach(v => io.observe(v));
+    } else videos.forEach(v => v.controls = true);
+  }
+  function quadroFilme() {
+    const r = filme.getBoundingClientRect(), total = r.height - innerHeight;
+    if (r.bottom < 0 || r.top > innerHeight) { videos.forEach(v => tocar(v, false)); return; }
+    const p = limitar(-r.top / total), { solo, grade, soloW, H } = geo, final = fase(p, .80, .93);
+    quadros.forEach((q, i) => {
+      const s = .06 + i * .24, entra = fase(p, s, s + .12), g = grade[i];
+      const vaiGrade = i < 2 ? fase(p, s + .2, s + .28) : final;
+      const x = misturar(solo.x, g.x, vaiGrade), y = misturar(misturar(solo.y + H * .55, solo.y, entra), g.y, vaiGrade);
+      const esc = misturar(misturar(.86, 1, entra), g.w / soloW, vaiGrade);
+      const esperando = i < 2 ? vaiGrade * (1 - final) : 0;
+      const opac = entra * misturar(1, .14, esperando), desfoque = (1 - entra) * 18 + esperando * 8;
+      q.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${esc})`;
+      q.style.opacity = opac.toFixed(3);
+      q.style.filter = desfoque > .3 ? `blur(${desfoque.toFixed(1)}px)` : 'none';
+      q.style.zIndex = esperando > .5 ? 1 : 3;
+      tocar(videos[i], entra > .5 && (esperando < .5 || final > .5));
+      const l = legendas[i], lIn = fase(p, s + .03, s + .11), lOut = i < 2 ? fase(p, s + .17, s + .23) : fase(p, .76, .82), lo = lIn * (1 - lOut);
+      l.style.opacity = lo.toFixed(3);
+      l.style.transform = `translateY(calc(-50% + ${((1 - lIn) * 60 - lOut * 40).toFixed(1)}px))`;
+      l.style.filter = lo < .98 ? `blur(${((1 - lo) * 12).toFixed(1)}px)` : 'none';
+    });
+  }
+
+  /* Trilha pontilhada: liga as seções pelas bordas e acende conforme a rolagem; a Candeia vai na ponta. */
+  const main = $('main'), svg = $('.trilha'), pBase = $('.trilha .base'), pAcesa = $('.trilha .acesa'), pMasc = $('.trilha .revela'), ponta = $('.candeia-ponta');
+  let compr = 0;
+  function montarTrilha() {
+    const W = main.clientWidth, H = main.scrollHeight;
+    svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const secoes = $$(':scope > section', main), mobile = W <= 760;
+    const esq = mobile ? 10 : Math.max(18, W * .022), dir = W - esq;
+    let lado = 0, d = `M ${esq} ${secoes[0].offsetTop + 40}`;
+    for (let i = 1; i < secoes.length; i++) {
+      const yIni = secoes[i - 1].offsetTop + 40, yB = secoes[i].offsetTop, xA = lado ? dir : esq, xB = lado ? esq : dir;
+      const ondas = Math.max(1, Math.round((yB - 90 - yIni) / 420)), passo = (yB - 90 - yIni) / ondas;
+      for (let k = 1; k <= ondas; k++) { const y = yIni + passo * k, amp = (lado ? -1 : 1) * (mobile ? 6 : 14); d += ` Q ${(xA + amp).toFixed(1)} ${(y - passo / 2).toFixed(1)} ${xA.toFixed(1)} ${y.toFixed(1)}`; }
+      d += ` C ${xA.toFixed(1)} ${yB - 10}, ${xB.toFixed(1)} ${yB - 10}, ${xB.toFixed(1)} ${yB + 90}`;
+      lado = 1 - lado;
+    }
+    const ultima = secoes[secoes.length - 1];
+    d += ` L ${(lado ? dir : esq).toFixed(1)} ${ultima.offsetTop + ultima.offsetHeight - 60}`;
+    [pBase, pAcesa, pMasc].forEach(p => p.setAttribute('d', d));
+    compr = pBase.getTotalLength();
+    pMasc.style.strokeDasharray = `${compr} ${compr}`;
+  }
+  function quadroTrilha() {
+    const r = main.getBoundingClientRect(), p = limitar((innerHeight * .55 - r.top) / main.scrollHeight), L = compr * p;
+    pMasc.style.strokeDashoffset = compr - L;
+    const pt = pBase.getPointAtLength(L);
+    ponta.style.transform = `translate3d(${pt.x}px, ${pt.y}px, 0)`;
+    ponta.style.opacity = p > .003 && p < .998 ? 1 : 0;
+  }
+
+  /* Menu flutuante e item atual. */
+  const links = $$('.menu a'), alvos = links.map(a => $(a.getAttribute('href')));
+  function quadroMenu() {
+    topo.classList.toggle('fixo', scrollY > innerHeight * (usarAbertura ? 1.6 : .6));
+    let atual = -1; alvos.forEach((s, i) => { if (s && s.getBoundingClientRect().top < innerHeight * .4) atual = i; });
+    links.forEach((a, i) => a.classList.toggle('atual', i === atual && !a.classList.contains('destaque')));
+  }
+
+  /* Um só laço de quadros: só trabalha quando a rolagem ou o tamanho mudam. */
+  let ultimoY = -1, ultimoW = -1, ultimoH = -1;
+  function laco() {
+    const mudouTam = innerWidth !== ultimoW || main.scrollHeight !== ultimoH;
+    if (scrollY !== ultimoY || mudouTam) {
+      if (mudouTam) { ultimoW = innerWidth; ultimoH = main.scrollHeight; montarTrilha(); if (usarFilme) medirFilme(); }
+      ultimoY = scrollY;
+      quadroMenu();
+      ajustarAbertura();
+      atualizarHud();
+      if (!semMovimento) quadroTrilha();
+      if (usarFilme) quadroFilme();
+    }
+    requestAnimationFrame(laco);
+  }
+  if (semMovimento) { montarTrilha(); pMasc.style.strokeDashoffset = 0; }
+  requestAnimationFrame(laco);
+
+
+  /* ---------- Batalha jogável: perguntas reais do banco e cartas com os valores do jogo ---------- */
+  (() => {
+    const arena = $('.arena'); if (!arena) return;
+    const NO_CHEIO = 26;
+    const PERGUNTAS = [
+      { hab: 'EF03MA07', t: 'Cada caixa da feira tem 4 ovos. Quantos ovos há em 3 caixas?',
+        op: [['7', 'SOMOU_EM_VEZ_DE_MULTIPLICAR'], ['12'], ['34', 'JUNTOU_OS_ALGARISMOS'], ['16', 'CONTOU_UMA_CAIXA_A_MAIS']],
+        licao: 'Três caixas de 4 é 4 + 4 + 4, que dá 12. Multiplicar é somar o mesmo número várias vezes.' },
+      { hab: 'EF35LP12', t: 'A placa do Embaraço escreveu errado. Qual é a forma certa?',
+        op: [['caxorro', 'TROCOU_CH_POR_X'], ['cachoro', 'FALTOU_O_R_DOBRADO'], ['cachorro'], ['caçorro', 'TROCOU_CH_POR_CEDILHA']],
+        licao: 'O som do "ch" pode ser escrito com ch ou com x, e nem sempre dá para saber pelo som. Cachorro é com ch e com dois erres.' },
+      { hab: 'EF03MA24', t: 'Você pagou com uma nota de 10 reais uma fruta de 6 reais. Quanto vem de troco?',
+        op: [['16 reais', 'SOMOU_EM_VEZ_DE_TIRAR'], ['4 reais'], ['6 reais', 'REPETIU_O_PRECO'], ['3 reais', 'CONTAGEM']],
+        licao: 'Troco é o que sobra: de 10 tire 6 e ficam 4 reais.' },
+    ];
+    const LUMES = [
+      { nome: 'Corte', custo: 1, clareza: 4, img: 'arte/cartas/corte.webp', r: -14 },
+      { nome: 'Fagulha', custo: 2, clareza: 7, img: 'arte/cartas/fagulha.webp', r: 0 },
+      { nome: 'Fôlego', custo: 1, folego: 6, img: 'arte/cartas/folego.webp', r: 14 },
+    ];
+    const est = { q: 0, luz: 0, no: NO_CHEIO, respondeu: false, fim: false };
+    const elLuz = $('#b-luz'), elNo = $('#b-no'), pips = $$('.pips i', arena), barra = $('.barra-no', arena), fala = $('#b-fala');
+    const caixaP = $('#b-pergunta'), enun = $('#b-enunciado'), hab = $('#b-hab'), ops = $('#b-opcoes'), mao = $('#b-mao'), fim = $('#b-fim');
+    const pingo = $('.pingo-arena', arena), heroi = $('.heroi-arena', arena), heroiImg = $('img', heroi);
+    const pintar = () => {
+      elLuz.textContent = est.luz; elNo.textContent = est.no;
+      pips.forEach((p, i) => p.classList.toggle('on', i < est.luz));
+      barra.style.setProperty('--no', (est.no / NO_CHEIO).toFixed(3));
+      $$('.lume-carta', mao).forEach((b, i) => b.disabled = est.fim || !est.respondeu || est.luz < LUMES[i].custo);
+    };
+    const dizer = (html, erro) => { fala.innerHTML = html; if (erro) { const s = document.createElement('span'); s.className = 'erro-nome'; s.textContent = 'No relatório do professor: ' + erro; fala.appendChild(s); } };
+    const montarPergunta = () => {
+      const p = PERGUNTAS[est.q % PERGUNTAS.length];
+      hab.textContent = 'Pergunta ' + (est.q % PERGUNTAS.length + 1) + ' · BNCC ' + p.hab;
+      enun.textContent = p.t; ops.textContent = '';
+      p.op.forEach(([texto, erro]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'opcao interativo'; b.textContent = texto;
+        b.addEventListener('click', () => responder(b, erro, p)); ops.appendChild(b);
+      });
+      caixaP.classList.remove('some'); mao.classList.add('fechada');
+    };
+    const responder = (b, erro, p) => {
+      if (est.respondeu || est.fim) return;
+      est.respondeu = true; est.luz = erro ? 1 : 3;
+      b.classList.add(erro ? 'errada' : 'certa');
+      [...ops.children].forEach((x, j) => { x.disabled = true; if (!p.op[j][1]) x.classList.add('certa'); });
+      const [x, y] = centro($('.pips', arena)); estouro(x, y, erro ? 6 : 16);
+      if (erro) dizer(p.licao + ' <em>Um fio de Luz, e o turno segue.</em>', erro);
+      else dizer('Acertou! <em>A Candeia encheu: 3 de Luz.</em> Agora solte um Lume.');
       pintar();
+      setTimeout(() => { caixaP.classList.add('some'); mao.classList.remove('fechada'); pintar(); }, semMovimento ? 200 : 1300);
+    };
+    const proxima = () => { est.q += 1; est.respondeu = false; est.luz = 0; montarPergunta(); pintar(); };
+    LUMES.forEach((l, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'lume-carta interativo'; b.style.setProperty('--r', l.r + 'deg'); b.style.left = (i - 1) * 9 + 'vw';
+      b.setAttribute('aria-label', `${l.nome}: custa ${l.custo} de Luz, ${l.clareza ? 'afrouxa ' + l.clareza + ' do nó' : 'devolve ' + l.folego + ' de fôlego'}`);
+      b.innerHTML = `<img src="${l.img}" alt="" width="420" height="620" loading="lazy"><span class="custo">${l.custo}</span><span class="nome-l">${l.nome}</span><span class="efeito">${l.clareza ? 'Afrouxa ' + l.clareza : 'Fôlego +' + l.folego}</span>`;
+      b.addEventListener('click', () => jogar(b, l));
+      mao.appendChild(b);
     });
-    caixaLumes.appendChild(b);
-  });
-  $('#recomecar').addEventListener('click', () => {
-    Object.assign(est, { q: 0, luz: 0, no: NO_CHEIO, respondeu: false, fim: false });
-    caixaLumes.hidden = true; pingo.classList.remove('solto');
-    dizer('A medida sumiu. <em>Responda para encher a Candeia.</em>');
-    montarPergunta(); pintar();
-    caixaOp.querySelector('button')?.focus({ preventScroll: true });
-  });
-  montarPergunta(); pintar();
-
-  /* ---------------------------------------------------------------
-     O MAPA: onde o mapa do jogo põe cada lugar, em % da ilustração. */
-  const LUGARES = [
-    { n: 'O Tear que Repete', u: 'Álgebra', x: 34.4, y: 20, e: 'O desenho errou a repetição. O padrão do tecido começa certo e some no meio do caminho.', c: ['EF04MA11', 'sequências e regularidades'] },
-    { n: 'A Vila Torta', u: 'Geometria', x: 61.3, y: 30, e: 'As casas entortaram. Ângulo, simetria e planta baixa deixaram de combinar entre si.', c: ['EF05MA16', 'ângulos e figuras planas'] },
-    { n: 'A Feira Sem Conta', u: 'Números', x: 26.5, y: 51.6, e: 'Ninguém fecha o troco. As bancas anunciam preço e o dinheiro não bate com o que se leva.', c: ['EF03MA24', 'sistema monetário e troco'] },
-    { n: 'O Rio Sem Palmo', u: 'Grandezas e medidas', x: 80.3, y: 58.6, e: 'Sumiu o tamanho de tudo. Comprimento, massa, tempo e capacidade perderam a referência.', c: ['EF03MA19', 'medidas de comprimento'] },
-    { n: 'O Campo do Talvez', u: 'Probabilidade e estatística', x: 64.7, y: 76, e: 'Tudo virou "sei lá". Ninguém sabe mais o que é provável, o que é certo e o que é impossível.', c: ['EF04MA26', 'probabilidade e possibilidades'] },
-  ];
-  const noMapa = $('#lugares-mapa'), lista = $('#lugares-lista'), cartao = $('#cartao-lugar');
-  const botoes = [];
-  const mostrar = i => {
-    const l = LUGARES[i];
-    botoes.forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.i) === i)));
-    const chip = lista.querySelector(`button[data-i="${i}"]`);
-    if (chip && lista.scrollWidth > lista.clientWidth) {
-      const gut = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gut')) || 20;
-      // so o trilho de chips rola; a pagina fica onde esta
-      lista.scrollTo({ left: Math.max(0, chip.offsetLeft - gut), behavior: suave.matches ? 'auto' : 'smooth' });
+    function jogar(b, l) {
+      if (est.fim || !est.respondeu || est.luz < l.custo) return;
+      est.luz -= l.custo;
+      const rC = b.getBoundingClientRect(), rP = pingo.getBoundingClientRect();
+      if (!semMovimento) {
+        b.style.transform = `translate(${rP.left + rP.width / 2 - (rC.left + rC.width / 2)}px, ${rP.top + rP.height / 2 - (rC.top + rC.height / 2)}px) rotate(20deg) scale(.5)`;
+        b.classList.add('voando');
+        heroi.classList.add('avanca'); heroiImg.src = 'arte/heroi-lamina-golpe-1.webp';
+        setTimeout(() => { heroiImg.src = 'arte/heroi-lamina-golpe-2.webp'; }, 160);
+      }
+      setTimeout(() => {
+        heroi.classList.remove('avanca'); heroiImg.src = 'arte/heroi-lamina.webp';
+        b.classList.remove('voando'); b.style.transform = '';
+        if (l.clareza) {
+          est.no = Math.max(0, est.no - l.clareza);
+          pingo.classList.remove('atingido'); void pingo.offsetWidth; pingo.classList.add('atingido');
+          const d = document.createElement('span'); d.className = 'dano'; d.textContent = '-' + l.clareza;
+          const rA = arena.getBoundingClientRect(); d.style.left = (rP.left - rA.left + rP.width * .4) + 'px'; d.style.top = (rP.top - rA.top) + 'px';
+          arena.appendChild(d); setTimeout(() => d.remove(), 1000);
+          const [x, y] = centro(pingo); estouro(x, y, 12, ['#ffd447', '#ff9a3c', '#fff6cf']);
+          dizer(`${l.nome} afrouxou <em>${l.clareza}</em> do nó.`);
+        } else dizer('O fôlego do herói voltou. <em>O nó continua igual, e tudo bem.</em>');
+        if (est.no === 0) {
+          est.fim = true; mao.classList.add('fechada');
+          pingo.classList.remove('atingido'); pingo.classList.add('solto');
+          dizer('O Pingo se soltou. <em>Ele vira carta e vai para a sua mão.</em>');
+          const [x, y] = centro(pingo); estouro(x, y, 30);
+          setTimeout(() => fim.classList.add('ativo'), semMovimento ? 0 : 1100);
+          if (typeof ganharLuz === 'function') ganharLuz(.12);
+        } else if (est.luz === 0) {
+          fala.insertAdjacentHTML('beforeend', ' <em>Acabou a Luz: vem outra pergunta.</em>');
+          setTimeout(proxima, semMovimento ? 300 : 1500);
+        }
+        pintar();
+      }, semMovimento ? 0 : 520);
     }
-    cartao.innerHTML = '';
-    const h = document.createElement('h3'); h.textContent = l.n;
-    const u = document.createElement('p'); u.className = 'unidade'; u.textContent = l.u;
-    const e = document.createElement('p'); e.className = 'enredo'; e.textContent = l.e;
-    const c = document.createElement('p'); c.className = 'cod';
-    const cb = document.createElement('b'); cb.textContent = l.c[0]; c.append(cb, document.createTextNode(l.c[1]));
-    cartao.append(h, u, e, c);
-  };
-  LUGARES.forEach((l, i) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'lugar'; b.dataset.i = String(i);
-    b.style.left = l.x + '%'; b.style.top = l.y + '%';
-    b.setAttribute('aria-label', l.n + ', ' + l.u);
-    b.innerHTML = '<i aria-hidden="true"></i><span></span>'; b.querySelector('span').textContent = l.n;
-    b.addEventListener('click', () => mostrar(i));
-    noMapa.appendChild(b); botoes.push(b);
-    const p = document.createElement('button');
-    p.type = 'button'; p.dataset.i = String(i); p.textContent = l.n;
-    p.addEventListener('click', () => mostrar(i));
-    lista.appendChild(p); botoes.push(p);
-  });
-  mostrar(2);
+    $('#b-recomecar').addEventListener('click', () => {
+      Object.assign(est, { q: 0, luz: 0, no: NO_CHEIO, respondeu: false, fim: false });
+      fim.classList.remove('ativo'); pingo.classList.remove('solto', 'atingido');
+      dizer('O Pingo está embaraçado. <em>Responda para encher a Candeia.</em>');
+      montarPergunta(); pintar(); ops.querySelector('button')?.focus({ preventScroll: true });
+    });
+    montarPergunta(); pintar();
+  })();
 
-  /* ---------------------------------------------------------------
-     A CONTA DA REDE: 58,7 kB gzip medidos na primeira tela do jogo
-     (npm run banda), kB de 1024 bytes, link em Mbps de 10^6 bits. Dá os
-     14,4 s que o orçamento do projeto mede para 30 alunos a 1 Mbps. */
-  const PRIMEIRA_TELA = 58.7 * 1024;
-  const fAlunos = $('#alunos'), fLink = $('#link');
-  const virgula = (n, c = 1) => n.toFixed(c).replace('.', ',');
-  const tempo = s => s < 90 ? virgula(s) + ' segundos' : Math.floor(s / 60) + ' min ' + Math.round(s % 60) + ' s';
-  const peso = b => b < 1048576 ? Math.round(b / 1024) + ' kB' : virgula(b / 1048576) + ' MB';
-  const cheio = el => el.style.setProperty('--cheio', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
-  const recalcular = () => {
-    const n = +fAlunos.value, mbps = +fLink.value / 10;
-    $('#alunos-val').textContent = n; $('#link-val').textContent = virgula(mbps);
-    $('#f-alunos').textContent = n + ' alunos'; $('#f-link').textContent = virgula(mbps) + ' Mbps';
-    $('#f-tempo').textContent = tempo(PRIMEIRA_TELA * n * 8 / (mbps * 1e6));
-    $('#f-total').textContent = peso(PRIMEIRA_TELA * n);
-    cheio(fAlunos); cheio(fLink);
+  /* Calculadora de rede: 58,7 kB por aluno na primeira tela (medido por npm run banda). */
+  const alunos = $('#alunos'), link = $('#link');
+  const atualizar = () => {
+    const a = +alunos.value, m = +link.value, bytes = 58.7 * 1024 * a, seg = bytes / (m * 1e6 / 8);
+    $('#alunos-valor').textContent = a; $('#link-valor').textContent = fmt(m, 1) + ' Mbps';
+    $('#tempo').textContent = fmt(seg, seg < 100 ? 1 : 0);
+    const mb = bytes / 1048576; $('#total').textContent = mb < 1 ? fmt(bytes / 1024) + ' kB' : fmt(mb, 1) + ' MB';
   };
-  fAlunos.addEventListener('input', recalcular); fLink.addEventListener('input', recalcular);
-  recalcular();
+  alunos.addEventListener('input', atualizar); link.addEventListener('input', atualizar); atualizar();
 
-  /* ---------------------------------------------------------------
-     O PEDIDO DE PILOTO
-     O site é estático (GitHub Pages): não há servidor para guardar o
-     pedido. O formulário monta um e-mail pronto, e quem envia é o
-     programa de e-mail do visitante. O aviso diz isso com todas as
-     letras e deixa o endereço à vista para quem não tem programa de
-     e-mail configurado. */
-  const CONTATO = 'claude5@cyberedux.com.br';
-  const form = $('#form-piloto'), aviso = $('#f-aviso'), enviar = $('#f-enviar');
-  const erroCampo = (id, msg) => {
-    const i = $('#' + id), e = $('#e-' + id.slice(2));
-    i.setAttribute('aria-invalid', msg ? 'true' : 'false'); if (e) e.textContent = msg || '';
-    return !msg;
-  };
-  const avisar = (txt, tipo) => { aviso.textContent = txt; aviso.className = 'form-aviso ' + (tipo || ''); aviso.hidden = false; };
-  form.addEventListener('submit', async ev => {
-    ev.preventDefault();
-    const d = Object.fromEntries(new FormData(form).entries());
-    const ok = [
-      erroCampo('f-nome', d.nome.trim() ? '' : 'Escreva o seu nome.'),
-      erroCampo('f-escola', d.escola.trim() ? '' : 'Diga a escola ou a rede.'),
-      erroCampo('f-contato', /.+@.+\..+/.test(d.contato) ? '' : 'Precisamos de um e-mail válido para responder.'),
-    ].every(Boolean);
-    if (!ok) { form.querySelector('[aria-invalid="true"]')?.focus(); return; }
-    const corpo = [
-      'Olá! Quero pedir um piloto do Lumina.',
-      '',
-      'Nome: ' + d.nome.trim(),
-      'Sou: ' + d.papel,
-      'Escola ou rede: ' + d.escola.trim(),
-      'Cidade e UF: ' + (d.cidade.trim() || '(não informado)'),
-      'E-mail para retorno: ' + d.contato.trim(),
-    ].join('\n');
-    const assunto = 'Pedido de piloto: ' + d.escola.trim();
-    location.href = 'mailto:' + CONTATO + '?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo);
-    avisar('Abrimos o seu programa de e-mail com o pedido pronto; falta só enviar. Se nada abriu, escreva para ' + CONTATO + '.', 'ok');
+  /* Pedido de piloto: valida no campo e monta o e-mail; nada vai para servidor. */
+  const form = $('#form-piloto'), estado = $('#estado');
+  const regras = { nome: v => v.trim().length >= 2 || 'Escreva seu nome.', papel: v => !!v || 'Escolha uma opção.', escola: v => v.trim().length >= 2 || 'Diga a escola ou a rede.',
+    cidade: v => v.trim().length >= 2 || 'Diga a cidade e a UF.', email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || 'Confira o e-mail.' };
+  form.addEventListener('submit', e => {
+    e.preventDefault(); let erro = null;
+    for (const [c, regra] of Object.entries(regras)) { const el = form.elements[c], ok = regra(el.value); $('#erro-' + c).textContent = ok === true ? '' : ok; el.setAttribute('aria-invalid', ok !== true); if (ok !== true && !erro) erro = el; }
+    if (erro) { erro.focus(); estado.textContent = ''; return; }
+    const f = form.elements, corpo = `Nome: ${f.nome.value}\nPapel: ${f.papel.value}\nEscola ou rede: ${f.escola.value}\nCidade e UF: ${f.cidade.value}\nE-mail para retorno: ${f.email.value}`;
+    const [x, y] = centro($('button[type=submit]', form)); estouro(x, y, 22);
+    location.href = `mailto:claude5@cyberedux.com.br?subject=${encodeURIComponent('Pedido de piloto do Lumina')}&body=${encodeURIComponent(corpo)}`;
+    estado.textContent = 'Seu programa de e-mail vai abrir com o pedido pronto. É só enviar.';
   });
 })();
 </script>

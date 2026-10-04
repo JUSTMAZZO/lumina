@@ -1,0 +1,360 @@
+/* Mapa interativo de Lumina. Herda a fonte do site (Plus Jakarta Sans). */
+.mapa-jogo {
+  --ouro: #ffd447;
+  --ouro-brilho: rgba(255, 212, 71, .55);
+  --vidro: rgba(16, 58, 160, .5);
+  --vidro-forte: rgba(14, 50, 140, .62);
+  --borda-vidro: rgba(255, 255, 255, .34);
+  --texto-sombra: 0 1px 2px rgba(5, 24, 78, .9), 0 0 12px rgba(5, 24, 78, .5);
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+  color: #fff;
+  font-family: inherit;
+  line-height: 1.35;
+  -webkit-tap-highlight-color: transparent;
+}
+.mapa-jogo *, .mapa-jogo *::before, .mapa-jogo *::after { box-sizing: border-box; }
+:where(.mapa-jogo button) { font: inherit; color: inherit; }
+
+/* ---------- Palco (imagem + camadas) ---------- */
+.mapa-jogo__palco {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1400 / 781;
+  border-radius: 18px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #6bb3f0;
+  box-shadow: 0 30px 60px -28px rgba(5, 24, 78, .7), 0 6px 18px rgba(5, 24, 78, .22);
+}
+.mapa-jogo__fundo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  user-select: none; -webkit-user-drag: none;
+}
+.mapa-jogo__trilha {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+.mapa-jogo__trilha .brilho { fill: none; stroke: var(--ouro); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; opacity: .55; }
+.mapa-jogo__trilha .pontos { fill: none; stroke: var(--ouro); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 0 22; }
+
+/* ---------- HUD: seletor de herói e contador ---------- */
+.mapa-jogo__hud {
+  position: absolute;
+  top: 12px; left: 12px; right: 12px;
+  z-index: 8;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+.mapa-jogo__hud > * { pointer-events: auto; }
+.mapa-jogo__herois,
+.mapa-jogo__contador {
+  display: flex; align-items: center; gap: 6px;
+  margin: 0;
+  padding: 5px 12px 5px 6px;
+  border-radius: 999px;
+  background: var(--vidro);
+  border: 1px solid var(--borda-vidro);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: 0 8px 22px -12px rgba(5, 24, 78, .6);
+  text-shadow: var(--texto-sombra);
+}
+.mapa-jogo__hud-rotulo {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 0 4px 0 8px;
+  opacity: .9;
+}
+.mapa-jogo__heroi-nome { font-size: 13px; font-weight: 700; padding-left: 4px; min-width: 4.2em; }
+.mapa-jogo__contador { padding: 8px 14px; font-size: 13px; font-weight: 600; }
+.mapa-jogo__contador strong { color: var(--ouro); font-weight: 800; }
+
+.mapa-jogo__retrato {
+  position: relative;
+  width: 38px; height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .35);
+  background: radial-gradient(circle at 50% 35%, #2f7cf0, #123e9e);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.mapa-jogo__retrato img {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  height: 200%;
+  width: auto;
+  max-width: none;
+  transform: translateX(calc(var(--px, .4) * -100%));
+  pointer-events: none;
+}
+.mapa-jogo__retrato[data-heroi="lamina"] { --px: .34; }
+.mapa-jogo__retrato[data-heroi="adagas"] { --px: .3; }
+.mapa-jogo__retrato[data-heroi="livro"]  { --px: .44; }
+.mapa-jogo__retrato[data-heroi="luvas"]  { --px: .5; }
+.mapa-jogo__retrato:hover { transform: translateY(-2px); }
+.mapa-jogo__retrato[aria-pressed="true"] {
+  border-color: var(--ouro);
+  box-shadow: 0 0 0 2px rgba(255, 212, 71, .3), 0 0 14px var(--ouro-brilho);
+}
+.mapa-jogo__retrato:focus-visible,
+.mapa-jogo__lugar:focus-visible,
+.mapa-jogo__painel button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ---------- Marcadores ---------- */
+.mapa-jogo__lugar {
+  position: absolute;
+  left: calc(var(--x) / 1400 * 100%);
+  top: calc(var(--y) / 781 * 100%);
+  z-index: 5;
+  width: clamp(26px, 3.3cqw, 46px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+.mapa-jogo__lugar::before { /* halo pulsante */
+  content: "";
+  position: absolute; inset: -55%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 212, 71, .6) 0%, rgba(255, 212, 71, .18) 40%, rgba(255, 212, 71, 0) 68%);
+  animation: mapa-halo 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.mapa-jogo__lugar::after { /* área de toque maior */
+  content: ""; position: absolute; inset: -10px; border-radius: 50%;
+}
+.mapa-jogo__estrela {
+  position: relative;
+  display: block;
+  width: 100%; height: 100%;
+  fill: rgba(255, 212, 71, .28);
+  stroke: var(--ouro);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(255, 212, 71, .9)) drop-shadow(0 2px 3px rgba(5, 24, 78, .55));
+  transition: transform .2s ease, fill .3s ease;
+  animation: mapa-pulso 2.2s ease-in-out infinite;
+}
+.mapa-jogo__lugar:hover .mapa-jogo__estrela,
+.mapa-jogo__lugar:focus-visible .mapa-jogo__estrela { transform: scale(1.15); }
+.mapa-jogo__lugar.is-feito .mapa-jogo__estrela {
+  fill: var(--ouro);
+  stroke: #fff6cf;
+  filter: drop-shadow(0 0 6px rgba(255, 212, 71, 1)) drop-shadow(0 0 14px rgba(255, 212, 71, .7));
+}
+.mapa-jogo__lugar.is-feito::before { animation: none; opacity: .75; }
+.mapa-jogo__lugar.is-ativo::before { animation-duration: 1.2s; }
+
+.mapa-jogo__rotulo {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: clamp(11px, 1.05cqw, 14px);
+  font-weight: 800;
+  letter-spacing: .01em;
+  color: #fff;
+  text-shadow: var(--texto-sombra);
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.mapa-jogo__lugar.is-ativo .mapa-jogo__rotulo { opacity: 0; }
+
+/* ---------- Herói ---------- */
+.mapa-jogo__heroi {
+  --ax: .28;
+  position: absolute;
+  left: 13%; top: 36%;
+  height: 12.5%;
+  z-index: 4;
+  transform: translate(calc(var(--ax) * -100%), -100%);
+  pointer-events: none;
+}
+.mapa-jogo__heroi::after { /* sombra no chão */
+  content: "";
+  position: absolute;
+  left: calc(var(--ax) * 100%);
+  bottom: -5%;
+  height: 12%;
+  aspect-ratio: 3.4;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(10, 40, 30, .45), rgba(10, 40, 30, 0));
+  z-index: -1;
+}
+.mapa-jogo__heroi-corpo {
+  display: block;
+  height: 100%;
+  transform-origin: calc(var(--ax) * 100%) 100%;
+  transition: transform .12s ease;
+}
+.mapa-jogo__heroi.is-esquerda .mapa-jogo__heroi-corpo { transform: scaleX(-1); }
+.mapa-jogo__heroi img {
+  display: block;
+  height: 100%; width: auto; max-width: none;
+  filter: drop-shadow(0 2px 2px rgba(5, 24, 78, .35));
+  transform-origin: 50% 100%;
+}
+.mapa-jogo__heroi.is-andando img { animation: mapa-passo .34s ease-in-out infinite; }
+.mapa-jogo__heroi.is-no-ceu img { filter: drop-shadow(0 0 10px rgba(255, 212, 71, .8)); }
+
+/* ---------- Embaraçados ---------- */
+.mapa-jogo__ser {
+  position: absolute;
+  height: 15.5%;
+  z-index: 3;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.mapa-jogo__ser img {
+  display: block;
+  height: 100%; width: auto; max-width: none;
+  transform-origin: 50% 100%;
+  filter: saturate(.8) drop-shadow(0 3px 3px rgba(5, 24, 78, .4));
+  animation: mapa-pop .5s cubic-bezier(.3, 1.6, .5, 1) both, mapa-tremer 2.6s ease-in-out .5s infinite;
+}
+.mapa-jogo__ser.is-troca img { animation: mapa-pop .4s cubic-bezier(.3, 1.6, .5, 1) both; }
+.mapa-jogo__ser.is-solto img {
+  filter: sepia(.5) saturate(1.7) hue-rotate(-6deg) brightness(1.12) drop-shadow(0 0 6px rgba(255, 230, 140, 1)) drop-shadow(0 0 18px rgba(255, 212, 71, .85));
+  animation: mapa-pulo .5s ease-out 2, mapa-flutuar 3s ease-in-out 1s infinite;
+}
+.mapa-jogo__ser.is-saindo { opacity: 0; }
+
+/* ---------- Faíscas ---------- */
+.mapa-jogo__faiscas { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+.mapa-jogo__faisca {
+  position: absolute;
+  width: var(--t, 14px); height: var(--t, 14px);
+  margin: calc(var(--t, 14px) / -2) 0 0 calc(var(--t, 14px) / -2);
+  background: var(--ouro);
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+  filter: drop-shadow(0 0 4px #fff);
+  animation: mapa-faisca .8s cubic-bezier(.2, .7, .3, 1) forwards;
+}
+
+/* ---------- Painel (balão de vidro) ---------- */
+.mapa-jogo__painel {
+  position: absolute;
+  z-index: 9;
+  width: min(320px, 44cqw);
+  padding: 16px 18px 16px;
+  border-radius: 16px;
+  background: var(--vidro-forte);
+  border: 1px solid var(--borda-vidro);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  backdrop-filter: blur(14px) saturate(1.25);
+  box-shadow: 0 20px 44px -20px rgba(5, 24, 78, .75);
+  text-shadow: var(--texto-sombra);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity .25s ease, transform .25s ease, visibility 0s linear .25s;
+}
+.mapa-jogo__painel.is-aberto {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity .25s ease, transform .25s ease, visibility 0s;
+}
+.mapa-jogo__painel p { margin: 0; }
+.mapa-jogo__sobre {
+  font-size: 11px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ouro);
+  margin-bottom: 4px !important;
+}
+.mapa-jogo__titulo { margin: 0 0 8px; font-size: 19px; font-weight: 800; line-height: 1.2; letter-spacing: -.01em; }
+.mapa-jogo__dados { margin: 0 0 10px; display: grid; gap: 3px; font-size: 13.5px; }
+.mapa-jogo__dados div { display: flex; gap: 6px; flex-wrap: wrap; }
+.mapa-jogo__dados dt { opacity: .78; font-weight: 500; }
+.mapa-jogo__dados dt::after { content: ":"; }
+.mapa-jogo__dados dd { margin: 0; font-weight: 700; }
+.mapa-jogo__no { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+.mapa-jogo__no-barra { flex: 1; height: 7px; border-radius: 99px; background: rgba(255, 255, 255, .2); overflow: hidden; }
+.mapa-jogo__no-barra i { display: block; height: 100%; width: 100%; border-radius: inherit; background: linear-gradient(90deg, #fff1b3, var(--ouro)); transition: width .5s cubic-bezier(.3, .8, .3, 1); }
+.mapa-jogo__dica { font-size: 13px; opacity: .92; margin-bottom: 12px !important; }
+.mapa-jogo__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.mapa-jogo__botao {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: var(--ouro);
+  color: #0c2a6e !important;
+  font-weight: 800; font-size: 14px;
+  text-shadow: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px -6px rgba(255, 212, 71, .8), inset 0 -2px 0 rgba(0, 0, 0, .12);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.mapa-jogo__botao:hover { transform: translateY(-1px); box-shadow: 0 10px 22px -6px rgba(255, 212, 71, .9), inset 0 -2px 0 rgba(0, 0, 0, .12); }
+.mapa-jogo__botao:active { transform: translateY(1px); }
+.mapa-jogo__botao[disabled] { opacity: .6; cursor: default; }
+.mapa-jogo__link {
+  border: 0; background: none; padding: 6px 2px;
+  font-weight: 700; font-size: 13.5px;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255, 255, 255, .5);
+  cursor: pointer;
+}
+.mapa-jogo__solto { font-size: 15px; font-weight: 800; color: var(--ouro); margin-bottom: 10px !important; }
+
+/* ---------- Celular / contêiner estreito ---------- */
+@container (max-width: 700px) {
+  .mapa-jogo { display: flex; flex-direction: column; }
+  .mapa-jogo__palco { order: 1; border-radius: 14px; }
+  .mapa-jogo__hud {
+    position: static; order: 2;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .mapa-jogo__contador { padding: 7px 12px; font-size: 12px; }
+  .mapa-jogo__painel {
+    position: relative; order: 3;
+    left: auto !important; top: auto !important;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .mapa-jogo__painel:not(.is-aberto) { display: none; }
+  .mapa-jogo__rotulo { display: none; }
+  .mapa-jogo__heroi { height: 15%; }
+  .mapa-jogo__ser { height: 19%; }
+}
+
+/* ---------- Animações ---------- */
+@keyframes mapa-halo { 0%, 100% { transform: scale(.75); opacity: .55; } 50% { transform: scale(1.1); opacity: 1; } }
+@keyframes mapa-pulso { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@keyframes mapa-passo { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-5%) rotate(-2deg); } 50% { transform: translateY(0) rotate(0); } 75% { transform: translateY(-5%) rotate(2deg); } }
+@keyframes mapa-pop { 0% { transform: scale(.15); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes mapa-tremer { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-2deg); } 75% { transform: rotate(2deg); } }
+@keyframes mapa-pulo { 0%, 100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-14%) scale(1.04); } }
+@keyframes mapa-flutuar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
+@keyframes mapa-faisca {
+  0% { transform: translate(0, 0) scale(.3) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1) rotate(90deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-jogo *, .mapa-jogo *::before, .mapa-jogo *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .mapa-jogo__faisca { display: none; }
+}

@@ -1,0 +1,100 @@
+<!--
+  Mapa interativo de Lumina (componente).
+  Requer componentes/mapa.css no <head> e componentes/mapa.js no fim do <body>.
+  data-base: pasta das artes, relativa à página. No site: "arte/". Na página de teste: "../arte/".
+  As posições (--x, --y) estão em pixels da imagem mapa-dia.webp (1400 x 781) e caem sobre o caminho pontilhado.
+-->
+<div class="mapa-jogo" id="mapa-jogo" data-base="arte/">
+
+
+  <div class="mapa-jogo__palco">
+    <img class="mapa-jogo__fundo" data-arte="mapa-dia.webp" width="1400" height="781" alt="Mapa de Lumina: campos verdes, um caminho de pontinhos, um rio com ponte e uma cachoeira.">
+
+    <svg class="mapa-jogo__trilha" viewBox="0 0 1400 781" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="mapa-jogo-brilho" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="5"/>
+        </filter>
+      </defs>
+      <g data-trilhas></g>
+    </svg>
+
+    <div class="mapa-jogo__seres" data-seres aria-hidden="true"></div>
+
+    <div class="mapa-jogo__heroi" data-heroi-sprite aria-hidden="true">
+      <span class="mapa-jogo__heroi-corpo"><img alt="" data-arte="heroi-lamina.webp" width="399" height="260"></span>
+    </div>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:138;--y:311"
+      data-lugar="1" data-nome="A Feira Sem Conta" data-unidade="Números" data-embaracado="Contadeira" data-ser="formiga.webp" data-balao="abaixo"
+      data-dica="Acertou a pergunta? A Candeia ganha 3 de Luz."
+      aria-label="Lugar 1: A Feira Sem Conta. Unidade: Números. Embaraçado: Contadeira.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">A Feira Sem Conta</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:754;--y:167"
+      data-lugar="2" data-nome="O Tear que Repete" data-unidade="Álgebra" data-embaracado="Remendo" data-ser="goblin.webp" data-balao="abaixo"
+      data-dica="Errou? Ganha 1 de Luz e a Aritana explica."
+      aria-label="Lugar 2: O Tear que Repete. Unidade: Álgebra. Embaraçado: Remendo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">O Tear que Repete</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:1000;--y:318"
+      data-lugar="3" data-nome="A Vila Torta" data-unidade="Geometria" data-embaracado="Prumo" data-ser="golem.webp" data-balao="abaixo"
+      data-dica="A Luz da Candeia paga as cartas. Elas se chamam Lumes."
+      aria-label="Lugar 3: A Vila Torta. Unidade: Geometria. Embaraçado: Prumo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">A Vila Torta</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:1211;--y:498"
+      data-lugar="4" data-nome="O Rio Sem Palmo" data-unidade="Grandezas e medidas" data-embaracado="Palmo" data-ser="morcego.webp" data-balao="esquerda"
+      data-dica="Quando o nó chega a zero, o Embaraçado se solta."
+      aria-label="Lugar 4: O Rio Sem Palmo. Unidade: Grandezas e medidas. Embaraçado: Palmo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">O Rio Sem Palmo</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar" style="--x:414;--y:686"
+      data-lugar="5" data-nome="O Campo do Talvez" data-unidade="Probabilidade e estatística" data-embaracado="Pingo" data-ser="slime.webp" data-balao="acima"
+      data-dica="Quem se solta não vai embora. Vira aliado."
+      aria-label="Lugar 5: O Campo do Talvez. Unidade: Probabilidade e estatística. Embaraçado: Pingo.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">O Campo do Talvez</span>
+    </button>
+
+    <button type="button" class="mapa-jogo__lugar mapa-jogo__lugar--ceu" style="--x:500;--y:84"
+      data-lugar="6" data-nome="A Ponte de Nuvens" data-unidade="As cinco, em rodízio" data-embaracado="Os cinco, em rodízio" data-ser="rodizio" data-balao="direita" data-parada="104" data-ser-dx="-88" data-ser-dy="56"
+      data-dica="Fica no céu, fora do mapa. Aqui as cinco unidades voltam em rodízio."
+      aria-label="Lugar 6: A Ponte de Nuvens, no céu. Cobra as cinco unidades em rodízio.">
+      <svg class="mapa-jogo__estrela" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.5C12.9 8.6 15.4 11.1 22.5 12 15.4 12.9 12.9 15.4 12 22.5 11.1 15.4 8.6 12.9 1.5 12 8.6 11.1 11.1 8.6 12 1.5Z"/></svg>
+      <span class="mapa-jogo__rotulo">A Ponte de Nuvens</span>
+    </button>
+
+    <div class="mapa-jogo__faiscas" data-faiscas aria-hidden="true"></div>
+  </div>
+
+  <div class="mapa-jogo__hud">
+    <div class="mapa-jogo__herois" role="group" aria-label="Escolha seu herói">
+      <span class="mapa-jogo__hud-rotulo">Herói</span>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="true" data-heroi="lamina" data-nome="Iberê" data-ancora="0.28" aria-label="Jogar com Iberê" title="Iberê">
+        <img alt="" data-arte="heroi-lamina.webp" width="399" height="260">
+      </button>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="false" data-heroi="adagas" data-nome="Tiê" data-ancora="0.28" aria-label="Jogar com Tiê" title="Tiê">
+        <img alt="" data-arte="heroi-adagas.webp" width="392" height="260">
+      </button>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="false" data-heroi="livro" data-nome="Dandara" data-ancora="0.4" aria-label="Jogar com Dandara" title="Dandara">
+        <img alt="" data-arte="heroi-livro.webp" width="348" height="260">
+      </button>
+      <button type="button" class="mapa-jogo__retrato" aria-pressed="false" data-heroi="luvas" data-nome="Juninho" data-ancora="0.5" aria-label="Jogar com Juninho" title="Juninho">
+        <img alt="" data-arte="heroi-luvas.webp" width="268" height="260">
+      </button>
+      <span class="mapa-jogo__heroi-nome" data-heroi-nome>Iberê</span>
+    </div>
+    <p class="mapa-jogo__contador" aria-live="polite">Lugares desembaraçados: <strong data-feitos>0</strong> de 6</p>
+  </div>
+
+  <div class="mapa-jogo__painel" data-painel role="region" aria-label="Lugar escolhido" aria-live="polite"></div>
+</div>
